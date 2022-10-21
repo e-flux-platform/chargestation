@@ -6,8 +6,8 @@ Todo:
 
 - [x] Basic web UI
 - [x] Basic connectivity & heartbeats
-- [ ] Basic charge session simulation
 - [ ] Settings UI
+- [ ] Basic charge session simulation
 - [ ] Support for BootNotification
 - [ ] Allow Settings and Configuration via URL params
 - [ ] API Documentation
@@ -15,6 +15,9 @@ Todo:
 - [ ] Support for using two connectors
 - [ ] Time travel
 - [ ] OCPP 2.1 Support
+- [ ] Animation for plugging in cable
+- [ ] Animation for cars
+- [ ] Animation for connectivity on the station
 
 ## Setup
 

@@ -4,24 +4,14 @@ import { Button, Loader } from 'semantic';
 import { Transition } from 'semantic-ui-react';
 
 import ChargeStation from 'lib/ChargeStation';
+import { getConfiguration, getSettings } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
 import car1Svg from 'assets/car-1.svg';
 import car2Svg from 'assets/car-2.svg';
 import roadLogoSvg from 'assets/road-logo-dark-mode.svg';
 
-// TODO: make this configurable via params
-function getConfiguration() {
-  return {
-    Identity: 'ChargeStationOne',
-  };
-}
-
-function getOptions() {
-  return {
-    ocppBaseUrl: 'ws://localhost:2600/1.6/e-flux',
-  };
-}
+import SettingsModal from './SettingsModal';
 
 import './dashboard.less';
 @screen
@@ -30,11 +20,14 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
+    configuration: getConfiguration(),
+    settings: getSettings(),
     logEntries: [],
   };
 
   componentDidMount() {
-    const chargeStation = new ChargeStation(getConfiguration(), getOptions());
+    const { configuration, settings } = this.state;
+    const chargeStation = new ChargeStation(configuration, settings);
     chargeStation.onLog = this.onLog;
     chargeStation.connect();
     this.setState({ chargeStation });
@@ -51,7 +44,8 @@ export default class Home extends React.Component {
   };
 
   render() {
-    const { chargeStation, tick, logEntries } = this.state;
+    const { chargeStation, tick, logEntries, settings, configuration } =
+      this.state;
     if (!chargeStation) {
       return <Loader />;
     }
@@ -104,7 +98,11 @@ export default class Home extends React.Component {
               }}
             />
             <div className="right-actions">
-              <Button inverted icon="setting" />
+              <SettingsModal
+                trigger={<Button inverted icon="setting" />}
+                settings={settings}
+                configuration={configuration}
+              />
             </div>
           </div>
           <div className="console">
