@@ -1,0 +1,150 @@
+.logo {
+  position: absolute;
+  font-family: 'IBM Plex Mono', monospace;
+  color: #222;
+  font-size: 40px;
+  top: 20px;
+  left: 20px;
+
+  .subtitle {
+    color: #999;
+    margin-left: 3px;
+    margin-top: 15px;
+    font-size: 20px;
+  }
+}
+
+.visualization {
+  float: left;
+  width: 60%;
+  height: 100vh;
+  position: relative;
+
+  .charge-station {
+    width: 30%;
+    position: absolute;
+    z-index: 200;
+    left: 40%;
+    bottom: 10%;
+  }
+
+  @keyframes parkCar1 {
+    0% {
+      left: -40%;
+      bottom: -4%;
+    }
+    100% {
+      left: -1%;
+      bottom: 5%;
+    }
+  }
+
+  @keyframes parkCar1Reverse {
+    0% {
+      left: -1%;
+      bottom: 5%;
+    }
+    100% {
+      left: -90%;
+      bottom: -4%;
+    }
+  }
+
+  @keyframes parkCar2 {
+    0% {
+      left: -120%;
+      bottom: -4%;
+    }
+    100% {
+      left: -50%;
+      bottom: 20%;
+    }
+  }
+
+  .car-1 {
+    animation: parkCar1Reverse 3s 1 normal ease-out;
+    position: absolute;
+    z-index: 1000;
+    width: 100%;
+    height: 30%;
+    left: -90%;
+    bottom: -4%;
+  }
+
+  .car-1.initial {
+    display: none;
+  }
+
+  .car-1.animated {
+    animation: parkCar1 3s 1 normal ease-out;
+    left: -1%;
+    bottom: 5%;
+  }
+
+  .car-2 {
+    position: absolute;
+    z-index: 100;
+    width: 90%;
+    height: 30%;
+    left: -120%;
+    bottom: -4%;
+  }
+
+  .car-2.initial {
+    display: none;
+  }
+
+  .car-2.animated {
+    animation: parkCar2 3s 1 normal ease-out;
+    left: -120%;
+    bottom: -4%;
+  }
+}
+
+.terminal {
+  float: left;
+  background: #222;
+  width: 40%;
+  height: 100vh;
+  padding: 1em;
+
+  .actions {
+    margin-bottom: 2em;
+
+    .right-actions {
+      float: right;
+    }
+  }
+
+  .console {
+    color: #ccc;
+    font-family: 'IBM Plex Mono', monospace;
+
+    .log-entry {
+      margin-bottom: 8px;
+    }
+
+    .response,
+    .message-response {
+      color: #999;
+    }
+
+    .error {
+      color: #ffaaaa;
+    }
+  }
+
+  .tick {
+    display: none;
+  }
+}
+
+.road-logo {
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+
+  img {
+    height: 20px;
+  }
+}

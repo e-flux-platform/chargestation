@@ -1,0 +1,38 @@
+/*******************************
+          Breadcrumb
+*******************************/
+
+@import (multiple) '../globals/site.variables';
+
+/*-------------------
+     Breadcrumb
+--------------------*/
+
+@verticalMargin: 0em;
+@display: inline-block;
+@verticalAlign: middle;
+
+@dividerSpacing: @3px;
+@dividerOpacity: 0.5;
+@dividerColor: @lightTextColor;
+
+@dividerSize: @relativeSmall;
+@dividerVerticalAlign: top;
+
+@iconDividerSize: @relativeTiny;
+@iconDividerVerticalAlign: top;
+
+@sectionMargin: 0em;
+@sectionPadding: 0em;
+
+/* Coupling */
+@segmentPadding: @relativeMini @relativeMedium;
+
+/* Link Color */
+@breadcrumbLinkColor: #ABADB3;
+
+/*-------------------
+       States
+--------------------*/
+
+@activeFontWeight: 500;

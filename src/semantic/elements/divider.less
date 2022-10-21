@@ -1,0 +1,161 @@
+/*!
+ * # Semantic UI - Divider
+ * http://github.com/semantic-org/semantic-ui/
+ *
+ *
+ * Released under the MIT license
+ * http://opensource.org/licenses/MIT
+ *
+ */
+
+@import './divider.variables';
+
+/*******************************
+            Divider
+*******************************/
+
+.ui.divider {
+  height: 1px;
+  background-color: #dbdbda;
+  margin: @margin;
+
+  &.horizontal,
+  &.vertical {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: @fontWeight;
+    text-transform: @textTransform;
+    letter-spacing: @letterSpacing;
+    user-select: none;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    height: auto;
+    background: transparent;
+
+    &:before,
+    &:after {
+      content: '';
+      background-color: #dbdbda;
+      flex: auto;
+    }
+  }
+
+  &.horizontal {
+    &:before,
+    &:after {
+      height: 1px;
+    }
+
+    &:before {
+      margin-right: 15px;
+    }
+
+    &:after {
+      margin-left: 15px;
+    }
+  }
+
+  &.vertical {
+    flex-flow: column;
+    align-self: stretch;
+    margin: 0 1rem;
+
+    &:before,
+    &:after {
+      width: 1px;
+      min-height: 15px;
+    }
+
+    &:before {
+      margin-bottom: 5px;
+    }
+
+    &:after {
+      margin-top: 5px;
+    }
+  }
+}
+
+/*--------------
+    Coupling
+---------------*/
+
+/* Allow divider between each column row */
+.ui.grid > .column + .divider,
+.ui.grid > .row > .column + .divider {
+  left: auto;
+}
+
+/*--------------
+      Icon
+---------------*/
+
+.ui.divider > .icon {
+  margin: @dividerIconMargin;
+  font-size: @dividerIconSize;
+  height: 1em;
+  vertical-align: middle;
+}
+
+/*******************************
+          Variations
+*******************************/
+
+/*--------------
+    Hidden
+---------------*/
+
+.ui.hidden.divider {
+  visibility: hidden;
+}
+
+/*--------------
+    Inverted
+---------------*/
+
+.ui.divider.inverted,
+.ui.vertical.inverted.divider,
+.ui.horizontal.inverted.divider {
+  color: @invertedTextColor;
+}
+.ui.divider.inverted,
+.ui.divider.inverted:after,
+.ui.divider.inverted:before {
+  border-top-color: @invertedShadowColor !important;
+  border-left-color: @invertedShadowColor !important;
+  border-bottom-color: @invertedHighlightColor !important;
+  border-right-color: @invertedHighlightColor !important;
+}
+
+/*--------------
+    Fitted
+---------------*/
+
+.ui.fitted.divider {
+  margin: 0;
+}
+
+/*--------------
+    Clearing
+---------------*/
+
+.ui.clearing.divider {
+  clear: both;
+}
+
+/*--------------
+    Section
+---------------*/
+
+.ui.section.divider {
+  margin-top: @sectionMargin;
+  margin-bottom: @sectionMargin;
+}
+
+/*--------------
+     Sizes
+---------------*/
+
+.ui.divider {
+  font-size: @medium;
+}
