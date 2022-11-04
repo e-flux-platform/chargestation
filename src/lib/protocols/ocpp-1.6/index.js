@@ -42,6 +42,10 @@ class Connection {
     });
   }
 
+  disconnect() {
+    this.ws.close();
+  }
+
   sendCommand(method, params) {
     return new Promise((resolve, reject) => {
       const messageId = this.messageId++;

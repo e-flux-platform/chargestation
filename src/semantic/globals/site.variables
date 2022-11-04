@@ -37,7 +37,7 @@
     Brand Colors
 --------------------*/
 
-@primaryColor        : #77a741;
+@primaryColor        : #54c7ff;
 @secondaryColor      : #423629;
 
 @lightPrimaryColor   : @lightBlue;

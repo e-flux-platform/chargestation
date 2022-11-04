@@ -1,23 +1,19 @@
 import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import {
-  settingsList,
-  getConfiguration,
-  getConfigurationItem,
-} from 'lib/settings';
+import { sessionSettingsList } from 'lib/settings';
 import { HelpTip } from 'components';
 
 @modal
-export default class SettingsModal extends React.Component {
+export default class StartSessionModal extends React.Component {
   state = {
-    settings: this.props.settings,
+    session: this.props.session,
     configuration: this.props.configuration,
   };
   setField = (e, { name, value }) => {
     this.setState({
-      settings: {
-        ...this.state.settings,
+      session: {
+        ...this.state.session,
         [name]: value,
       },
     });
@@ -25,7 +21,7 @@ export default class SettingsModal extends React.Component {
   setConfigurationField = (e, { name, value }) => {
     this.setState({
       configuration: {
-        ...this.state.settings,
+        ...this.state.session,
         [name]: value,
       },
     });
@@ -35,14 +31,13 @@ export default class SettingsModal extends React.Component {
     this.props.close();
   };
   render() {
-    const { settings, configuration } = this.state;
+    const { session } = this.state;
     return (
       <>
-        <Modal.Header>Settings &amp; Configuration</Modal.Header>
+        <Modal.Header>Start Session</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="edit-settings">
-            <Header as="h3" content="Settings" />
-            {settingsList.map((item) => {
+            {sessionSettingsList.map((item) => {
               return (
                 <div key={item.key} style={{ marginBottom: '8px' }}>
                   <Form.Input
@@ -59,39 +54,17 @@ export default class SettingsModal extends React.Component {
                       </strong>
                     }
                     name={item.key}
-                    value={settings[item.key]}
+                    value={session[item.key]}
                     onChange={this.setField}
                   />
                 </div>
               );
             })}
             <Divider hidden />
-            <Header as="h3" content="Configuration Keys" />
-            {Object.keys(getConfiguration()).map((key) => {
-              const item = getConfigurationItem(key);
-              return (
-                <Form.Input
-                  key={key}
-                  label={
-                    <strong
-                      style={{
-                        marginBottom: '4px',
-                        display: 'inline-block',
-                      }}>
-                      {key}
-                      {item?.description && <HelpTip text={item.description} />}
-                    </strong>
-                  }
-                  name={key}
-                  value={configuration[key]}
-                  onChange={this.setConfigurationField}
-                />
-              );
-            })}
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button primary form="edit-settings" content="Save" />
+          <Button primary form="edit-settings" content="Start" />
         </Modal.Actions>
       </>
     );

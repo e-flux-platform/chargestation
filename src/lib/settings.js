@@ -50,6 +50,15 @@ export const configurationList = [
   },
 ];
 
+export const sessionSettingsList = [
+  {
+    key: 'uid',
+    name: 'UID',
+    description: 'RFID card UID that would be used in a StartSession',
+    defaultValue: 'FF88888801',
+  },
+];
+
 function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
@@ -84,4 +93,18 @@ export function getConfiguration() {
 
 export function getConfigurationItem(key) {
   return configurationList.filter((item) => item.key === key)[0];
+}
+
+export function getDefaultSession() {
+  const query = getDocumentQuery();
+  const result = {};
+  for (const item of sessionSettingsList) {
+    const { key } = item;
+    if (query.get(key)) {
+      result[key] = query.get(key);
+      continue;
+    }
+    result[key] = item.defaultValue;
+  }
+  return result;
 }

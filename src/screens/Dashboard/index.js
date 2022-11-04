@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Transition } from 'semantic-ui-react';
 
 import ChargeStation from 'lib/ChargeStation';
-import { getConfiguration, getSettings } from 'lib/settings';
+import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
 import car1Svg from 'assets/car-1.svg';
@@ -15,6 +15,7 @@ import roadLogoSvg from 'assets/road-logo-dark-mode.svg';
 import SettingsModal from './SettingsModal';
 
 import './dashboard.less';
+import StartSessionModal from './StartSessionModal';
 @screen
 export default class Home extends React.Component {
   static title = 'Charge Station One';
@@ -23,6 +24,7 @@ export default class Home extends React.Component {
   state = {
     configuration: getConfiguration(),
     settings: getSettings(),
+    session: getDefaultSession(),
     logEntries: [],
   };
 
@@ -45,8 +47,14 @@ export default class Home extends React.Component {
   };
 
   render() {
-    const { chargeStation, tick, logEntries, settings, configuration } =
-      this.state;
+    const {
+      chargeStation,
+      tick,
+      logEntries,
+      settings,
+      configuration,
+      session,
+    } = this.state;
     if (!chargeStation) {
       return <Loader />;
     }
@@ -76,16 +84,23 @@ export default class Home extends React.Component {
         </div>
         <div className="terminal">
           <div className="actions">
-            <Button
-              inverted
-              primary={chargeStation.hasRunningSession('1') ? false : true}
-              disabled={chargeStation.hasRunningSession('1')}
-              icon="play"
-              content="Start Charging"
-              onClick={() => {
-                chargeStation.startSession('1');
-                this.nextTick();
+            <StartSessionModal
+              session={session}
+              onSave={({ session }) => {
+                this.setState({ session }, () => {
+                  chargeStation.startSession('1', session);
+                  this.nextTick();
+                });
               }}
+              trigger={
+                <Button
+                  inverted
+                  primary={chargeStation.hasRunningSession('1') ? false : true}
+                  disabled={chargeStation.hasRunningSession('1')}
+                  icon="play"
+                  content="Start Charging"
+                />
+              }
             />
             <Button
               inverted
@@ -104,6 +119,16 @@ export default class Home extends React.Component {
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}
                 configuration={configuration}
+                onSave={({ settings, configuration }) => {
+                  this.setState({ settings, configuration }, () => {
+                    chargeStation.configuration = configuration;
+                    chargeStation.settings = settings;
+                    chargeStation.disconnect();
+                    setTimeout(() => {
+                      chargeStation.connect();
+                    }, 1000);
+                  });
+                }}
               />
             </div>
           </div>

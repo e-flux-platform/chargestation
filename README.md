@@ -11,6 +11,7 @@ Todo:
 - [x] API Documentation
 - [x] Support for BootNotification
 - [ ] Basic charge session simulation
+- [ ] Terminate session on disconnect
 - [ ] OCPP Command drill-down
 - [ ] Auto start via parameters
 - [ ] Support for authorization

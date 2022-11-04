@@ -78,3 +78,12 @@ export default class ChargeStation {
     });
   }
 }
+
+class Session {
+  constructor(connectorId, options = {}) {
+    this.connectorId = connectorId;
+    this.options = options;
+  }
+  start() {}
+  stop() {}
+}
