@@ -1,5 +1,6 @@
 import { extractOcppBaseUrlFromConfiguration } from './utils';
 import { Connection } from '../protocols/ocpp-1.6';
+import { sleep } from 'utils/csv';
 
 export default class ChargeStation {
   constructor(configuration, options = {}) {
@@ -31,10 +32,17 @@ export default class ChargeStation {
     this.connection.disconnect();
     this.stopHeartbeat();
   }
-  startSession(connectorId) {
-    this.sessions[connectorId] = {};
+  async startSession(connectorId, session) {
+    this.sessions[connectorId] = new Session(connectorId, {
+      ...session,
+      sendCommand: this.sendCommand.bind(this),
+    });
+    await this.sessions[connectorId].start();
   }
-  stopSession(connectorId) {
+  async stopSession(connectorId) {
+    if (this.sessions[connectorId]) {
+      await this.sessions[connectorId].stop();
+    }
     delete this.sessions[connectorId];
   }
   hasRunningSession(connectorId) {
@@ -84,6 +92,11 @@ class Session {
     this.connectorId = connectorId;
     this.options = options;
   }
-  start() {}
+  async start() {
+    const response = await this.options.sendCommand('Authorize', {
+      idTag: this.options.uid,
+    });
+    console.log('authorize response', response);
+  }
   stop() {}
 }

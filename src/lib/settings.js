@@ -46,7 +46,7 @@ export const configurationList = [
   {
     key: 'HeartbeatInterval',
     description: 'Frequency of Heartbeat commands in seconds',
-    defaultValue: 60,
+    defaultValue: 300,
   },
 ];
 
