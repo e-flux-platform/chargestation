@@ -75,9 +75,11 @@ export default class Docs extends React.Component {
       <Container>
         <Divider hidden />
         <Breadcrumb size="mini">
-          <Breadcrumb.Section link as={Link} to="/docs">
-            API Docs
+          <Breadcrumb.Section link as={Link} to="/">
+            Chargestation.one
           </Breadcrumb.Section>
+          <Breadcrumb.Divider icon="chevron-right" />
+          <Breadcrumb.Section active>API Docs</Breadcrumb.Section>
         </Breadcrumb>
         <Divider hidden />
         <StandardPage page={page} substitutions={getDynamicMarkdown()} />

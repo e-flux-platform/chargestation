@@ -43,7 +43,7 @@ export default class SettingsModal extends React.Component {
             <Header as="h3" content="Settings" />
             {settingsList.map((item) => {
               return (
-                <div key={item.key}>
+                <div key={item.key} style={{ marginBottom: '8px' }}>
                   <Form.Input
                     label={
                       <strong

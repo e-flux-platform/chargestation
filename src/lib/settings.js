@@ -5,6 +5,36 @@ export const settingsList = [
     description: 'Websocket server to connect with',
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
   },
+  {
+    key: 'chargepointVendor',
+    name: 'Boot / Vendor',
+    description: 'The chargepointVendor sent during BootNotification',
+    defaultValue: 'Chargepoint.one',
+  },
+  {
+    key: 'chargePointModel',
+    name: 'Boot / Model',
+    description: 'The chargePointModel sent during BootNotification',
+    defaultValue: 'Chargepoint.one v1',
+  },
+  {
+    key: 'chargePointSerialNumber',
+    name: 'Boot / Serial Number',
+    description: 'The chargePointSerialNumber sent during BootNotification',
+    defaultValue: 'CP1-2919101',
+  },
+  {
+    key: 'iccid',
+    name: 'Boot / MoICCID',
+    description: 'The iccid sent during BootNotification',
+    defaultValue: '8888888888088888888F',
+  },
+  {
+    key: 'imsi',
+    name: 'Boot / IMSI',
+    description: 'The imsi sent during BootNotification',
+    defaultValue: '888888888888888',
+  },
 ];
 
 export const configurationList = [

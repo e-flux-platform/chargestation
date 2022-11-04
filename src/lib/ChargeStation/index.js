@@ -17,6 +17,9 @@ export default class ChargeStation {
     this.connection.onConnected = () => {
       this.log('message-response', '< Connected!');
       this.startHeartbeat();
+      setTimeout(() => {
+        this.sendBootNotification();
+      }, 2000);
     };
     this.connection.onError = (error) => {
       this.log('error', error.message);
@@ -53,6 +56,18 @@ export default class ChargeStation {
 
   stopHeartbeat() {
     clearInterval(this.heartbeatInterval);
+  }
+
+  sendBootNotification() {
+    this.sendCommand('BootNotification', {
+      chargePointVendor: this.options.chargePointVendor,
+      chargePointModel: this.options.chargePointModel,
+      chargePointSerialNumber: this.options.chargePointSerialNumber,
+      chargeBoxSerialNumber: this.configuration.Identity,
+      firmwareVersion: 'v1-000',
+      iccid: this.options.iccid,
+      imsi: this.options.imsi,
+    });
   }
 
   async sendCommand(method, params) {
