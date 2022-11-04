@@ -1,7 +1,12 @@
 import React from 'react';
-import { Modal, Button, Form, Header } from 'semantic';
+import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import { settingsList, getConfiguration, configuration } from 'lib/settings';
+import {
+  settingsList,
+  getConfiguration,
+  getConfigurationItem,
+} from 'lib/settings';
+import { HelpTip } from 'components';
 
 @modal
 export default class SettingsModal extends React.Component {
@@ -38,22 +43,44 @@ export default class SettingsModal extends React.Component {
             <Header as="h3" content="Settings" />
             {settingsList.map((item) => {
               return (
-                <Form.Input
-                  key={item.key}
-                  label={item.name}
-                  name={item.key}
-                  value={settings[item.key]}
-                  onChange={this.setField}
-                />
+                <div key={item.key}>
+                  <Form.Input
+                    label={
+                      <strong
+                        style={{
+                          marginBottom: '4px',
+                          display: 'inline-block',
+                        }}>
+                        {item.name}
+                        {item.description && (
+                          <HelpTip text={item.description} />
+                        )}
+                      </strong>
+                    }
+                    name={item.key}
+                    value={settings[item.key]}
+                    onChange={this.setField}
+                  />
+                </div>
               );
             })}
-
+            <Divider hidden />
             <Header as="h3" content="Configuration Keys" />
             {Object.keys(getConfiguration()).map((key) => {
+              const item = getConfigurationItem(key);
               return (
                 <Form.Input
                   key={key}
-                  label={key}
+                  label={
+                    <strong
+                      style={{
+                        marginBottom: '4px',
+                        display: 'inline-block',
+                      }}>
+                      {key}
+                      {item?.description && <HelpTip text={item.description} />}
+                    </strong>
+                  }
                   name={key}
                   value={configuration[key]}
                   onChange={this.setConfigurationField}

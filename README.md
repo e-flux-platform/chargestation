@@ -18,6 +18,7 @@ Todo:
 - [ ] Animation for plugging in cable
 - [ ] Animation for cars
 - [ ] Animation for connectivity on the station
+- [ ] Auto start via parameters
 
 ## Setup
 

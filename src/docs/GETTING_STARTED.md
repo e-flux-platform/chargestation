@@ -1,6 +1,29 @@
 # <APP_NAME> API v1
 
-The <APP_NAME> API is a RESTful JSON API. Select export CSV API calls are
-available for specific endpoints. All communication is enforced over HTTPS (with
-support for TLS 1.3) and protected by CloudFlare. Using the dashboard API
-credentials can be managed with a full RBAC permissioning layer.
+This is a free and
+[open source](https://github.com/e-flux-platform/chargestation) simulator UI
+tool. It is intended to simulate and debug OCPP connections from charge stations
+to OCPP backends.
+
+You can pass various GET query parameters to this URL to control and configure
+it. For example, to set the OCPP backend it is connecting to:
+
+<APP_URL>?ocppBaseUrl=ws://localhost:2600
+
+## Settings
+
+<SETTINGS_MARKDOWN>
+
+## Configuration
+
+Any GET query parameter that is not in the above Settings list will be set as a
+charge station configuration key. These can be retrieved or changed using the
+`GetConfiguration` and `ChangeConfiguration` OCPP commands.
+
+Here's a list of configuration keys that are implemented:
+
+<CONFIGURATION_MARKDOWN>
+
+## Learn More
+
+Need more tools for building EV applications? Contact us at https://road.io

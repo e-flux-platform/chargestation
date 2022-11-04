@@ -1,6 +1,7 @@
 import React from 'react';
 import screen from 'helpers/screen';
 import { Button, Loader } from 'semantic';
+import { Link } from 'react-router-dom';
 import { Transition } from 'semantic-ui-react';
 
 import ChargeStation from 'lib/ChargeStation';
@@ -98,6 +99,7 @@ export default class Home extends React.Component {
               }}
             />
             <div className="right-actions">
+              <Button to="/docs" as={Link} inverted icon="book" />
               <SettingsModal
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}

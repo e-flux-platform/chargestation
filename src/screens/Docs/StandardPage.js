@@ -35,9 +35,13 @@ export default class StandardPage extends React.Component {
   };
 
   render() {
-    const { credentials, page, openApi } = this.props;
-    let markdown = enrichMarkdown(page.markdown, credentials);
-    markdown = executeOpenApiMacros(openApi, markdown);
+    const { page } = this.props;
+    let markdown = enrichMarkdown(
+      page.markdown,
+      null,
+      null,
+      this.props.substitutions
+    );
 
     return (
       <div className="docs markdown-body">

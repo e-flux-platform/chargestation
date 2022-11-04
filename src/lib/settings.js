@@ -13,6 +13,11 @@ export const configurationList = [
     description: 'OCPP Identity used in authenticating the charge station',
     defaultValue: 'ChargeStationOne',
   },
+  {
+    key: 'HeartbeatInterval',
+    description: 'Frequency of Heartbeat commands in seconds',
+    defaultValue: 60,
+  },
 ];
 
 function getDocumentQuery() {
@@ -45,4 +50,8 @@ export function getConfiguration() {
     result[key] = item.defaultValue;
   }
   return result;
+}
+
+export function getConfigurationItem(key) {
+  return configurationList.filter((item) => item.key === key)[0];
 }

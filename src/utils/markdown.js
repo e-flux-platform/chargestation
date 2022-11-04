@@ -215,7 +215,12 @@ export function executeOpenApiMacros(openApi, markdown) {
   return markdown;
 }
 
-export function enrichMarkdown(markdown, credentials, organization) {
+export function enrichMarkdown(
+  markdown,
+  credentials,
+  organization,
+  substitutions = {}
+) {
   let enrichedMarkdown = markdown;
   if (organization) {
     enrichedMarkdown = enrichedMarkdown.replace(
@@ -237,6 +242,16 @@ export function enrichMarkdown(markdown, credentials, organization) {
     new RegExp('<APP_NAME>', 'g'),
     APP_NAME.replace(/\/$/, '')
   );
+  enrichedMarkdown = enrichedMarkdown.replace(
+    new RegExp('<APP_URL>', 'g'),
+    document.location.href
+  );
+  Object.keys(substitutions).forEach((key) => {
+    enrichedMarkdown = enrichedMarkdown.replace(
+      new RegExp(key, 'g'),
+      substitutions[key]
+    );
+  });
   return enrichedMarkdown;
 }
 

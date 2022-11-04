@@ -17,7 +17,6 @@ import { Menu as ResponsiveMenu } from 'components/Responsive';
 import { APP_NAME } from 'utils/env';
 
 import StandardPage from './StandardPage';
-import Context from './Context';
 import PageLoader from 'components/PageLoader';
 
 import { request } from 'utils/api';
@@ -27,33 +26,36 @@ import DOCS from 'docs';
 import PortalSettings from 'modals/PortalSettings';
 import { userHasAccess } from 'utils/permissions';
 import { withSession } from 'stores';
+import { settingsList, configurationList } from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
 
-const PAGES = Object.keys(DOCS).map((name) => {
-  return {
-    id: kebabCase(name),
-    name: startCase(name.toLowerCase()),
-    markdown: DOCS[name],
-  };
-});
+const page = {
+  id: DEFAULT_PAGE_ID,
+  name: 'Getting Started',
+  markdown: DOCS.GETTING_STARTED,
+};
 
-function stateForParams(params) {
-  const { id = DEFAULT_PAGE_ID } = params;
-  return {
-    pageId: id,
-    page: id ? PAGES.find((p) => p.id === id) : getDefaultPage(),
-  };
-}
-
-function getDefaultPage() {
-  return PAGES.find((page) => {
-    return page.id === DEFAULT_PAGE_ID;
+function getDynamicMarkdown() {
+  let settingsMarkdown = 'Attribute|Name|Description\n';
+  settingsMarkdown += '-|-|-\n';
+  settingsList.forEach((item) => {
+    settingsMarkdown += `\`${item.key}\`|${item.name}|${item.description}`;
   });
+
+  let configurationMarkdown = 'Key|description\n';
+  configurationMarkdown += '-|-\n';
+  configurationList.forEach((item) => {
+    configurationMarkdown += `\`${item.key}\`|${item.description}`;
+  });
+
+  return {
+    '<SETTINGS_MARKDOWN>': settingsMarkdown,
+    '<CONFIGURATION_MARKDOWN>': configurationMarkdown,
+  };
 }
 
 @withSession
-@screen
 export default class Docs extends React.Component {
   static layout = 'portal';
 
@@ -65,158 +67,22 @@ export default class Docs extends React.Component {
       openApi: null,
       loading: true,
       error: null,
-      ...stateForParams(this.props.match.params),
     };
   }
 
-  async componentDidMount() {
-    try {
-      const openApi = await request({
-        method: 'GET',
-        path: '/openapi.lite.json',
-      });
-      this.setState(
-        {
-          loading: false,
-          openApi,
-        },
-        () => {
-          this.checkJumpLink();
-        }
-      );
-    } catch (error) {
-      this.setState({
-        error,
-        loading: false,
-      });
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.match.params.id !== this.props.match.params.id) {
-      this.setState({
-        ...stateForParams(this.props.match.params),
-      });
-    }
-  }
-
-  checkJumpLink() {
-    const { hash } = this.props.location;
-    if (hash) {
-      const el = document.querySelector(hash);
-      if (el) {
-        el.scrollIntoView();
-      }
-    }
-  }
-
   render() {
-    const { page, loading, openApi, pageId } = this.state;
-    const { me } = this.props;
-
-    if (loading) {
-      return <PageLoader />;
-    }
-
-    if (!page) {
-      return (
-        <Container>
-          <Message error content="Page not found" />
-        </Container>
-      );
-    }
-
     return (
-      <Context>
-        <h1 className="primary">
-          {APP_NAME} API v1
-          {this.context.user &&
-            userHasAccess(this.context.user, {
-              endpoint: 'applications',
-              permission: 'read',
-              scope: 'global',
-            }) && (
-              <PortalSettings
-                trigger={
-                  <Button
-                    icon={<Icon name="cog" />}
-                    content="Settings"
-                    floated="right"
-                  />
-                }
-                size="tiny"
-              />
-            )}
-        </h1>
-
+      <Container>
         <Divider hidden />
         <Breadcrumb size="mini">
           <Breadcrumb.Section link as={Link} to="/docs">
             API Docs
           </Breadcrumb.Section>
-          <Breadcrumb.Divider icon="chevron-right" />
-          <Breadcrumb.Section>{page.name}</Breadcrumb.Section>
         </Breadcrumb>
         <Divider hidden />
-        <Layout horizontal top stackable>
-          <Layout.Group size="200px" fixed>
-            <ResponsiveMenu contextRef={this.contextRef} title="Docs Menu">
-              {PAGES.map(({ id, name }) => {
-                return (
-                  <Menu.Item
-                    key={id}
-                    exact
-                    name={name}
-                    active={pageId === id}
-                    to={`/docs/${id}`}
-                    as={NavLink}
-                  />
-                );
-              })}
-            </ResponsiveMenu>
-          </Layout.Group>
-          <Layout.Spacer size={1} />
-
-          <Layout.Group>
-            <Ref innerRef={this.contextRef}>
-              <Switch>
-                {PAGES.map((page) => {
-                  return (
-                    <Route
-                      key={page.id}
-                      exact
-                      path={`/docs/${page.id}`}
-                      component={(props) => (
-                        <StandardPage
-                          {...props}
-                          me={me}
-                          openApi={openApi}
-                          page={page}
-                        />
-                      )}
-                    />
-                  );
-                }).concat([
-                  <Route
-                    key="index"
-                    path="/docs"
-                    exact
-                    component={(props) => (
-                      <StandardPage
-                        {...props}
-                        me={me}
-                        openApi={openApi}
-                        page={getDefaultPage()}
-                      />
-                    )}
-                  />,
-                ])}
-              </Switch>
-            </Ref>
-          </Layout.Group>
-        </Layout>
+        <StandardPage page={page} substitutions={getDynamicMarkdown()} />
         <Divider hidden />
-      </Context>
+      </Container>
     );
   }
 }

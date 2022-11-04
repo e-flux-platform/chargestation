@@ -16,7 +16,6 @@ export default class PortalLayout extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <ConnectionError />
         <Layout className={this.getElementClass('menu')}>
           <Layout
             className={this.getElementClass('menu-top')}
