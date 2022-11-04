@@ -37,7 +37,12 @@ export default class ChargeStation {
       ...session,
       sendCommand: this.sendCommand.bind(this),
     });
-    await this.sessions[connectorId].start();
+    try {
+      await this.sessions[connectorId].start();
+    } catch (error) {
+      await this.stopSession(connectorId);
+      this.error(error);
+    }
   }
   async stopSession(connectorId) {
     if (this.sessions[connectorId]) {
@@ -50,6 +55,10 @@ export default class ChargeStation {
   }
 
   // Private
+
+  error(error) {
+    this.onError && this.onError(error);
+  }
 
   log(type, message, command = undefined) {
     this.onLog && this.onLog({ id: Date.now(), type, message, command });
@@ -84,6 +93,7 @@ export default class ChargeStation {
       request: { method, params },
       response,
     });
+    return response;
   }
 }
 
@@ -93,10 +103,18 @@ class Session {
     this.options = options;
   }
   async start() {
-    const response = await this.options.sendCommand('Authorize', {
+    await sleep(1000);
+    const authorizeResponse = await this.options.sendCommand('Authorize', {
       idTag: this.options.uid,
     });
-    console.log('authorize response', response);
+    if (authorizeResponse.idTagInfo.status === 'Invalid') {
+      throw new Error(
+        `OCPP Server rejected our Token UID: ${this.options.uid}`
+      );
+    }
+    await sleep(1000);
   }
-  stop() {}
+  async stop() {
+    await sleep(1000);
+  }
 }

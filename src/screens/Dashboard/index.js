@@ -16,9 +16,10 @@ import SettingsModal from './SettingsModal';
 
 import './dashboard.less';
 import StartSessionModal from './StartSessionModal';
+import ErrorModal from './ErrorModal';
 @screen
 export default class Home extends React.Component {
-  static title = 'Charge Station One';
+  static title = 'Chargestation.one';
   static layout = 'simulator';
 
   state = {
@@ -32,6 +33,7 @@ export default class Home extends React.Component {
     const { configuration, settings } = this.state;
     const chargeStation = new ChargeStation(configuration, settings);
     chargeStation.onLog = this.onLog;
+    chargeStation.onError = this.onError;
     chargeStation.connect();
     this.setState({ chargeStation });
   }
@@ -46,6 +48,11 @@ export default class Home extends React.Component {
     this.setState({ logEntries });
   };
 
+  onError = (error) => {
+    this.setState({ error });
+    this.nextTick();
+  };
+
   render() {
     const {
       chargeStation,
@@ -54,12 +61,18 @@ export default class Home extends React.Component {
       settings,
       configuration,
       session,
+      error,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
     }
+    console.log(
+      'chargeStation.hasRunningSession',
+      chargeStation.hasRunningSession('1')
+    );
     return (
       <div className="dashboard">
+        <ErrorModal open={!!error} error={error} />
         <div className="logo">
           chargestation.one<p className="subtitle">OCPP simulator</p>
         </div>
@@ -87,10 +100,9 @@ export default class Home extends React.Component {
             <StartSessionModal
               session={session}
               onSave={({ session }) => {
-                this.setState({ session }, () => {
-                  chargeStation.startSession('1', session);
-                  this.nextTick();
-                });
+                this.setState({ session });
+                chargeStation.startSession('1', session);
+                this.nextTick();
               }}
               trigger={
                 <Button
