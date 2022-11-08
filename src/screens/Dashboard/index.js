@@ -17,6 +17,9 @@ import SettingsModal from './SettingsModal';
 import './dashboard.less';
 import StartSessionModal from './StartSessionModal';
 import ErrorModal from './ErrorModal';
+import { summarizeCommandParams } from 'lib/ChargeStation/utils';
+import CommandDetailsModal from './CommandDetailsModal';
+import { formatDateTimeRelative } from 'utils/date';
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -36,6 +39,11 @@ export default class Home extends React.Component {
     chargeStation.onError = this.onError;
     chargeStation.connect();
     this.setState({ chargeStation });
+    this.tickInterval = setInterval(() => this.nextTick(), 4000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.tickInterval);
   }
 
   nextTick() {
@@ -62,12 +70,21 @@ export default class Home extends React.Component {
       configuration,
       session,
       error,
+      inspectCommand,
+      sessionOnceStarted,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
     }
     return (
       <div className="dashboard">
+        <CommandDetailsModal
+          open={!!inspectCommand}
+          command={inspectCommand}
+          onClose={() => {
+            this.setState({ inspectCommand: null });
+          }}
+        />
         <ErrorModal open={!!error} error={error} />
         <div className="logo">
           chargestation.one<p className="subtitle">OCPP simulator</p>
@@ -76,13 +93,13 @@ export default class Home extends React.Component {
           <div
             className={`car-1 ${
               chargeStation.hasRunningSession('1') ? 'animated' : ''
-            } ${tick ? '' : 'initial'}`}>
+            } ${sessionOnceStarted ? '' : 'initial'}`}>
             <img src={car1Svg} />
           </div>
           <div
             className={`car-2 ${
               chargeStation.hasRunningSession('2') ? 'animated' : ''
-            } ${tick ? '' : 'initial'}`}>
+            } ${sessionOnceStarted ? '' : 'initial'}`}>
             <img src={car2Svg} />
           </div>
           <div className="car-1-connector"></div>
@@ -99,6 +116,7 @@ export default class Home extends React.Component {
                 this.setState({ session });
                 chargeStation.startSession('1', session);
                 this.nextTick();
+                this.setState({ sessionOnceStarted: true });
               }}
               trigger={
                 <Button
@@ -155,9 +173,40 @@ export default class Home extends React.Component {
           <div className="console">
             {logEntries.map((logEntry) => {
               if (logEntry.command) {
+                const paramSummary = summarizeCommandParams(
+                  logEntry.command.request
+                );
                 return (
-                  <div key={logEntry.id} className="log-entry command">
-                    <div>&gt; {logEntry.command.request.method}</div>
+                  <div
+                    key={logEntry.id}
+                    className="log-entry command"
+                    onClick={() => {
+                      this.setState({ inspectCommand: logEntry.command });
+                    }}>
+                    <div>
+                      <span className="date-time">
+                        {formatDateTimeRelative(logEntry.command.requestSentAt)}
+                      </span>
+                      &gt; {logEntry.command.request.method}{' '}
+                      {paramSummary && (
+                        <span className="params-summary">
+                          (
+                          <span className="keys">
+                            {Object.keys(paramSummary).map((key) => {
+                              return (
+                                <React.Fragment key={key}>
+                                  <span className="key">{key}</span>=
+                                  <span className="value">
+                                    {paramSummary[key]}
+                                  </span>
+                                </React.Fragment>
+                              );
+                            })}
+                            )
+                          </span>
+                        </span>
+                      )}
+                    </div>
                     <div className="response">
                       &lt; {JSON.stringify(logEntry.command.response)}
                     </div>

@@ -12,14 +12,15 @@ Todo:
 - [x] Support for BootNotification
 - [x] Basic charge session simulation
 - [x] Terminal scrolling
-- [ ] OCPP Command drill-down
-- [ ] OCPP Command summary
+- [x] OCPP Command drill-down
+- [x] OCPP Command summary
 - [ ] Auto start via parameters
 - [ ] Make GetConfiguration and ChangeConfiguration work
 - [ ] Visual indicator that charging is happening
 - [ ] Visual progress bar on car state of charge
 - [ ] Support for using two connectors
 - [ ] Support for authorization
+- [ ] Run any OCPP command
 - [ ] Terminate session on disconnect
 - [ ] Simulate being offline (and buffering commands)
 - [ ] Time travel

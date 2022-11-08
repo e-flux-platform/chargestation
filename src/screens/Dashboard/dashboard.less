@@ -106,11 +106,12 @@
   background: #222;
   width: 40%;
   height: 100vh;
-  padding: 1em;
+  padding: 1em 0;
   overflow-y: scroll;
 
   .actions {
     margin-bottom: 2em;
+    padding: 0 1em;
 
     .right-actions {
       float: right;
@@ -123,6 +124,29 @@
 
     .log-entry {
       margin-bottom: 8px;
+      padding: 0 1em;
+
+      .params-summary {
+        color: #777;
+      }
+
+      .params-summary .value {
+        color: #fff;
+      }
+      .params-summary .key:not(:first-child) {
+        margin-left: 10px;
+      }
+
+      .date-time {
+        float: right;
+        color: #777;
+        font-size: 90%;
+      }
+    }
+
+    .log-entry.command:hover {
+      cursor: pointer;
+      background-color: #303030;
     }
 
     .response,

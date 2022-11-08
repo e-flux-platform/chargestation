@@ -106,10 +106,13 @@ export default class ChargeStation {
   }
 
   async sendCommand(method, params) {
+    const requestSentAt = new Date();
     const response = await this.connection.sendCommand(method, params);
     this.log('command', `sent ${method} command`, {
+      requestSentAt,
       request: { method, params },
       response,
+      responseReceivedAt: new Date(),
     });
     return response;
   }
@@ -158,7 +161,7 @@ class Session {
       {
         connectorId: this.connectorId,
         idTag: this.options.uid,
-        meterStart: this.kwhElapsed * 1000,
+        meterStart: Math.round(this.kwhElapsed * 1000),
         timestamp: this.now().toISOString(),
         reservationId: undefined,
       }
@@ -187,7 +190,7 @@ class Session {
     await this.options.sendCommand('StopTransaction', {
       connectorId: this.connectorId,
       idTag: this.options.uid,
-      meterStop: this.kwhElapsed * 1000,
+      meterStop: Math.round(this.kwhElapsed * 1000),
       timestamp: this.now().toISOString(),
       disconnectReason: 'EVDisconnected',
       transactionData: [
@@ -253,7 +256,7 @@ class Session {
           timestamp: this.now().toISOString(),
           sampledValue: [
             {
-              value: this.kwhElapsed.toString(),
+              value: this.kwhElapsed.toFixed(5),
               context: 'Sample.Periodic',
               measurand: 'Energy.Active.Import.Register',
               unit: 'kWh',
