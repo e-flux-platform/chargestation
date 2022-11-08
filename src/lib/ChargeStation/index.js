@@ -56,12 +56,16 @@ export default class ChargeStation {
     }
   }
   async stopSession(connectorId, statusFn) {
-    if (this.sessions[connectorId]) {
-      this.sessions[connectorId].isStoppingSession = true;
-      statusFn && statusFn();
-      await this.sessions[connectorId].stop();
+    try {
+      if (this.sessions[connectorId]) {
+        this.sessions[connectorId].isStoppingSession = true;
+        statusFn && statusFn();
+        await this.sessions[connectorId].stop();
+      }
+      delete this.sessions[connectorId];
+    } catch (error) {
+      this.error(error);
     }
-    delete this.sessions[connectorId];
   }
   hasRunningSession(connectorId) {
     return !!this.sessions[connectorId];
