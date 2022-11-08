@@ -14,11 +14,11 @@ Todo:
 - [x] Terminal scrolling
 - [x] OCPP Command drill-down
 - [x] OCPP Command summary
-- [ ] Auto start via parameters
+- [x] Visual indicator that charging is happening
 - [ ] Make GetConfiguration and ChangeConfiguration work
-- [ ] Visual indicator that charging is happening
-- [ ] Visual progress bar on car state of charge
+- [ ] Auto start via parameters
 - [ ] Support for using two connectors
+- [ ] Visual progress bar on car state of charge
 - [ ] Support for authorization
 - [ ] Run any OCPP command
 - [ ] Terminate session on disconnect

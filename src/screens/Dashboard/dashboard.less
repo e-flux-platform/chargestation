@@ -28,6 +28,35 @@
     bottom: 10%;
   }
 
+  @keyframes pulse {
+    0% {
+      opacity: 0.2;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.2;
+    }
+  }
+
+  .charge-station-status {
+    width: 30%;
+    position: absolute;
+    z-index: 200;
+    left: 40%;
+    bottom: 10%;
+    img {
+      opacity: 1;
+    }
+  }
+
+  .charge-station-status.charging {
+    img {
+      animation: pulse 2s infinite;
+    }
+  }
+
   @keyframes parkCar1 {
     0% {
       left: -40%;

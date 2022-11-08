@@ -8,7 +8,9 @@ import ChargeStation from 'lib/ChargeStation';
 import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
+import chargeStationStatusSvg from 'assets/charge-station-status.svg';
 import car1Svg from 'assets/car-1.svg';
+import car1ConnectorSvg from 'assets/car-1-connector.svg';
 import car2Svg from 'assets/car-2.svg';
 import roadLogoSvg from 'assets/road-logo-dark-mode.svg';
 
@@ -76,6 +78,9 @@ export default class Home extends React.Component {
     if (!chargeStation) {
       return <Loader />;
     }
+    const chargeStationIsCharging =
+      chargeStation.hasRunningSession('1') ||
+      chargeStation.hasRunningSession('2');
     return (
       <div className="dashboard">
         <CommandDetailsModal
@@ -106,6 +111,12 @@ export default class Home extends React.Component {
           <div className="car-2-connector"></div>
           <div className="charge-station">
             <img src={chargeStationSvg} />
+          </div>
+          <div
+            className={`charge-station-status ${
+              chargeStationIsCharging ? 'charging' : ''
+            }`}>
+            <img src={chargeStationStatusSvg} />
           </div>
         </div>
         <div className="terminal">
