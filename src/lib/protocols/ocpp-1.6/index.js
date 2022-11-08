@@ -52,9 +52,9 @@ class Connection {
       let responded = false;
       let timeout = setTimeout(() => {
         if (!responded) {
-          reject(new Error(`Command ${method} did not respond in 5 seconds`));
+          reject(new Error(`Command ${method} did not respond in 30 seconds`));
         }
-      }, 5000);
+      }, 30000);
       this.commandCallbacks[messageId.toString()] = (response) => {
         responded = true;
         clearTimeout(timeout);
