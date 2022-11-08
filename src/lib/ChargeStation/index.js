@@ -16,6 +16,7 @@ export default class ChargeStation {
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
     this.connection = new Connection(ocppBaseUrl, ocppIdentity);
     this.connection.onConnected = () => {
+      this.connected = true;
       this.log('message-response', '< Connected!');
       this.startHeartbeat();
       setTimeout(() => {
@@ -31,17 +32,21 @@ export default class ChargeStation {
   disconnect() {
     this.connection.disconnect();
     this.stopHeartbeat();
+    this.connected = false;
   }
   async startSession(connectorId, session) {
-    this.sessions[connectorId] = new Session(connectorId, {
-      ...session,
-      sendCommand: this.sendCommand.bind(this),
-      meterValuesInterval: parseInt(
-        this.configuration['MeterValueSampleInterval'] || '60',
-        10
-      ),
-    });
     try {
+      if (!this.connected) {
+        throw new Error('Not connected to OCPP server, cannot start session');
+      }
+      this.sessions[connectorId] = new Session(connectorId, {
+        ...session,
+        sendCommand: this.sendCommand.bind(this),
+        meterValuesInterval: parseInt(
+          this.configuration['MeterValueSampleInterval'] || '60',
+          10
+        ),
+      });
       this.sessions[connectorId].isStartingSession = true;
       await this.sessions[connectorId].start();
       this.sessions[connectorId].isStartingSession = false;
