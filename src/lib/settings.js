@@ -48,6 +48,11 @@ export const configurationList = [
     description: 'Frequency of Heartbeat commands in seconds',
     defaultValue: 300,
   },
+  {
+    key: 'MeterValueSampleInterval',
+    description: 'Frequency of MeterValues commands in seconds',
+    defaultValue: 60,
+  },
 ];
 
 export const sessionSettingsList = [
@@ -56,6 +61,27 @@ export const sessionSettingsList = [
     name: 'UID',
     description: 'RFID card UID that would be used in a StartSession',
     defaultValue: 'FF88888801',
+  },
+  {
+    key: 'maxPowerKw',
+    name: "Charge Station's Max Power (kW)",
+    description:
+      'The power in kW that this charge startion can deliver to a car (e.g. AC single phase is 7.4kW, AC three phase is 22kW, DC Fast charger is 25-175kW',
+    defaultValue: 22,
+  },
+  {
+    key: 'carBatteryKwh',
+    name: 'Car Battery Capacity (kWh)',
+    description:
+      "The car battery capacity that we're simulating in kWh - is used for determinig when to flatten MeterValues and send SuspendedEV notice",
+    defaultValue: 64,
+  },
+  {
+    key: 'carBatteryStateOfCharge',
+    name: 'Car Battery State of Charge (%)',
+    description:
+      'How full is the car battery we are simulating - is used for determinig when to flatten MeterValues and send SuspendedEV notice',
+    defaultValue: 80,
   },
 ];
 

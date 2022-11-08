@@ -36,22 +36,40 @@ export default class ChargeStation {
     this.sessions[connectorId] = new Session(connectorId, {
       ...session,
       sendCommand: this.sendCommand.bind(this),
+      meterValuesInterval: parseInt(
+        this.configuration['MeterValueSampleInterval'] || '60',
+        10
+      ),
     });
     try {
+      this.sessions[connectorId].isStartingSession = true;
       await this.sessions[connectorId].start();
+      this.sessions[connectorId].isStartingSession = false;
     } catch (error) {
       await this.stopSession(connectorId);
       this.error(error);
     }
   }
-  async stopSession(connectorId) {
+  async stopSession(connectorId, statusFn) {
     if (this.sessions[connectorId]) {
+      this.sessions[connectorId].isStoppingSession = true;
+      statusFn && statusFn();
       await this.sessions[connectorId].stop();
     }
     delete this.sessions[connectorId];
   }
   hasRunningSession(connectorId) {
     return !!this.sessions[connectorId];
+  }
+  isStartingSession(connectorId) {
+    return (
+      this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
+    );
+  }
+  isStoppingSession(connectorId) {
+    return (
+      this.sessions[connectorId] && this.sessions[connectorId].isStoppingSession
+    );
   }
 
   // Private
@@ -97,10 +115,32 @@ export default class ChargeStation {
   }
 }
 
+/*
+
+64kwh car battery:
+
+Type Of Charger	Speed	Range Added Per Hour	Charging Time
+8 Amp Portable Charger	1.8kW	10km	35 hours
+AC Charger Single-phase	7.4kW	40km	9 hours
+AC Charger Three-phase	22kW	120km	3 hours
+DC Charger Medium	25kW	150km	1.5 hours (to 80%)
+DC Rapid Charger	50kW	300km	1 hour (to 80%)
+DC Ultra Rapid Charger	175kW	1000km	15 minutes (to 80%)
+*/
 class Session {
   constructor(connectorId, options = {}) {
     this.connectorId = connectorId;
     this.options = options;
+    this.meterValuesInterval = options.meterValuesInterval || 60;
+    this.maxPowerKw = options.maxPowerKw || 22;
+    this.carBatteryKwh = options.carBatteryKwh || 64;
+    this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
+    this.secondsElapsed = 0;
+    this.kwhElapsed = 0;
+    this.lastMeterValuesTimestamp = undefined;
+  }
+  now() {
+    return new Date();
   }
   async start() {
     await sleep(1000);
@@ -109,12 +149,118 @@ class Session {
     });
     if (authorizeResponse.idTagInfo.status === 'Invalid') {
       throw new Error(
-        `OCPP Server rejected our Token UID: ${this.options.uid}`
+        `OCPP Server rejected our Token UID during Authorize: ${this.options.uid}`
       );
     }
     await sleep(1000);
+    const startTransactionResponse = await this.options.sendCommand(
+      'StartTransaction',
+      {
+        connectorId: this.connectorId,
+        idTag: this.options.uid,
+        meterStart: this.kwhElapsed * 1000,
+        timestamp: this.now().toISOString(),
+        reservationId: undefined,
+      }
+    );
+    await sleep(1000);
+    if (startTransactionResponse.idTagInfo.status === 'Invalid') {
+      throw new Error(
+        `OCPP Server rejected our Token UID during StartTransaction: ${this.options.uid}`
+      );
+    }
+
+    await this.options.sendCommand('StatusNotification', {
+      connectorId: this.connectorId,
+      errorCode: 'NoError',
+      status: 'Preparing',
+    });
+    this.tickInterval = setInterval(() => {
+      this.tick(5);
+    }, 5000);
+    await sleep(500);
+    this.tick(0);
   }
   async stop() {
+    clearInterval(this.tickInterval);
     await sleep(1000);
+    await this.options.sendCommand('StopTransaction', {
+      connectorId: this.connectorId,
+      idTag: this.options.uid,
+      meterStop: this.kwhElapsed * 1000,
+      timestamp: this.now().toISOString(),
+      disconnectReason: 'EVDisconnected',
+      transactionData: [
+        {
+          sampledValue: [
+            {
+              value: this.kwhElapsed.toString(),
+              context: 'Sample.Periodic',
+              format: 'Raw',
+              measurand: 'Energy.Active.Import.Register',
+              location: 'Outlet',
+              unit: 'kWh',
+            },
+          ],
+          timestamp: new Date().toISOString(),
+        },
+      ],
+    });
+  }
+  async tick(secondsElapsed) {
+    this.secondsElapsed += secondsElapsed;
+    if (secondsElapsed === 0) {
+      await this.options.sendCommand('StatusNotification', {
+        connectorId: this.connectorId,
+        errorCode: 'NoError',
+        status: 'Charging',
+        info: 'Charging',
+      });
+      return;
+    }
+    const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
+    const carNeededKwh =
+      this.carBatteryKwh -
+      this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
+    const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
+    console.info(
+      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge})`
+    );
+
+    if (
+      this.lastMeterValuesTimestamp &&
+      this.lastMeterValuesTimestamp >
+        this.now() - this.meterValuesInterval * 1000
+    ) {
+      return;
+    }
+
+    if (chargeLimitReached) {
+      await this.options.sendCommand('StatusNotification', {
+        connectorId: this.connectorId,
+        errorCode: 'NoError',
+        status: 'SuspendedEV',
+      });
+    } else {
+      this.kwhElapsed += amountKwhToCharge;
+    }
+    await sleep(100);
+    this.lastMeterValuesTimestamp = this.now();
+    await this.options.sendCommand('MeterValues', {
+      connectorId: this.connectorId,
+      meterValue: [
+        {
+          timestamp: this.now().toISOString(),
+          sampledValue: [
+            {
+              value: this.kwhElapsed.toString(),
+              context: 'Sample.Periodic',
+              measurand: 'Energy.Active.Import.Register',
+              unit: 'kWh',
+            },
+          ],
+        },
+      ],
+    });
   }
 }

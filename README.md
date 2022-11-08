@@ -10,17 +10,24 @@ Todo:
 - [x] Allow Settings and Configuration via URL params
 - [x] API Documentation
 - [x] Support for BootNotification
-- [ ] Basic charge session simulation
-- [ ] Terminate session on disconnect
+- [x] Basic charge session simulation
+- [x] Terminal scrolling
 - [ ] OCPP Command drill-down
+- [ ] OCPP Command summary
 - [ ] Auto start via parameters
-- [ ] Support for authorization
+- [ ] Make GetConfiguration and ChangeConfiguration work
+- [ ] Visual indicator that charging is happening
+- [ ] Visual progress bar on car state of charge
 - [ ] Support for using two connectors
+- [ ] Support for authorization
+- [ ] Terminate session on disconnect
+- [ ] Simulate being offline (and buffering commands)
 - [ ] Time travel
 - [ ] OCPP 2.1 Support
 - [ ] Animation for plugging in cable
 - [ ] Animation for cars
 - [ ] Animation for connectivity on the station
+- [ ] Tweak responsiveness for mobile
 
 ## Setup
 

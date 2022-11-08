@@ -17,7 +17,6 @@ class Connection {
 
     this.ws.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
-      console.log('message data', data);
       if (data[0] === 3) {
         const callback = this.commandCallbacks[data[1].toString()];
         if (callback) {

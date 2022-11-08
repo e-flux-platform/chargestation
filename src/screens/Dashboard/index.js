@@ -44,7 +44,7 @@ export default class Home extends React.Component {
 
   onLog = (logEntry) => {
     const { logEntries } = this.state;
-    logEntries.push(logEntry);
+    logEntries.unshift(logEntry);
     this.setState({ logEntries });
   };
 
@@ -66,10 +66,6 @@ export default class Home extends React.Component {
     if (!chargeStation) {
       return <Loader />;
     }
-    console.log(
-      'chargeStation.hasRunningSession',
-      chargeStation.hasRunningSession('1')
-    );
     return (
       <div className="dashboard">
         <ErrorModal open={!!error} error={error} />
@@ -108,7 +104,12 @@ export default class Home extends React.Component {
                 <Button
                   inverted
                   primary={chargeStation.hasRunningSession('1') ? false : true}
-                  disabled={chargeStation.hasRunningSession('1')}
+                  disabled={
+                    chargeStation.hasRunningSession('1') ||
+                    chargeStation.isStartingSession('1') ||
+                    chargeStation.isStoppingSession('1')
+                  }
+                  loading={chargeStation.isStartingSession('1')}
                   icon="play"
                   content="Start Charging"
                 />
@@ -117,11 +118,18 @@ export default class Home extends React.Component {
             <Button
               inverted
               primary={chargeStation.hasRunningSession('1') ? true : false}
-              disabled={!chargeStation.hasRunningSession('1')}
+              disabled={
+                !chargeStation.hasRunningSession('1') ||
+                chargeStation.isStartingSession('1') ||
+                chargeStation.isStoppingSession('1')
+              }
+              loading={chargeStation.isStoppingSession('1')}
               icon="stop"
               content="End Charging"
-              onClick={() => {
-                chargeStation.stopSession('1');
+              onClick={async () => {
+                await chargeStation.stopSession('1', () => {
+                  this.nextTick();
+                });
                 this.nextTick();
               }}
             />

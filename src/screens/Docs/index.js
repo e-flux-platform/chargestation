@@ -26,7 +26,11 @@ import DOCS from 'docs';
 import PortalSettings from 'modals/PortalSettings';
 import { userHasAccess } from 'utils/permissions';
 import { withSession } from 'stores';
-import { settingsList, configurationList } from 'lib/settings';
+import {
+  settingsList,
+  sessionSettingsList,
+  configurationList,
+} from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
 
@@ -40,17 +44,24 @@ function getDynamicMarkdown() {
   let settingsMarkdown = 'Attribute|Name|Description\n';
   settingsMarkdown += '-|-|-\n';
   settingsList.forEach((item) => {
-    settingsMarkdown += `\`${item.key}\`|${item.name}|${item.description}`;
+    settingsMarkdown += `\`${item.key}\`|${item.name}|${item.description}\n`;
+  });
+
+  let sessionSettingsMarkdown = 'Attribute|Name|Description\n';
+  sessionSettingsMarkdown += '-|-|-\n';
+  sessionSettingsList.forEach((item) => {
+    sessionSettingsMarkdown += `\`${item.key}\`|${item.name}|${item.description}\n`;
   });
 
   let configurationMarkdown = 'Key|description\n';
   configurationMarkdown += '-|-\n';
   configurationList.forEach((item) => {
-    configurationMarkdown += `\`${item.key}\`|${item.description}`;
+    configurationMarkdown += `\`${item.key}\`|${item.description}\n`;
   });
 
   return {
     '<SETTINGS_MARKDOWN>': settingsMarkdown,
+    '<SESSION_SETTINGS_MARKDOWN>': sessionSettingsMarkdown,
     '<CONFIGURATION_MARKDOWN>': configurationMarkdown,
   };
 }

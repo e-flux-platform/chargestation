@@ -10,9 +10,13 @@ it. For example, to set the OCPP backend it is connecting to:
 
 <APP_URL>?ocppBaseUrl=ws://localhost:2600
 
-## Settings
+## General Settings
 
 <SETTINGS_MARKDOWN>
+
+## Session Specific Settings
+
+<SESSION_SETTINGS_MARKDOWN>
 
 ## Configuration
 
