@@ -23,6 +23,7 @@ class Connection {
           callback(data[2]);
         }
       } else {
+        // [2,"1667956677594","GetConfiguration",{}]
         throw new Error(`Not implemented: ${JSON.stringify(data)}`);
       }
     });

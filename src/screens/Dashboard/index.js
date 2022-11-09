@@ -177,7 +177,7 @@ export default class Home extends React.Component {
                 onSave={({ settings, configuration }) => {
                   this.setState({ settings, configuration }, () => {
                     chargeStation.configuration = configuration;
-                    chargeStation.settings = settings;
+                    chargeStation.options = settings;
                     chargeStation.disconnect();
                     setTimeout(() => {
                       chargeStation.connect();

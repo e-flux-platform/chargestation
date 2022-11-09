@@ -20,6 +20,7 @@ export default class SettingsModal extends React.Component {
         ...this.state.settings,
         [name]: value,
       },
+      configuration: this.state.configuration,
     });
   };
   setConfigurationField = (e, { name, value }) => {
@@ -28,6 +29,7 @@ export default class SettingsModal extends React.Component {
         ...this.state.settings,
         [name]: value,
       },
+      settings: this.state.settings,
     });
   };
   onSubmit = () => {

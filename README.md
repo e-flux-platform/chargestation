@@ -15,10 +15,9 @@ Todo:
 - [x] OCPP Command drill-down
 - [x] OCPP Command summary
 - [x] Visual indicator that charging is happening
-- [ ] Tweak UI for big screens
 - [ ] Make GetConfiguration and ChangeConfiguration work
-- [ ] Auto start session via parameters
 - [ ] Support for using two connectors
+- [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge
 - [ ] Support for authorization
 - [ ] Run any OCPP command
@@ -29,6 +28,7 @@ Todo:
 - [ ] Animation for plugging in cable
 - [ ] Animation for cars
 - [ ] Animation for connectivity on the station
+- [ ] Tweak UI for big screens
 - [ ] Tweak responsiveness for mobile
 
 ## Setup
