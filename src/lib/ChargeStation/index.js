@@ -27,6 +27,23 @@ export default class ChargeStation {
       this.log('error', error.message);
       this.stopHeartbeat();
     };
+    this.connection.onCommand = (method, params) => {
+      let response = {};
+      if (this['receive' + method]) {
+        response = this['receive' + method](params);
+      }
+      this.log('command', `received ${method} command`, {
+        destination: 'charge-point',
+        requestReceivedAt: new Date(),
+        request: { method, params },
+        response,
+        responseSentAt: new Date(),
+      });
+      console.warn(
+        `Received command from Central Server, but no implementation is known: ${method}`
+      );
+      return response;
+    };
     this.connection.connect();
   }
   disconnect() {
@@ -118,12 +135,33 @@ export default class ChargeStation {
     const requestSentAt = new Date();
     const response = await this.connection.sendCommand(method, params);
     this.log('command', `sent ${method} command`, {
+      destination: 'central-server',
       requestSentAt,
       request: { method, params },
       response,
       responseReceivedAt: new Date(),
     });
     return response;
+  }
+
+  receiveGetConfiguration() {
+    return {
+      configurationKey: Object.keys(this.configuration).map((key) => {
+        return {
+          key,
+          value: this.configuration[key],
+          readOnly: false,
+        };
+      }),
+      unknownKey: [],
+    };
+  }
+
+  receiveChangeConfiguration({ key, value }) {
+    this.configuration[key] = value;
+    return {
+      status: 'Accepted',
+    };
   }
 }
 

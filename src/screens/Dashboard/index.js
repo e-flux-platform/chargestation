@@ -190,21 +190,22 @@ export default class Home extends React.Component {
           <div className="console">
             {logEntries.map((logEntry) => {
               if (logEntry.command) {
-                const paramSummary = summarizeCommandParams(
-                  logEntry.command.request
-                );
+                const { command } = logEntry;
+                const paramSummary = summarizeCommandParams(command.request);
                 return (
                   <div
                     key={logEntry.id}
                     className="log-entry command"
                     onClick={() => {
-                      this.setState({ inspectCommand: logEntry.command });
+                      this.setState({ inspectCommand: command });
                     }}>
                     <div>
                       <span className="date-time">
-                        {formatDateTimeRelative(logEntry.command.requestSentAt)}
+                        {command.destination === 'central-server'
+                          ? formatDateTimeRelative(command.requestSentAt)
+                          : formatDateTimeRelative(command.requestReceivedAt)}
                       </span>
-                      &gt; {logEntry.command.request.method}{' '}
+                      &gt; {command.request.method}{' '}
                       {paramSummary && (
                         <span className="params-summary">
                           (
@@ -225,7 +226,7 @@ export default class Home extends React.Component {
                       )}
                     </div>
                     <div className="response">
-                      &lt; {JSON.stringify(logEntry.command.response)}
+                      &lt; {JSON.stringify(command.response)}
                     </div>
                   </div>
                 );

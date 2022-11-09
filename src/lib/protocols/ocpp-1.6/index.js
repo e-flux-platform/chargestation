@@ -5,6 +5,7 @@ class Connection {
     this.ready = false;
     this.messageId = 1;
     this.commandCallbacks = {};
+    this.incomingCommand;
   }
 
   connect() {
@@ -22,8 +23,11 @@ class Connection {
         if (callback) {
           callback(data[2]);
         }
+      } else if (data[0] === 2) {
+        const result = this.onCommand(data[2], data[3]);
+        const message = [3, data[1], result];
+        this.ws.send(JSON.stringify(message));
       } else {
-        // [2,"1667956677594","GetConfiguration",{}]
         throw new Error(`Not implemented: ${JSON.stringify(data)}`);
       }
     });

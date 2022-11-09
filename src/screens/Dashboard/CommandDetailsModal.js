@@ -14,17 +14,31 @@ export default class CommandDetailsModal extends React.Component {
       <>
         <Modal.Header>Command Details</Modal.Header>
         <Modal.Content>
-          <p>
-            Request from Charge Station (sent at{' '}
-            {formatDateTimePrecise(command.requestSentAt)}):
-          </p>
+          {command.destination === 'central-server' ? (
+            <p>
+              Request from Charge Station (sent at{' '}
+              {formatDateTimePrecise(command.requestSentAt)}):
+            </p>
+          ) : (
+            <p>
+              Request from Central Server (received at{' '}
+              {formatDateTimePrecise(command.requestReceivedAt)}):
+            </p>
+          )}
           <SyntaxHighlighter language="json" style={atomDark}>
             {JSON.stringify(command?.request || {}, null, 2)}
           </SyntaxHighlighter>
-          <p>
-            Response from Central Server (received at{' '}
-            {formatDateTimePrecise(command.responseReceivedAt)}):
-          </p>
+          {command.destination === 'central-server' ? (
+            <p>
+              Response from Central Server (received at{' '}
+              {formatDateTimePrecise(command.responseReceivedAt)}):
+            </p>
+          ) : (
+            <p>
+              Response from Charge Station (sent at{' '}
+              {formatDateTimePrecise(command.responseSentAt)}):
+            </p>
+          )}
           <SyntaxHighlighter language="json" style={atomDark}>
             {JSON.stringify(command?.response || {}, null, 2)}
           </SyntaxHighlighter>
