@@ -19,14 +19,23 @@ class Connection {
     this.ws.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       if (data[0] === 3) {
-        const callback = this.commandCallbacks[data[1].toString()];
-        if (callback) {
-          callback(data[2]);
+        const command = this.commandCallbacks[data[1].toString()];
+        if (command.callback) {
+          command.callback(null, data[2]);
         }
       } else if (data[0] === 2) {
         const result = this.onCommand(data[2], data[3]);
         const message = [3, data[1], result];
         this.ws.send(JSON.stringify(message));
+      } else if (data[0] === 4) {
+        const command = this.commandCallbacks[data[1].toString()];
+        if (command) {
+          command.callback(
+            new Error(
+              `Command ${command.method} returned error: ${data[2]}: ${data[3]}`
+            )
+          );
+        }
       } else {
         throw new Error(`Not implemented: ${JSON.stringify(data)}`);
       }
@@ -60,10 +69,17 @@ class Connection {
           reject(new Error(`Command ${method} did not respond in 30 seconds`));
         }
       }, 30000);
-      this.commandCallbacks[messageId.toString()] = (response) => {
-        responded = true;
-        clearTimeout(timeout);
-        resolve(response);
+      this.commandCallbacks[messageId.toString()] = {
+        method,
+        callback: (error, response) => {
+          responded = true;
+          clearTimeout(timeout);
+          if (error) {
+            reject(error);
+          } else {
+            resolve(response);
+          }
+        },
       };
       this.ws.send(JSON.stringify(message));
     });

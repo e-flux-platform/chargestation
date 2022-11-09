@@ -16,11 +16,11 @@ Todo:
 - [x] OCPP Command summary
 - [x] Visual indicator that charging is happening
 - [x] Make GetConfiguration and ChangeConfiguration work
-- [ ] Support for using two connectors
+- [x] Support for using two connectors
+- [ ] Run any OCPP command
 - [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge
 - [ ] Support for authorization
-- [ ] Run any OCPP command
 - [ ] Terminate session on disconnect
 - [ ] Simulate being offline (and buffering commands)
 - [ ] Time travel

@@ -53,6 +53,12 @@ export const configurationList = [
     description: 'Frequency of MeterValues commands in seconds',
     defaultValue: 60,
   },
+  {
+    key: 'NumberOfConnectors',
+    description:
+      'The number of sockets connected to this EVSE (only applies to configuration)',
+    defaultValue: 2,
+  },
 ];
 
 export const sessionSettingsList = [

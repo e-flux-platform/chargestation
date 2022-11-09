@@ -90,6 +90,17 @@
     }
   }
 
+  @keyframes parkCar2Reverse {
+    0% {
+      left: -50%;
+      bottom: 20%;
+    }
+    100% {
+      left: -120%;
+      bottom: -4%;
+    }
+  }
+
   .car-1 {
     animation: parkCar1Reverse 3s 1 normal ease-out;
     position: absolute;
@@ -111,6 +122,7 @@
   }
 
   .car-2 {
+    animation: parkCar2Reverse 3s 1 normal ease-out;
     position: absolute;
     z-index: 100;
     width: 90%;
@@ -125,8 +137,8 @@
 
   .car-2.animated {
     animation: parkCar2 3s 1 normal ease-out;
-    left: -120%;
-    bottom: -4%;
+    left: -50%;
+    bottom: 20%;
   }
 }
 

@@ -8,6 +8,9 @@ export default class ChargeStation {
     this.options = options;
     this.sessions = {};
   }
+  availableConnectors() {
+    return ['1', '2'].filter((id) => !this.sessions[id]);
+  }
   connect() {
     const ocppBaseUrl =
       extractOcppBaseUrlFromConfiguration(this.configuration) ||
@@ -121,8 +124,8 @@ export default class ChargeStation {
     clearInterval(this.heartbeatInterval);
   }
 
-  sendBootNotification() {
-    this.sendCommand('BootNotification', {
+  async sendBootNotification() {
+    await this.sendCommand('BootNotification', {
       chargePointVendor: this.options.chargePointVendor,
       chargePointModel: this.options.chargePointModel,
       chargePointSerialNumber: this.options.chargePointSerialNumber,
@@ -130,6 +133,18 @@ export default class ChargeStation {
       firmwareVersion: 'v1-000',
       iccid: this.options.iccid,
       imsi: this.options.imsi,
+    });
+    await sleep(200);
+    await this.sendCommand('StatusNotification', {
+      connectorId: 1,
+      errorCode: 'NoError',
+      status: 'Available',
+    });
+    await sleep(200);
+    await this.sendCommand('StatusNotification', {
+      connectorId: 2,
+      errorCode: 'NoError',
+      status: 'Available',
     });
   }
 

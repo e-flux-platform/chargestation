@@ -22,6 +22,7 @@ import ErrorModal from './ErrorModal';
 import { summarizeCommandParams } from 'lib/ChargeStation/utils';
 import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
+import StopSessionModal from './StopSessionModal';
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -32,6 +33,8 @@ export default class Home extends React.Component {
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],
+    session1OnceStarted: false,
+    session2OnceStarted: false,
   };
 
   componentDidMount() {
@@ -73,7 +76,8 @@ export default class Home extends React.Component {
       session,
       error,
       inspectCommand,
-      sessionOnceStarted,
+      session1OnceStarted,
+      session2OnceStarted,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
@@ -104,13 +108,13 @@ export default class Home extends React.Component {
           <div
             className={`car-1 ${
               chargeStation.hasRunningSession('1') ? 'animated' : ''
-            } ${sessionOnceStarted ? '' : 'initial'}`}>
+            } ${session1OnceStarted ? '' : 'initial'}`}>
             <img src={car1Svg} />
           </div>
           <div
             className={`car-2 ${
               chargeStation.hasRunningSession('2') ? 'animated' : ''
-            } ${sessionOnceStarted ? '' : 'initial'}`}>
+            } ${session2OnceStarted ? '' : 'initial'}`}>
             <img src={car2Svg} />
           </div>
           <div className="car-1-connector"></div>
@@ -128,45 +132,53 @@ export default class Home extends React.Component {
         <div className="terminal">
           <div className="actions">
             <StartSessionModal
+              availableConnectors={chargeStation.availableConnectors()}
               session={session}
-              onSave={({ session }) => {
+              onSave={({ connectorId, session }) => {
                 this.setState({ session });
-                chargeStation.startSession('1', session);
+                chargeStation.startSession(connectorId, session);
                 this.nextTick();
-                this.setState({ sessionOnceStarted: true });
+                if (connectorId === '1') {
+                  this.setState({ session1OnceStarted: true });
+                } else {
+                  this.setState({ session2OnceStarted: true });
+                }
               }}
               trigger={
                 <Button
                   inverted
-                  primary={chargeStation.hasRunningSession('1') ? false : true}
-                  disabled={
-                    chargeStation.hasRunningSession('1') ||
+                  primary={chargeStationIsCharging ? false : true}
+                  loading={
                     chargeStation.isStartingSession('1') ||
-                    chargeStation.isStoppingSession('1')
+                    chargeStation.isStartingSession('2')
                   }
-                  loading={chargeStation.isStartingSession('1')}
                   icon="play"
                   content="Start Charging"
                 />
               }
             />
-            <Button
-              inverted
-              primary={chargeStation.hasRunningSession('1') ? true : false}
-              disabled={
-                !chargeStation.hasRunningSession('1') ||
-                chargeStation.isStartingSession('1') ||
-                chargeStation.isStoppingSession('1')
-              }
-              loading={chargeStation.isStoppingSession('1')}
-              icon="stop"
-              content="End Charging"
-              onClick={async () => {
-                await chargeStation.stopSession('1', () => {
+            <StopSessionModal
+              availableConnectors={chargeStation.availableConnectors()}
+              session={session}
+              onSave={async ({ connectorId }) => {
+                await chargeStation.stopSession(connectorId, () => {
                   this.nextTick();
                 });
                 this.nextTick();
               }}
+              trigger={
+                <Button
+                  inverted
+                  primary={chargeStationIsCharging ? true : false}
+                  disabled={!chargeStationIsCharging}
+                  loading={
+                    chargeStation.isStoppingSession('1') ||
+                    chargeStation.isStoppingSession('2')
+                  }
+                  icon="stop"
+                  content="End Charging"
+                />
+              }
             />
             <div className="right-actions">
               <Button to="/docs" as={Link} inverted icon="book" />
