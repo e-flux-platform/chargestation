@@ -205,7 +205,8 @@ export default class Home extends React.Component {
                           ? formatDateTimeRelative(command.requestSentAt)
                           : formatDateTimeRelative(command.requestReceivedAt)}
                       </span>
-                      &gt; {command.request.method}{' '}
+                      {command.destination === 'central-server' ? `>` : `<`}{' '}
+                      {command.request.method}{' '}
                       {paramSummary && (
                         <span className="params-summary">
                           (
@@ -226,7 +227,8 @@ export default class Home extends React.Component {
                       )}
                     </div>
                     <div className="response">
-                      &lt; {JSON.stringify(command.response)}
+                      {command.destination === 'central-server' ? `<` : `>`}{' '}
+                      {JSON.stringify(command.response)}
                     </div>
                   </div>
                 );
