@@ -31,6 +31,10 @@ export default class ChargeStation {
       let response = {};
       if (this['receive' + method]) {
         response = this['receive' + method](params);
+      } else {
+        console.warn(
+          `Received command from Central Server, but no implementation is known: ${method}`
+        );
       }
       this.log('command', `received ${method} command`, {
         destination: 'charge-point',
@@ -39,9 +43,6 @@ export default class ChargeStation {
         response,
         responseSentAt: new Date(),
       });
-      console.warn(
-        `Received command from Central Server, but no implementation is known: ${method}`
-      );
       return response;
     };
     this.connection.connect();
@@ -68,6 +69,7 @@ export default class ChargeStation {
       await this.sessions[connectorId].start();
       this.sessions[connectorId].isStartingSession = false;
     } catch (error) {
+      this.sessions[connectorId].isStartingSession = false;
       await this.stopSession(connectorId);
       this.error(error);
     }
@@ -179,7 +181,7 @@ DC Ultra Rapid Charger	175kW	1000km	15 minutes (to 80%)
 */
 class Session {
   constructor(connectorId, options = {}) {
-    this.connectorId = connectorId;
+    this.connectorId = parseInt(connectorId, 10);
     this.options = options;
     this.meterValuesInterval = options.meterValuesInterval || 60;
     this.maxPowerKw = options.maxPowerKw || 22;
@@ -219,6 +221,7 @@ class Session {
         `OCPP Server rejected our Token UID during StartTransaction: ${this.options.uid}`
       );
     }
+    this.transactionId = startTransactionResponse.transactionId;
 
     await this.options.sendCommand('StatusNotification', {
       connectorId: this.connectorId,
@@ -240,6 +243,7 @@ class Session {
       meterStop: Math.round(this.kwhElapsed * 1000),
       timestamp: this.now().toISOString(),
       disconnectReason: 'EVDisconnected',
+      transactionId: this.transactionId,
       transactionData: [
         {
           sampledValue: [
@@ -255,6 +259,12 @@ class Session {
           timestamp: new Date().toISOString(),
         },
       ],
+    });
+    await sleep(1000);
+    await this.options.sendCommand('StatusNotification', {
+      connectorId: this.connectorId,
+      errorCode: 'NoError',
+      status: 'Available',
     });
   }
   async tick(secondsElapsed) {
@@ -298,6 +308,7 @@ class Session {
     this.lastMeterValuesTimestamp = this.now();
     await this.options.sendCommand('MeterValues', {
       connectorId: this.connectorId,
+      transactionId: this.transactionId,
       meterValue: [
         {
           timestamp: this.now().toISOString(),
@@ -306,6 +317,7 @@ class Session {
               value: this.kwhElapsed.toFixed(5),
               context: 'Sample.Periodic',
               measurand: 'Energy.Active.Import.Register',
+              location: 'Outlet',
               unit: 'kWh',
             },
           ],

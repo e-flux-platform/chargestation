@@ -67,7 +67,7 @@ export const sessionSettingsList = [
     name: "Charge Station's Max Power (kW)",
     description:
       'The power in kW that this charge startion can deliver to a car (e.g. AC single phase is 7.4kW, AC three phase is 22kW, DC Fast charger is 25-175kW',
-    defaultValue: 22,
+    defaultValue: 75,
   },
   {
     key: 'carBatteryKwh',

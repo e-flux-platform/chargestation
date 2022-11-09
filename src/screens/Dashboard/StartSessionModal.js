@@ -36,6 +36,10 @@ export default class StartSessionModal extends React.Component {
       <>
         <Modal.Header>Start Session</Modal.Header>
         <Modal.Content>
+          <p>
+            Note: In order for a session to be included in billing, it typically
+            takes at least 4 minutes (due to checks on kWh and duration).
+          </p>
           <Form onSubmit={this.onSubmit} id="edit-settings">
             {sessionSettingsList.map((item) => {
               return (
