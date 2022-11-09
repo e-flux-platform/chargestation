@@ -13,7 +13,6 @@ import Error from 'screens/Error';
 
 const App = () => {
   const { loading, error } = useSession();
-  console.log('error', error);
   if (loading) {
     return <Loading />;
   } else if (error) {

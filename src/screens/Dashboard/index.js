@@ -90,7 +90,13 @@ export default class Home extends React.Component {
             this.setState({ inspectCommand: null });
           }}
         />
-        <ErrorModal open={!!error} error={error} />
+        <ErrorModal
+          open={!!error}
+          error={error}
+          onClose={() => {
+            this.setState({ error: null });
+          }}
+        />
         <div className="logo">
           chargestation.one<p className="subtitle">OCPP simulator</p>
         </div>
