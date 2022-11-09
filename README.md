@@ -15,7 +15,7 @@ Todo:
 - [x] OCPP Command drill-down
 - [x] OCPP Command summary
 - [x] Visual indicator that charging is happening
-- [ ] Make GetConfiguration and ChangeConfiguration work
+- [x] Make GetConfiguration and ChangeConfiguration work
 - [ ] Support for using two connectors
 - [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge
