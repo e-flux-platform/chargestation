@@ -17,6 +17,7 @@ Todo:
 - [x] Visual indicator that charging is happening
 - [x] Make GetConfiguration and ChangeConfiguration work
 - [x] Support for using two connectors
+- [x] Support for Remote Start/Stop
 - [ ] Run any OCPP command
 - [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge

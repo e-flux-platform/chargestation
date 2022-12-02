@@ -42,6 +42,13 @@ export default class Home extends React.Component {
     const chargeStation = new ChargeStation(configuration, settings);
     chargeStation.onLog = this.onLog;
     chargeStation.onError = this.onError;
+    chargeStation.onSessionStart = (connectorId) => {
+      if (connectorId === '1') {
+        this.setState({ session1OnceStarted: true });
+      } else {
+        this.setState({ session2OnceStarted: true });
+      }
+    };
     chargeStation.connect();
     this.setState({ chargeStation });
     this.tickInterval = setInterval(() => this.nextTick(), 4000);
@@ -138,11 +145,6 @@ export default class Home extends React.Component {
                 this.setState({ session });
                 chargeStation.startSession(connectorId, session);
                 this.nextTick();
-                if (connectorId === '1') {
-                  this.setState({ session1OnceStarted: true });
-                } else {
-                  this.setState({ session2OnceStarted: true });
-                }
               }}
               trigger={
                 <Button

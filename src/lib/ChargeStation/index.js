@@ -71,6 +71,7 @@ export default class ChargeStation {
       this.sessions[connectorId].isStartingSession = true;
       await this.sessions[connectorId].start();
       this.sessions[connectorId].isStartingSession = false;
+      this.onSessionStart && this.onSessionStart(connectorId);
     } catch (error) {
       this.sessions[connectorId].isStartingSession = false;
       await this.stopSession(connectorId);
@@ -176,6 +177,45 @@ export default class ChargeStation {
 
   receiveChangeConfiguration({ key, value }) {
     this.configuration[key] = value;
+    return {
+      status: 'Accepted',
+    };
+  }
+
+  receiveRemoteStartTransaction({ connectorId, idTag }) {
+    if (this.hasRunningSession(connectorId.toString())) {
+      return {
+        status: 'Rejected',
+      };
+    }
+    setTimeout(() => {
+      this.startSession(connectorId.toString(), {
+        uid: idTag,
+      });
+    }, 100);
+    return {
+      status: 'Accepted',
+    };
+  }
+
+  receiveRemoteStopTransaction({ transactionId }) {
+    let connectorId;
+    ['1', '2'].forEach((cId) => {
+      if (
+        this.sessions[cId] &&
+        this.sessions[cId].transactionId === transactionId
+      ) {
+        connectorId = cId.toString();
+      }
+    });
+    if (!connectorId || !this.hasRunningSession(connectorId)) {
+      return {
+        status: 'Rejected',
+      };
+    }
+    setTimeout(() => {
+      this.stopSession(connectorId);
+    }, 100);
     return {
       status: 'Accepted',
     };
