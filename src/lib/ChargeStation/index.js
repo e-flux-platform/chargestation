@@ -276,6 +276,13 @@ class Session {
         `OCPP Server rejected our Token UID during StartTransaction: ${this.options.uid}`
       );
     }
+
+    if (startTransactionResponse.idTagInfo.status === 'ConcurrentTx') {
+      throw new Error(
+        `OCPP Server did not start transaction due to ConcurrentTx: ${this.options.uid}`
+      );
+    }
+
     this.transactionId = startTransactionResponse.transactionId;
 
     await this.options.sendCommand('StatusNotification', {
