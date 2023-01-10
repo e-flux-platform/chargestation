@@ -13,7 +13,9 @@ function mockedCommandEmitter(commandName, payload) {
 }
 
 // Register the event emitter and the handlers somewhere. Probably makes most sense to do this when creating a new Session in the ChargeStation class and bind it to the Session instance.
-const eventEmitter = new ChargepointEventEmitter(mockedCommandEmitter);
+const session = {};
+
+const eventEmitter = new ChargepointEventEmitter(session);
 eventEmitter.registerHandlers(basicChargestationHandlerConfig);
 
 export class ChargepointEventEmitter extends EventEmitter {
