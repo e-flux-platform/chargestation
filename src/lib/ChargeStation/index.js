@@ -126,7 +126,8 @@ export default class ChargeStation {
   }
 
   log(type, message, command = undefined) {
-    this.onLog && this.onLog({ id: Date.now(), type, message, command });
+    const id = `${Date.now()}-${Math.random()}}`;
+    this.onLog && this.onLog({ id, type, message, command });
   }
 
   startHeartbeat() {
