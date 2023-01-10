@@ -2,7 +2,7 @@ import { EventEmitter } from 'node:events';
 import { sleep } from '../../../utils/csv';
 
 // Define a handler config for each different Chargestation model that does not follow the standard OCPP rules.
-const myCustomHandlerConfig = {
+const basicChargestationHandlerConfig = {
   afterSessionStart: [authorizeHandler],
   afterSendAuthorize: [startTransactionHandler],
   afterSendStartTransaction: [statusNotificationPreparingHandler],
@@ -10,7 +10,7 @@ const myCustomHandlerConfig = {
 
 // Register the event emitter and the handlers somewhere in the bootstrap code
 const eventEmitter = new ChargepointEventEmitter();
-eventEmitter.registerHandlers(myCustomHandlerConfig);
+eventEmitter.registerHandlers(basicChargestationHandlerConfig);
 
 export class ChargepointEventEmitter extends EventEmitter {
   registerHandlers(handlerConfig) {
