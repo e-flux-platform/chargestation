@@ -7,6 +7,7 @@ export default class ChargeStation {
     this.configuration = configuration;
     this.options = options;
     this.sessions = {};
+    this.numConnectionAttempts = 0;
   }
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
@@ -28,7 +29,8 @@ export default class ChargeStation {
     };
     this.connection.onError = (error) => {
       this.log('error', error.message);
-      this.stopHeartbeat();
+      this.disconnect();
+      this.reconnect();
     };
     this.connection.onCommand = (method, params) => {
       let response = {};
@@ -49,11 +51,24 @@ export default class ChargeStation {
       return response;
     };
     this.connection.connect();
+    this.numConnectionAttempts++;
   }
   disconnect() {
     this.connection.disconnect();
     this.stopHeartbeat();
     this.connected = false;
+  }
+  reconnect() {
+    if (this.numConnectionAttempts > 100) {
+      this.log('error', 'Too many connection attempts, giving up');
+      return;
+    }
+    const numSeconds = this.numConnectionAttempts < 5 ? 5 : 30;
+    this.log('message', `> Reconnecting in ${numSeconds} seconds`);
+    setTimeout(() => {
+      this.connection.connect();
+      this.numConnectionAttempts++;
+    }, numSeconds * 1000);
   }
   async startSession(connectorId, session) {
     try {
