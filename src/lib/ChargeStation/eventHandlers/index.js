@@ -8,11 +8,21 @@ const basicChargestationHandlerConfig = {
   afterSendStartTransaction: [statusNotificationPreparingHandler],
 };
 
+function mockedCommandEmitter(commandName, payload) {
+  console.log(`Command ${commandName} sent!`);
+}
+
 // Register the event emitter and the handlers somewhere in the bootstrap code
-const eventEmitter = new ChargepointEventEmitter();
+const eventEmitter = new ChargepointEventEmitter(mockedCommandEmitter);
+
 eventEmitter.registerHandlers(basicChargestationHandlerConfig);
 
 export class ChargepointEventEmitter extends EventEmitter {
+  constructor(sendCommand) {
+    super();
+    this.sendCommand = sendCommand;
+  }
+
   registerHandlers(handlerConfig) {
     this.handlerConfig = handlerConfig;
 
@@ -21,6 +31,11 @@ export class ChargepointEventEmitter extends EventEmitter {
         this.on(eventName, handler);
       }
     }
+  }
+
+  emitEvent(eventName) {
+    //TODO: Need to inject that session somewhere. Use empty object for now.
+    this.emit(eventName, {}, this.sendCommand, this);
   }
 }
 
@@ -38,7 +53,7 @@ async function authorizeHandler(session, sendCommand, eventEmitter) {
     );
   }
 
-  eventEmitter.emit('afterSendAuthorize');
+  eventEmitter.emitEvent('afterSendAuthorize');
 }
 
 async function startTransactionHandler(session, sendCommand, eventEmitter) {
@@ -61,7 +76,7 @@ async function startTransactionHandler(session, sendCommand, eventEmitter) {
   }
   session.transactionId = startTransactionResponse.transactionId;
 
-  eventEmitter.emit('afterSendStartTransaction');
+  eventEmitter.emitEvent('afterSendStartTransaction');
 }
 
 async function statusNotificationPreparingHandler(
@@ -75,7 +90,7 @@ async function statusNotificationPreparingHandler(
     status: 'Preparing',
   });
 
-  eventEmitter.emit('afterSendStatusNotificationPreparing');
+  eventEmitter.emitEvent('afterSendStatusNotificationPreparing');
 }
 
 // Possible handlers
