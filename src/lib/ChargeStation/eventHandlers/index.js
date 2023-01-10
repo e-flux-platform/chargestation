@@ -14,7 +14,6 @@ function mockedCommandEmitter(commandName, payload) {
 
 // Register the event emitter and the handlers somewhere in the bootstrap code
 const eventEmitter = new ChargepointEventEmitter(mockedCommandEmitter);
-
 eventEmitter.registerHandlers(basicChargestationHandlerConfig);
 
 export class ChargepointEventEmitter extends EventEmitter {
