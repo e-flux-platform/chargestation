@@ -12,14 +12,14 @@ function mockedCommandEmitter(commandName, payload) {
   console.log(`Command ${commandName} sent!`);
 }
 
-// Register the event emitter and the handlers somewhere in the bootstrap code
+// Register the event emitter and the handlers somewhere. Probably makes most sense to do this when creating a new Session in the ChargeStation class and bind it to the Session instance.
 const eventEmitter = new ChargepointEventEmitter(mockedCommandEmitter);
 eventEmitter.registerHandlers(basicChargestationHandlerConfig);
 
 export class ChargepointEventEmitter extends EventEmitter {
-  constructor(sendCommand) {
+  constructor(session) {
     super();
-    this.sendCommand = sendCommand;
+    this.session = session;
   }
 
   registerHandlers(handlerConfig) {
@@ -33,17 +33,16 @@ export class ChargepointEventEmitter extends EventEmitter {
   }
 
   emitEvent(eventName) {
-    //TODO: Need to inject that session somewhere. Use empty object for now.
-    this.emit(eventName, {}, this.sendCommand, this);
+    this.emit(eventName, this.session);
   }
 }
 
 // Define custom handlers for each event and put them in the handlerConfig
-async function authorizeHandler(session, sendCommand, eventEmitter) {
+async function authorizeHandler(session) {
   console.log('authorizing...');
 
   await sleep(1000);
-  const authorizeResponse = await sendCommand('Authorize', {
+  const authorizeResponse = await session.options.sendCommand('Authorize', {
     idTag: session.options.uid,
   });
   if (authorizeResponse.idTagInfo.status === 'Invalid') {
@@ -52,20 +51,23 @@ async function authorizeHandler(session, sendCommand, eventEmitter) {
     );
   }
 
-  eventEmitter.emitEvent('afterSendAuthorize');
+  session.options.eventEmitter.emitEvent('afterSendAuthorize');
 }
 
-async function startTransactionHandler(session, sendCommand, eventEmitter) {
+async function startTransactionHandler(session) {
   console.log('starting transaction');
 
   await sleep(1000);
-  const startTransactionResponse = await sendCommand('StartTransaction', {
-    connectorId: session.connectorId,
-    idTag: session.options.uid,
-    meterStart: Math.round(session.kwhElapsed * 1000),
-    timestamp: session.now().toISOString(),
-    reservationId: undefined,
-  });
+  const startTransactionResponse = await session.options.sendCommand(
+    'StartTransaction',
+    {
+      connectorId: session.connectorId,
+      idTag: session.options.uid,
+      meterStart: Math.round(session.kwhElapsed * 1000),
+      timestamp: session.now().toISOString(),
+      reservationId: undefined,
+    }
+  );
 
   await sleep(1000);
   if (startTransactionResponse.idTagInfo.status === 'Invalid') {
@@ -75,21 +77,19 @@ async function startTransactionHandler(session, sendCommand, eventEmitter) {
   }
   session.transactionId = startTransactionResponse.transactionId;
 
-  eventEmitter.emitEvent('afterSendStartTransaction');
+  session.options.eventEmitter.emitEvent('afterSendStartTransaction');
 }
 
-async function statusNotificationPreparingHandler(
-  session,
-  sendCommand,
-  eventEmitter
-) {
-  await sendCommand('StatusNotification', {
+async function statusNotificationPreparingHandler(session) {
+  await session.options.sendCommand('StatusNotification', {
     connectorId: session.connectorId,
     errorCode: 'NoError',
     status: 'Preparing',
   });
 
-  eventEmitter.emitEvent('afterSendStatusNotificationPreparing');
+  session.options.eventEmitter.emitEvent(
+    'afterSendStatusNotificationPreparing'
+  );
 }
 
 // Possible handlers
