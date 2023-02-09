@@ -59,6 +59,26 @@ export const configurationList = [
       'The number of sockets connected to this EVSE (only applies to configuration)',
     defaultValue: 2,
   },
+  {
+    key: 'Connector1-Type',
+    description: 'Meta data about connector type on connector 1',
+    defaultValue: 'Type 2 socket',
+  },
+  {
+    key: 'Connector1-MaxCurrent',
+    description: 'Meta data about max current on connector 1',
+    defaultValue: 32,
+  },
+  {
+    key: 'Connector2-Type',
+    description: 'Meta data about connector type on connector 2',
+    defaultValue: 'Type 2 socket',
+  },
+  {
+    key: 'Connector2-MaxCurrent',
+    description: 'Meta data about max current on connector 2',
+    defaultValue: 32,
+  },
 ];
 
 export const sessionSettingsList = [
