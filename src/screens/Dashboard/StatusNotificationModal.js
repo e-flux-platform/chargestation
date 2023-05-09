@@ -71,7 +71,7 @@ newStatusOption(Status.Charging, 'EV is charging')
   .allowedFrom(Status.Unavailable)
   .allowedFrom(Status.Faulted);
 
-newStatusOption(Status.SuspendedEV, 'The EV is not allowed to accept a charge')
+newStatusOption(Status.SuspendedEV, 'The EV is not allowing a charge to be received')
   .allowedFrom('Available')
   .allowedFrom('Preparing')
   .allowedFrom('Charging')
@@ -133,7 +133,10 @@ export default class StatusNotificationModal extends React.Component {
   }
 
   onSubmit = () => {
-    this.props.onSave(this.state);
+    this.props.onSave({
+      connectorId: this.state.connectorId,
+      status: this.state.status[this.state.connectorId],
+    });
     this.props.close();
   };
 

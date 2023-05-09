@@ -86,6 +86,7 @@ export default class ChargeStation {
           this.configuration['MeterValueSampleInterval'] || '60',
           10
         ),
+        getCurrentStatus: () => this.currentStatus[connectorId],
       });
       this.sessions[connectorId].isStartingSession = true;
       await this.sessions[connectorId].start();
@@ -281,7 +282,6 @@ class Session {
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
-    this.currentStatus = 'Available';
   }
   now() {
     return new Date();
@@ -383,7 +383,7 @@ class Session {
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
     console.info(
-      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge})`
+      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.options.getCurrentStatus()}`
     );
 
     if (
@@ -393,14 +393,13 @@ class Session {
     ) {
       return;
     }
-
     if (chargeLimitReached) {
       await this.options.sendCommand('StatusNotification', {
         connectorId: this.connectorId,
         errorCode: 'NoError',
         status: 'SuspendedEV',
       });
-    } else if (this.currentStatus === 'Charging') {
+    } else if (this.options.getCurrentStatus() === 'Charging') {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);

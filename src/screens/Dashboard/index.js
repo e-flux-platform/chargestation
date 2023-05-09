@@ -166,7 +166,7 @@ export default class Home extends React.Component {
               currentStatus={chargeStation.currentStatus}
               session={session}
               onSave={async ({ connectorId, status }) => {
-                await chargeStation.sendStatusNotification(connectorId, status[connectorId]);
+                await chargeStation.sendStatusNotification(connectorId, status);
                 this.nextTick();
               }}
               trigger={
