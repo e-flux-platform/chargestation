@@ -199,7 +199,7 @@ export default class Home extends React.Component {
                     chargeStation.isStoppingSession('2')
                   }
                   icon="stop"
-                  content="Finish Charging"
+                  content="End Charging"
                 />
               }
             />
