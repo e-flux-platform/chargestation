@@ -23,6 +23,7 @@ import { summarizeCommandParams } from 'lib/ChargeStation/utils';
 import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
+import StatusNotificationModal from './StatusNotificationModal';
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -159,6 +160,26 @@ export default class Home extends React.Component {
                 />
               }
             />
+
+            <StatusNotificationModal
+              availableConnectors={chargeStation.availableConnectors()}
+              currentStatus={chargeStation.currentStatus}
+              session={session}
+              onSave={async ({ connectorId, status }) => {
+                await chargeStation.sendStatusNotification(connectorId, status);
+                this.nextTick();
+              }}
+              trigger={
+                <Button
+                  inverted
+                  primary={!!chargeStationIsCharging}
+                  disabled={!chargeStationIsCharging}
+                  icon="signal"
+                  content="Status"
+                />
+              }
+            />
+
             <StopSessionModal
               availableConnectors={chargeStation.availableConnectors()}
               session={session}

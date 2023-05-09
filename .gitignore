@@ -15,4 +15,5 @@ tmp
 globalConfig.json
 .eslintcache
 .vscode
+.idea
 secrets

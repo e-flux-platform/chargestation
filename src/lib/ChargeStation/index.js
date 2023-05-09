@@ -8,6 +8,10 @@ export default class ChargeStation {
     this.options = options;
     this.sessions = {};
     this.numConnectionAttempts = 0;
+    this.currentStatus = {
+      '1': 'Available',
+      '2': 'Available',
+    };
   }
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
@@ -82,6 +86,7 @@ export default class ChargeStation {
           this.configuration['MeterValueSampleInterval'] || '60',
           10
         ),
+        getCurrentStatus: () => this.currentStatus[connectorId],
       });
       this.sessions[connectorId].isStartingSession = true;
       await this.sessions[connectorId].start();
@@ -93,6 +98,19 @@ export default class ChargeStation {
       this.error(error);
     }
   }
+
+  async sendStatusNotification(connectorId, status) {
+    if (!this.sessions[connectorId]) {
+      return;
+    }
+    await this.sendCommand('StatusNotification', {
+      connectorId,
+      timestamp: new Date().toISOString(),
+      errorCode: 'NoError',
+      status: status,
+    });
+  }
+
   async stopSession(connectorId, statusFn) {
     try {
       if (this.sessions[connectorId]) {
@@ -175,6 +193,9 @@ export default class ChargeStation {
       response,
       responseReceivedAt: new Date(),
     });
+    if (method === 'StatusNotification' && params.status && params.connectorId) {
+      this.currentStatus[params.connectorId] = params.status;
+    }
     return response;
   }
 
@@ -362,7 +383,7 @@ class Session {
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
     console.info(
-      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge})`
+      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.options.getCurrentStatus()}`
     );
 
     if (
@@ -372,14 +393,13 @@ class Session {
     ) {
       return;
     }
-
     if (chargeLimitReached) {
       await this.options.sendCommand('StatusNotification', {
         connectorId: this.connectorId,
         errorCode: 'NoError',
         status: 'SuspendedEV',
       });
-    } else {
+    } else if (this.options.getCurrentStatus() === 'Charging') {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);
