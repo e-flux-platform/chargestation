@@ -8,6 +8,10 @@ export default class ChargeStation {
     this.options = options;
     this.sessions = {};
     this.numConnectionAttempts = 0;
+    this.currentStatus = {
+      '1': 'Available',
+      '2': 'Available',
+    };
   }
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
@@ -94,7 +98,7 @@ export default class ChargeStation {
     }
   }
 
-  async finishCharging(connectorId) {
+  async sendStatusNotification(connectorId, status) {
     if (!this.sessions[connectorId]) {
       return;
     }
@@ -102,9 +106,8 @@ export default class ChargeStation {
       connectorId,
       timestamp: new Date().toISOString(),
       errorCode: 'NoError',
-      status: 'Finishing',
+      status: status,
     });
-    this.sessions[connectorId].isFinishedCharging = true;
   }
 
   async stopSession(connectorId, statusFn) {
@@ -189,6 +192,9 @@ export default class ChargeStation {
       response,
       responseReceivedAt: new Date(),
     });
+    if (method === 'StatusNotification' && params.status && params.connectorId) {
+      this.currentStatus[params.connectorId] = params.status;
+    }
     return response;
   }
 
@@ -275,6 +281,7 @@ class Session {
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
+    this.currentStatus = 'Available';
   }
   now() {
     return new Date();
@@ -393,7 +400,7 @@ class Session {
         errorCode: 'NoError',
         status: 'SuspendedEV',
       });
-    } else {
+    } else if (this.currentStatus === 'Charging') {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);
