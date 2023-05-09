@@ -27,7 +27,8 @@ const Status = {
 const newStatusOption = (status, description) => {
   const option = {
     key: status,
-    text: `${status} - ${description}`,
+    text: status,
+    description: description,
     value: status,
     canTransitionFrom: new Set([status]),
   };
