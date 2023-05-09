@@ -23,6 +23,7 @@ import { summarizeCommandParams } from 'lib/ChargeStation/utils';
 import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
+import FinishChargingModal from './FinishChargingModal';
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -159,6 +160,31 @@ export default class Home extends React.Component {
                 />
               }
             />
+
+            <FinishChargingModal
+              availableConnectors={chargeStation.availableConnectors()}
+              session={session}
+              onSave={async ({ connectorId }) => {
+                await chargeStation.finishCharging(connectorId, () => {
+                  this.nextTick();
+                });
+                this.nextTick();
+              }}
+              trigger={
+                <Button
+                  inverted
+                  primary={chargeStationIsCharging ? true : false}
+                  disabled={!chargeStationIsCharging}
+                  loading={
+                    chargeStation.isStoppingSession('1') ||
+                    chargeStation.isStoppingSession('2')
+                  }
+                  icon="battery-full"
+                  content="EV Battery Full"
+                />
+              }
+            />
+
             <StopSessionModal
               availableConnectors={chargeStation.availableConnectors()}
               session={session}
@@ -178,7 +204,7 @@ export default class Home extends React.Component {
                     chargeStation.isStoppingSession('2')
                   }
                   icon="stop"
-                  content="End Charging"
+                  content="Finish Charging"
                 />
               }
             />

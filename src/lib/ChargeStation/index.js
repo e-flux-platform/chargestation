@@ -93,6 +93,20 @@ export default class ChargeStation {
       this.error(error);
     }
   }
+
+  async finishCharging(connectorId) {
+    if (!this.sessions[connectorId]) {
+      return;
+    }
+    await this.sendCommand('StatusNotification', {
+      connectorId,
+      timestamp: new Date().toISOString(),
+      errorCode: 'NoError',
+      status: 'Finishing',
+    });
+    this.sessions[connectorId].isFinishedCharging = true;
+  }
+
   async stopSession(connectorId, statusFn) {
     try {
       if (this.sessions[connectorId]) {
