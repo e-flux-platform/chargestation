@@ -41,6 +41,7 @@ export default class Home extends React.Component {
   componentDidMount() {
     const { configuration, settings } = this.state;
     const chargeStation = new ChargeStation(configuration, settings);
+    window.chargeStation = chargeStation;
     chargeStation.onLog = this.onLog;
     chargeStation.onError = this.onError;
     chargeStation.onSessionStart = (connectorId) => {
