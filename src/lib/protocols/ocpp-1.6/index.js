@@ -10,7 +10,7 @@ class Connection {
 
   connect() {
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
-    this.ws = new WebSocket(url);
+    this.ws = new WebSocket(url, 'ocpp1.6');
     this.ws.addEventListener('open', () => {
       this.ready = true;
       this.onConnected && this.onConnected();
