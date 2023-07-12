@@ -6,9 +6,9 @@ export const settingsList = [
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
   },
   {
-    key: 'chargepointVendor',
+    key: 'chargePointVendor',
     name: 'Boot / Vendor',
-    description: 'The chargepointVendor sent during BootNotification',
+    description: 'The chargePointVendor sent during BootNotification',
     defaultValue: 'Chargepoint.one',
   },
   {
