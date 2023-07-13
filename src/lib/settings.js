@@ -1,5 +1,11 @@
 export const settingsList = [
   {
+    key: 'ocppProtocol',
+    name: 'OCPP Protocol',
+    description: 'OCPP protocol version to use',
+    defaultValue: '1.6',
+  },
+  {
     key: 'ocppBaseUrl',
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',

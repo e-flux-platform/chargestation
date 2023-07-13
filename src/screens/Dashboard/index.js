@@ -4,7 +4,7 @@ import { Button, Loader } from 'semantic';
 import { Link } from 'react-router-dom';
 import { Transition } from 'semantic-ui-react';
 
-import ChargeStation from 'lib/ChargeStation';
+import { ChargeStation16, ChargeStation201 } from 'lib/ocpp';
 import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -19,11 +19,12 @@ import SettingsModal from './SettingsModal';
 import './dashboard.less';
 import StartSessionModal from './StartSessionModal';
 import ErrorModal from './ErrorModal';
-import { summarizeCommandParams } from 'lib/ChargeStation/utils';
+import { summarizeCommandParams } from 'lib/ocpp/utils';
 import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
+
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -40,18 +41,7 @@ export default class Home extends React.Component {
 
   componentDidMount() {
     const { configuration, settings } = this.state;
-    const chargeStation = new ChargeStation(configuration, settings);
-    chargeStation.onLog = this.onLog;
-    chargeStation.onError = this.onError;
-    chargeStation.onSessionStart = (connectorId) => {
-      if (connectorId === '1') {
-        this.setState({ session1OnceStarted: true });
-      } else {
-        this.setState({ session2OnceStarted: true });
-      }
-    };
-    chargeStation.connect();
-    this.setState({ chargeStation });
+    this.initChargeStation(configuration, settings);
     this.tickInterval = setInterval(() => this.nextTick(), 4000);
   }
 
@@ -73,6 +63,31 @@ export default class Home extends React.Component {
     this.setState({ error });
     this.nextTick();
   };
+
+  initChargeStation(configuration, settings) {
+    let chargeStation;
+    switch (settings.ocppProtocol) {
+      case '1.6':
+        chargeStation = new ChargeStation16(configuration, settings);
+        break;
+      case '2.0.1':
+        chargeStation = new ChargeStation201(configuration, settings);
+        break;
+      default:
+        throw new Error(`unsupported protocol: ${settings.ocppProtocol}`);
+    }
+    chargeStation.onLog = this.onLog;
+    chargeStation.onError = this.onError;
+    chargeStation.onSessionStart = (connectorId) => {
+      if (connectorId === '1') {
+        this.setState({ session1OnceStarted: true });
+      } else {
+        this.setState({ session2OnceStarted: true });
+      }
+    };
+    chargeStation.connect();
+    this.setState({ chargeStation });
+  }
 
   render() {
     const {
@@ -209,14 +224,10 @@ export default class Home extends React.Component {
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}
                 configuration={configuration}
-                onSave={({ settings, configuration }) => {
-                  this.setState({ settings, configuration }, () => {
-                    chargeStation.configuration = configuration;
-                    chargeStation.options = settings;
-                    chargeStation.disconnect();
-                    setTimeout(() => {
-                      chargeStation.connect();
-                    }, 1000);
+                onSave={async ({ settings, configuration }) => {
+                  this.setState({ settings, configuration }, async () => {
+                    await chargeStation.powerOff();
+                    this.initChargeStation(configuration, settings);
                   });
                 }}
               />
@@ -226,7 +237,7 @@ export default class Home extends React.Component {
             {logEntries.map((logEntry) => {
               if (logEntry.command) {
                 const { command } = logEntry;
-                const paramSummary = summarizeCommandParams(command.request);
+                const paramSummary = summarizeCommandParams(command.subprotocol, command.request);
                 return (
                   <div
                     key={logEntry.id}
