@@ -26,7 +26,7 @@ export default class SettingsModal extends React.Component {
   setConfigurationField = (e, { name, value }) => {
     this.setState({
       configuration: {
-        ...this.state.settings,
+        ...this.state.configuration,
         [name]: value,
       },
       settings: this.state.settings,
