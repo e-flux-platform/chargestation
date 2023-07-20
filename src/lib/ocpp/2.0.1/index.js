@@ -251,7 +251,10 @@ class Session {
   async start() {
     await sleep(1000);
     const authorizeResponse = await this.options.sendCommand('Authorize', {
-      idToken: this.options.uid,
+      idToken: {
+        idToken: this.options.uid,
+        type: 'Central',
+      },
     });
     if (authorizeResponse.idTokenInfo.status === 'Invalid') {
       throw new Error(
