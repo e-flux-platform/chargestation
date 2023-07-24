@@ -71,6 +71,16 @@ export default class SettingsModal extends React.Component {
             <Header as="h3" content="Configuration Keys" />
             {Object.keys(getConfiguration()).map((key) => {
               const item = getConfigurationItem(key);
+              if (!(settings['ocppProtocol'] in item.name)) {
+                return null;
+              }
+              const component = [];
+              if (item.evseId) {
+                component.push(`evseId=${item.evseId}`);
+              }
+              if (item.evseConnectorId) {
+                component.push(`evseConnectorId=${item.evseConnectorId}`);
+              }
               return (
                 <Form.Input
                   key={key}
@@ -80,7 +90,7 @@ export default class SettingsModal extends React.Component {
                         marginBottom: '4px',
                         display: 'inline-block',
                       }}>
-                      {key}
+                      {item.name[settings['ocppProtocol']] + (component.length > 0 ? ` (${component.join(',')})` : '')}
                       {item?.description && <HelpTip text={item.description} />}
                     </strong>
                   }

@@ -77,7 +77,7 @@ export const configurationList = [
       '1.6': 'MeterValueSampleInterval',
       '2.0.1': 'SampledDataTxUpdatedInterval',
     },
-    description: 'Frequency of MeterValues commands in seconds',
+    description: 'Frequency at which meter value updates are sent',
     defaultValue: 60,
     component: 'SampledDataCtrlr',
     mutability: 'ReadWrite',
