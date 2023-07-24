@@ -1,26 +1,3 @@
-export function extractOcppBaseUrlFromConfiguration(configuration) {
-  // Alfen
-  if (
-    configuration['BackOffice-URL-wired'] &&
-    configuration['BackOffice-Path-wired']
-  ) {
-    return `${configuration['BackOffice-URL-wired']}${configuration['BackOffice-Path-wired']}`;
-  }
-  if (
-    configuration['BackOffice-URL-APN'] &&
-    configuration['BackOffice-Path-APN']
-  ) {
-    return `${configuration['BackOffice-URL-APN']}${configuration['BackOffice-Path-APN']}`;
-  }
-
-  // Evnex
-  if (configuration['OCPPEndPoint']) {
-    return configuration['OCPPEndPoint'];
-  }
-
-  return null;
-}
-
 export function summarizeCommandParams(protocol, { method, params }) {
   if (protocol === 'ocpp1.6') {
     switch (method) {
@@ -40,8 +17,12 @@ export function summarizeCommandParams(protocol, { method, params }) {
   }
   if (protocol === 'ocpp2.0.1') {
     switch (method) {
+      case 'GetBaseReport':
+        return { requestId: params.requestId, reportBase: params.reportBase };
       case 'StatusNotification':
         return { connectorId: params.connectorId, connectorStatus: params.connectorStatus };
+      case 'NotifyReport':
+        return { requestId: params.requestId, seqNo: params.seqNo, tbc: params.tbc ? 'true' : 'false' };
       default:
         return null;
     }

@@ -45,45 +45,81 @@ export const settingsList = [
 
 export const configurationList = [
   {
-    key: 'Identity',
+    key: 'identity',
+    name: {
+      '1.6': 'Identity',
+      '2.0.1': 'Identity',
+    },
     description: 'OCPP Identity used in authenticating the charge station',
     defaultValue: 'ChargeStationOne',
+    component: 'SecurityCtrlr',
+    mutability: 'ReadOnly',
+    dataType: 'string',
+    maxLimit: 48,
   },
   {
-    key: 'HeartbeatInterval',
+    key: 'heartbeat-interval',
+    name: {
+      '1.6': 'HeartbeatInterval',
+      '2.0.1': 'HeartbeatInterval',
+    },
     description: 'Frequency of Heartbeat commands in seconds',
     defaultValue: 50,
+    component: 'OCPPCommCtrlr',
+    mutability: 'ReadWrite',
+    unit: 'seconds',
+    dataType: 'integer',
+    minLimit: 1,
   },
   {
-    key: 'MeterValueSampleInterval',
+    key: 'meter-value-sample-interval',
+    name: {
+      '1.6': 'MeterValueSampleInterval',
+      '2.0.1': 'SampledDataTxUpdatedInterval',
+    },
     description: 'Frequency of MeterValues commands in seconds',
     defaultValue: 60,
+    component: 'SampledDataCtrlr',
+    mutability: 'ReadWrite',
+    unit: 'seconds',
+    dataType: 'integer',
   },
   {
-    key: 'NumberOfConnectors',
+    key: 'number-of-connectors',
+    name: {
+      '1.6': 'NumberOfConnectors',
+    },
     description:
       'The number of sockets connected to this EVSE (only applies to configuration)',
     defaultValue: 2,
   },
   {
-    key: 'Connector1-Type',
+    key: 'connector-1-type',
+    name: {
+      '1.6': 'Connector1-Type',
+      '2.0.1': 'ConnectorType',
+    },
     description: 'Meta data about connector type on connector 1',
     defaultValue: 'Type 2 socket',
+    component: 'Connector',
+    evseId: 1,
+    evseConnectorId: 1,
+    mutability: 'ReadOnly',
+    dataType: 'string',
   },
   {
-    key: 'Connector1-MaxCurrent',
-    description: 'Meta data about max current on connector 1',
-    defaultValue: 32,
-  },
-  {
-    key: 'Connector2-Type',
+    key: 'connector-2-type',
+    name: {
+      '1.6': 'Connector2-Type',
+      '2.0.1': 'ConnectorType',
+    },
     description: 'Meta data about connector type on connector 2',
     defaultValue: 'Type 2 socket',
-  },
-  {
-    key: 'Connector2-MaxCurrent',
-    description: 'Meta data about max current on connector 2',
-    defaultValue: 32,
+    component: 'Connector',
+    evseId: 1,
+    evseConnectorId: 2,
+    mutability: 'ReadOnly',
+    dataType: 'string',
   },
 ];
 

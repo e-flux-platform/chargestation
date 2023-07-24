@@ -4,7 +4,7 @@ import { Button, Loader } from 'semantic';
 import { Link } from 'react-router-dom';
 import { Transition } from 'semantic-ui-react';
 
-import { ChargeStation16, ChargeStation201 } from 'lib/ocpp';
+import { createChargeStation } from 'lib/ocpp';
 import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -65,17 +65,7 @@ export default class Home extends React.Component {
   };
 
   initChargeStation(configuration, settings) {
-    let chargeStation;
-    switch (settings.ocppProtocol) {
-      case '1.6':
-        chargeStation = new ChargeStation16(configuration, settings);
-        break;
-      case '2.0.1':
-        chargeStation = new ChargeStation201(configuration, settings);
-        break;
-      default:
-        throw new Error(`unsupported protocol: ${settings.ocppProtocol}`);
-    }
+    const chargeStation = createChargeStation(settings.ocppProtocol, configuration, settings);
     chargeStation.onLog = this.onLog;
     chargeStation.onError = this.onError;
     chargeStation.onSessionStart = (connectorId) => {

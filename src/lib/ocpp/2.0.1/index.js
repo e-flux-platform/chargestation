@@ -1,7 +1,9 @@
-import { extractOcppBaseUrlFromConfiguration } from '../utils';
 import { Connection } from '../connection';
 import { sleep } from 'utils/csv';
-import { ChargeState } from "../charge";
+import { ChargeState } from '../charge';
+import { getConfigurationItem } from '../../settings';
+
+const maxReportPageSize = 3;
 
 export default class ChargingStation {
   constructor(configuration, options = {}) {
@@ -21,10 +23,8 @@ export default class ChargingStation {
   }
 
   connect() {
-    const ocppBaseUrl =
-      extractOcppBaseUrlFromConfiguration(this.configuration) ||
-      this.options.ocppBaseUrl;
-    const ocppIdentity = this.configuration['Identity'];
+    const ocppBaseUrl = this.options.ocppBaseUrl;
+    const ocppIdentity = this.configuration['identity'];
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity} with OCPP protocol 2.0.1`);
     this.connection = new Connection(ocppBaseUrl, ocppIdentity, 'ocpp2.0.1');
     this.connection.onConnected = () => {
@@ -102,7 +102,7 @@ export default class ChargingStation {
         ...session,
         sendCommand: this.sendCommand.bind(this),
         meterValuesInterval: parseInt(
-          this.configuration['MeterValueSampleInterval'] || '60',
+          this.configuration['meter-value-sample-interval'] || '60',
           10
         ),
         getCurrentStatus: () => this.currentStatus[connectorId],
@@ -170,18 +170,78 @@ export default class ChargingStation {
 
   log(type, message, command = undefined) {
     const id = `${Date.now()}-${Math.random()}}`;
-    this.onLog && this.onLog({id, type, message, command});
+    this.onLog && this.onLog({ id, type, message, command });
   }
 
   startHeartbeat() {
     this.sendCommand('Heartbeat', {});
     this.heartbeatInterval = setInterval(() => {
       this.sendCommand('Heartbeat', {});
-    }, parseInt(this.configuration['HeartbeatInterval'] || '30', 10) * 1000);
+    }, parseInt(this.configuration['heartbeat-interval'] || '30', 10) * 1000);
   }
 
   stopHeartbeat() {
     clearInterval(this.heartbeatInterval);
+  }
+
+  receiveGetBaseReport({ requestId }) {
+    setTimeout(async () => {
+      const generatedAt = this.now();
+      let i = 0;
+      let seqNo = 0;
+      const notifyReport = async (reportData, tbc) => {
+        await this.sendCommand('NotifyReport', {
+          requestId,
+          generatedAt,
+          seqNo,
+          tbc,
+          reportData,
+        });
+        seqNo++;
+      };
+      let results = [];
+      const entries = Object.entries(this.configuration).filter(([ key, ]) => {
+        return '2.0.1' in getConfigurationItem(key).name;
+      });
+      for (const [key, value] of entries) {
+        const item = getConfigurationItem(key);
+        results.push({
+          component: {
+            name: item.component,
+          },
+          variable: {
+            name: item.name['2.0.1']
+          },
+          variableAttribute: [
+            {
+              value: `${value}`,
+              mutability: item.mutability,
+              persistence: true,
+              type: 'Actual'
+            }
+          ],
+          variableCharacteristics: {
+            dataType: item.dataType,
+            supportsMonitoring: false,
+            minLimit: 1,
+            ...(item.minLimit !== undefined && {minLimit: item.minLimit}),
+            ...(item.unit !== undefined && {unit: item.unit})
+          }
+        });
+        if (results.length === maxReportPageSize) {
+          await notifyReport(results, i < entries.length - 1);
+          results = [];
+        }
+        i++;
+      }
+      if (results.length > 0) {
+        await notifyReport(results, false);
+      }
+    }, 1000);
+
+    return {
+      status: 'Accepted',
+    };
   }
 
   async sendBootNotification() {

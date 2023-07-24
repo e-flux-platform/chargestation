@@ -1,7 +1,7 @@
-import { extractOcppBaseUrlFromConfiguration } from '../utils';
 import { Connection } from '../connection';
 import { sleep } from 'utils/csv';
 import { ChargeState } from '../charge';
+import { getConfigurationItem } from '../../settings';
 
 export default class ChargingStation {
   constructor(configuration, options = {}) {
@@ -20,10 +20,8 @@ export default class ChargingStation {
   }
 
   connect() {
-    const ocppBaseUrl =
-      extractOcppBaseUrlFromConfiguration(this.configuration) ||
-      this.options.ocppBaseUrl;
-    const ocppIdentity = this.configuration['Identity'];
+    const ocppBaseUrl = this.options.ocppBaseUrl;
+    const ocppIdentity = this.configuration['identity'];
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity} with OCPP protocol 1.6`);
     this.connection = new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
     this.connection.onConnected = () => {
@@ -101,7 +99,7 @@ export default class ChargingStation {
         ...session,
         sendCommand: this.sendCommand.bind(this),
         meterValuesInterval: parseInt(
-          this.configuration['MeterValueSampleInterval'] || '60',
+          this.configuration['meter-value-sample-interval'] || '60',
           10
         ),
         getCurrentStatus: () => this.currentStatus[connectorId],
@@ -166,14 +164,14 @@ export default class ChargingStation {
 
   log(type, message, command = undefined) {
     const id = `${Date.now()}-${Math.random()}}`;
-    this.onLog && this.onLog({id, type, message, command});
+    this.onLog && this.onLog({ id, type, message, command });
   }
 
   startHeartbeat() {
     this.sendCommand('Heartbeat', {});
     this.heartbeatInterval = setInterval(() => {
       this.sendCommand('Heartbeat', {});
-    }, parseInt(this.configuration['HeartbeatInterval'] || '30', 10) * 1000);
+    }, parseInt(this.configuration['heartbeat-interval'] || '30', 10) * 1000);
   }
 
   stopHeartbeat() {
@@ -185,7 +183,7 @@ export default class ChargingStation {
       chargePointVendor: this.options.chargePointVendor,
       chargePointModel: this.options.chargePointModel,
       chargePointSerialNumber: this.options.chargePointSerialNumber,
-      chargeBoxSerialNumber: this.configuration.Identity,
+      chargeBoxSerialNumber: this.configuration['identity'],
       firmwareVersion: 'v1-000',
       iccid: this.options.iccid,
       imsi: this.options.imsi,
@@ -222,26 +220,32 @@ export default class ChargingStation {
   }
 
   receiveGetConfiguration() {
+    const results = [];
+    for (const [key, value] of Object.entries(this.configuration)) {
+      const item = getConfigurationItem(key);
+      if (!('1.6' in item.name)) {
+        continue;
+      }
+      results.push({
+        key: item.name['1.6'],
+        value,
+        readOnly: item.mutability === 'ReadOnly',
+      });
+    }
     return {
-      configurationKey: Object.keys(this.configuration).map((key) => {
-        return {
-          key,
-          value: this.configuration[key],
-          readOnly: false,
-        };
-      }),
+      configurationKey: results,
       unknownKey: [],
     };
   }
 
-  receiveChangeConfiguration({key, value}) {
+  receiveChangeConfiguration({ key, value }) {
     this.configuration[key] = value;
     return {
       status: 'Accepted',
     };
   }
 
-  receiveRemoteStartTransaction({connectorId, idTag}) {
+  receiveRemoteStartTransaction({ connectorId, idTag }) {
     if (this.hasRunningSession(connectorId.toString())) {
       return {
         status: 'Rejected',
@@ -257,7 +261,7 @@ export default class ChargingStation {
     };
   }
 
-  receiveRemoteStopTransaction({transactionId}) {
+  receiveRemoteStopTransaction({ transactionId }) {
     let connectorId;
     ['1', '2'].forEach((cId) => {
       if (
