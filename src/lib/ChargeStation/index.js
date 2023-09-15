@@ -2,7 +2,7 @@ import { extractOcppBaseUrlFromConfiguration } from './utils';
 import { Connection } from '../protocols/ocpp-1.6';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
-import { EventTypes16 } from './eventHandlers/event-types';
+import { EventTypes, EventTypes16 } from './eventHandlers/event-types';
 
 export default class ChargeStation {
   constructor(configuration, options = {}) {
@@ -231,10 +231,10 @@ class Session {
     return new Date();
   }
   async start() {
-    this.emitter.emitEvent(EventTypes16.SessionStartInitiated, this);
+    this.emitter.emitEvent(EventTypes.SessionStartInitiated, this);
   }
   async stop() {
-    this.emitter.emitEvent(EventTypes16.SessionStopInitiated, this);
+    this.emitter.emitEvent(EventTypes.SessionStopInitiated, this);
   }
   async tick(secondsElapsed) {
     this.secondsElapsed += secondsElapsed;

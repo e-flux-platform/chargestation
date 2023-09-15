@@ -1,10 +1,14 @@
+export const EventTypes = {
+  SessionStartInitiated: 'sessionInitiated',
+  SessionStopInitiated: 'sessionStopInitiated',
+};
+
 export const EventTypes16 = {
   StationBooted: 'stationBooted',
   StationConnected: 'stationConnected',
   BootNotificationAccepted: 'bootNotificationAccepted',
   HeartbeatAccepted: 'heartbeatAccepted',
-  SessionStartInitiated: 'sessionInitiated',
-  SessionStopInitiated: 'sessionStopInitiated',
+
   AuthorizationFailed: 'authorizationFailed',
   AuthorizationAccepted: 'authorizationAccepted',
   AuthorizationFailedDuringStartTransaction:

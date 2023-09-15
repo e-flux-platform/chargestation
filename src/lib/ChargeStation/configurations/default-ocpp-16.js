@@ -1,6 +1,8 @@
-import { EventTypes16 as e } from '../eventHandlers/event-types';
+import {
+  EventTypes16 as e16,
+  EventTypes as e,
+} from '../eventHandlers/event-types';
 import sendBootNotification from '../eventHandlers/ocpp-16/send-boot-notification';
-import sendStatusNotificationActive from '../eventHandlers/ocpp-16/send-status-notification-active';
 import sendHeartbeat from '../eventHandlers/ocpp-16/send-heartbeat';
 import sendHeartbeatDelayed from '../eventHandlers/ocpp-16/send-heartbeat-delayed';
 import sendAuthorize from '../eventHandlers/ocpp-16/send-authorize';
@@ -15,23 +17,26 @@ import handleTransactionStoppedUI from '../eventHandlers/ocpp-16/handle-transact
 import sendStatusNotificationCharging from '../eventHandlers/ocpp-16/send-status-notification-charging';
 
 export default {
-  [e.StationConnected]: [sendBootNotification],
-  [e.BootNotificationAccepted]: [sendStatusNotificationActive, sendHeartbeat],
-  [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
+  [e16.StationConnected]: [sendBootNotification],
+  [e16.BootNotificationAccepted]: [
+    sendStatusNotificationAvailable,
+    sendHeartbeat,
+  ],
+  [e16.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
-  [e.AuthorizationFailed]: [handleTokenRejection],
-  [e.AuthorizationAccepted]: [sendStartTransaction],
-  [e.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
-  [e.StartTransactionAccepted]: [
+  [e16.AuthorizationFailed]: [handleTokenRejection],
+  [e16.AuthorizationAccepted]: [sendStartTransaction],
+  [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
+  [e16.StartTransactionAccepted]: [
     sendStatusNotificationPreparing,
     handleStartCharging,
     handleTransactionStartedUI,
   ],
-  [e.StopTransactionAccepted]: [
+  [e16.StopTransactionAccepted]: [
     sendStatusNotificationAvailable,
     handleTransactionStoppedUI,
   ],
-  [e.Charging]: [sendStatusNotificationCharging],
-  [e.SessionCancelled]: [sendStatusNotificationAvailable],
+  [e16.Charging]: [sendStatusNotificationCharging],
+  [e16.SessionCancelled]: [sendStatusNotificationAvailable],
 };
