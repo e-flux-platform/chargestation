@@ -50,6 +50,9 @@ export default class Home extends React.Component {
         this.setState({ session2OnceStarted: true });
       }
     };
+    chargeStation.onSessionStop = () => {
+      this.nextTick();
+    };
     chargeStation.connect();
     this.setState({ chargeStation });
     this.tickInterval = setInterval(() => this.nextTick(), 4000);
@@ -184,9 +187,7 @@ export default class Home extends React.Component {
               availableConnectors={chargeStation.availableConnectors()}
               session={session}
               onSave={async ({ connectorId }) => {
-                await chargeStation.stopSession(connectorId, () => {
-                  this.nextTick();
-                });
+                await chargeStation.stopSession(connectorId);
                 this.nextTick();
               }}
               trigger={

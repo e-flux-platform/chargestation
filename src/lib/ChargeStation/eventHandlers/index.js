@@ -15,8 +15,15 @@ const defaultHandlerConfig = {
   sessionAuthorizationFailed: [handleTokenRejection],
   sessionAuthorizationAccepted: [sendStartTransaction],
   sessionAuthorizationFailedDuringStartTransaction: [handleTokenRejection],
-  startTransactionAccepted: [sendStatusNotificationPreparing, startCharging],
-  stopTransactionAccepted: [sendStatusNotificationAvailable],
+  startTransactionAccepted: [
+    sendStatusNotificationPreparing,
+    startCharging,
+    handleUITransactionStarted,
+  ],
+  stopTransactionAccepted: [
+    sendStatusNotificationAvailable,
+    handleUITransactionStopped,
+  ],
   evCharging: [sendStatusNotificationCharging],
   sessionCancelled: [sendStatusNotificationAvailable],
   // sessionStopped: [],
@@ -128,7 +135,6 @@ async function sendAuthorize(chargepoint, emitter, session) {
 
 async function sendStopTransaction(chargepoint, emitter, session) {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
-  // statusFn && statusFn();
 
   clearInterval(session.tickInterval);
   await sleep(1000);
@@ -159,6 +165,8 @@ async function sendStopTransaction(chargepoint, emitter, session) {
   });
 
   delete chargepoint.sessions[session.connectorId];
+
+  chargepoint.onSessionStart && chargepoint.onSessionStart(session.connectorId);
 
   emitter.emitEvent('stopTransactionAccepted', session);
 }
@@ -211,8 +219,6 @@ async function sendStartTransaction(chargepoint, emitter, session) {
   session.transactionId = startTransactionResponse.transactionId;
   chargepoint.sessions[session.connectorId].isStartingSession = false;
 
-  // this.onSessionStart && this.onSessionStart(connectorId);
-
   emitter.emitEvent('startTransactionAccepted', session);
 }
 
@@ -242,4 +248,12 @@ async function sendStatusNotificationCharging(chargepoint, emitter, session) {
     status: 'Charging',
     info: 'Charging',
   });
+}
+
+async function handleUITransactionStopped(chargepoint, emitter, session) {
+  chargepoint.onSessionStart && chargepoint.onSessionStart(session.connectorId);
+}
+
+async function handleUITransactionStarted(chargepoint, emitter, session) {
+  chargepoint.onSessionStop && chargepoint.onSessionStop(session.connectorId);
 }

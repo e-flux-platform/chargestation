@@ -94,7 +94,7 @@ export default class ChargeStation {
     );
     await this.sessions[connectorId].start();
   }
-  async stopSession(connectorId, statusFn) {
+  async stopSession(connectorId) {
     if (!this.sessions[connectorId]) {
       return;
     }
