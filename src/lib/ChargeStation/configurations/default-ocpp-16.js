@@ -16,6 +16,8 @@ import sendStatusNotificationAvailable from '../eventHandlers/ocpp-16/send-statu
 import handleTransactionStoppedUI from '../eventHandlers/ocpp-16/handle-transaction-stopped-ui';
 import sendStatusNotificationCharging from '../eventHandlers/ocpp-16/send-status-notification-charging';
 
+// This is the default configuration for OCPP 1.6
+// Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
 export default {
   [e16.StationConnected]: [sendBootNotification],
   [e16.BootNotificationAccepted]: [

@@ -3,7 +3,7 @@ import DefaultOCPP16 from '../configurations/default-ocpp-16';
 import { getOCPPConfiguration } from '../configurations';
 
 export function createEventEmitter(chargepoint, ocppConfiguration) {
-  const emitter = new ChargepointEventEmitter(chargepoint);
+  const emitter = new ChargeStationEventEmitter(chargepoint);
   const handlerConfig =
     getOCPPConfiguration(ocppConfiguration) || DefaultOCPP16;
 
@@ -11,7 +11,7 @@ export function createEventEmitter(chargepoint, ocppConfiguration) {
   return emitter;
 }
 
-export class ChargepointEventEmitter extends EventEmitter {
+export class ChargeStationEventEmitter extends EventEmitter {
   constructor(chargepoint) {
     super();
     this.chargepoint = chargepoint;

@@ -6,6 +6,7 @@ export const settingsList = [
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
   },
   // TODO: Make dropdown
+  // Eventually a configuration should be selected automatically based on the Chargepoint model
   {
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
