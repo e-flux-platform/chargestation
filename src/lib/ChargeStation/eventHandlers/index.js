@@ -1,9 +1,13 @@
 import { EventEmitter } from 'events';
-import ocpp16BaseConfig from '../configurations/base-16';
+import DefaultOCPP16 from '../configurations/default-ocpp-16';
+import { getOCPPConfiguration } from '../configurations';
 
-export function createEventEmitter(chargepoint) {
+export function createEventEmitter(chargepoint, ocppConfiguration) {
   const emitter = new ChargepointEventEmitter(chargepoint);
-  emitter.registerHandlers(ocpp16BaseConfig);
+  const handlerConfig =
+    getOCPPConfiguration(ocppConfiguration) || DefaultOCPP16;
+
+  emitter.registerHandlers(handlerConfig);
   return emitter;
 }
 
