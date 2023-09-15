@@ -1,12 +1,14 @@
 import { extractOcppBaseUrlFromConfiguration } from './utils';
 import { Connection } from '../protocols/ocpp-1.6';
 import { sleep } from 'utils/csv';
+import { createEventEmitter } from './eventHandlers';
 
 export default class ChargeStation {
   constructor(configuration, options = {}) {
     this.configuration = configuration;
     this.options = options;
     this.sessions = {};
+    this.emitter = createEventEmitter(this);
     this.numConnectionAttempts = 0;
     this.currentStatus = {
       '1': 'Available',
@@ -26,12 +28,10 @@ export default class ChargeStation {
     this.connection.onConnected = () => {
       this.connected = true;
       this.log('message-response', '< Connected!');
-      this.startHeartbeat();
-      setTimeout(() => {
-        this.sendBootNotification();
-      }, 2000);
+      this.emitter.emitEvent('stationConnected');
     };
     this.connection.onError = (error) => {
+      this.connection = false;
       this.log('error', error.message);
       this.disconnect();
       this.reconnect();
@@ -75,53 +75,30 @@ export default class ChargeStation {
     }, numSeconds * 1000);
   }
   async startSession(connectorId, session) {
-    try {
-      if (!this.connected) {
-        throw new Error('Not connected to OCPP server, cannot start session');
-      }
-      this.sessions[connectorId] = new Session(connectorId, {
+    if (!this.connected) {
+      throw new Error('Not connected to OCPP server, cannot start session');
+    }
+
+    this.sessions[connectorId] = new Session(
+      connectorId,
+      {
         ...session,
         sendCommand: this.sendCommand.bind(this),
         meterValuesInterval: parseInt(
           this.configuration['MeterValueSampleInterval'] || '60',
           10
         ),
-        getCurrentStatus: () => this.currentStatus[connectorId],
-      });
-      this.sessions[connectorId].isStartingSession = true;
-      await this.sessions[connectorId].start();
-      this.sessions[connectorId].isStartingSession = false;
-      this.onSessionStart && this.onSessionStart(connectorId);
-    } catch (error) {
-      this.sessions[connectorId].isStartingSession = false;
-      await this.stopSession(connectorId);
-      this.error(error);
-    }
+				getCurrentStatus: () => this.currentStatus[connectorId],
+      },
+      this.emitter
+    );
+    await this.sessions[connectorId].start();
   }
-
-  async sendStatusNotification(connectorId, status) {
+  async stopSession(connectorId, statusFn) {
     if (!this.sessions[connectorId]) {
       return;
     }
-    await this.sendCommand('StatusNotification', {
-      connectorId,
-      timestamp: new Date().toISOString(),
-      errorCode: 'NoError',
-      status: status,
-    });
-  }
-
-  async stopSession(connectorId, statusFn) {
-    try {
-      if (this.sessions[connectorId]) {
-        this.sessions[connectorId].isStoppingSession = true;
-        statusFn && statusFn();
-        await this.sessions[connectorId].stop();
-      }
-      delete this.sessions[connectorId];
-    } catch (error) {
-      this.error(error);
-    }
+    await this.sessions[connectorId].stop();
   }
   hasRunningSession(connectorId) {
     return !!this.sessions[connectorId];
@@ -146,41 +123,6 @@ export default class ChargeStation {
   log(type, message, command = undefined) {
     const id = `${Date.now()}-${Math.random()}}`;
     this.onLog && this.onLog({ id, type, message, command });
-  }
-
-  startHeartbeat() {
-    this.sendCommand('Heartbeat', {});
-    this.heartbeatInterval = setInterval(() => {
-      this.sendCommand('Heartbeat', {});
-    }, parseInt(this.configuration['HeartbeatInterval'] || '30', 10) * 1000);
-  }
-
-  stopHeartbeat() {
-    clearInterval(this.heartbeatInterval);
-  }
-
-  async sendBootNotification() {
-    await this.sendCommand('BootNotification', {
-      chargePointVendor: this.options.chargePointVendor,
-      chargePointModel: this.options.chargePointModel,
-      chargePointSerialNumber: this.options.chargePointSerialNumber,
-      chargeBoxSerialNumber: this.configuration.Identity,
-      firmwareVersion: 'v1-000',
-      iccid: this.options.iccid,
-      imsi: this.options.imsi,
-    });
-    await sleep(200);
-    await this.sendCommand('StatusNotification', {
-      connectorId: 1,
-      errorCode: 'NoError',
-      status: 'Available',
-    });
-    await sleep(200);
-    await this.sendCommand('StatusNotification', {
-      connectorId: 2,
-      errorCode: 'NoError',
-      status: 'Available',
-    });
   }
 
   async sendCommand(method, params) {
@@ -272,7 +214,7 @@ DC Rapid Charger	50kW	300km	1 hour (to 80%)
 DC Ultra Rapid Charger	175kW	1000km	15 minutes (to 80%)
 */
 class Session {
-  constructor(connectorId, options = {}) {
+  constructor(connectorId, options = {}, emitter) {
     this.connectorId = parseInt(connectorId, 10);
     this.options = options;
     this.meterValuesInterval = options.meterValuesInterval || 60;
@@ -282,99 +224,20 @@ class Session {
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
+    this.emitter = emitter;
   }
   now() {
     return new Date();
   }
   async start() {
-    await sleep(1000);
-    const authorizeResponse = await this.options.sendCommand('Authorize', {
-      idTag: this.options.uid,
-    });
-    if (authorizeResponse.idTagInfo.status === 'Invalid') {
-      throw new Error(
-        `OCPP Server rejected our Token UID during Authorize: ${this.options.uid}`
-      );
-    }
-    await sleep(1000);
-    const startTransactionResponse = await this.options.sendCommand(
-      'StartTransaction',
-      {
-        connectorId: this.connectorId,
-        idTag: this.options.uid,
-        meterStart: Math.round(this.kwhElapsed * 1000),
-        timestamp: this.now().toISOString(),
-        reservationId: undefined,
-      }
-    );
-    await sleep(1000);
-    if (startTransactionResponse.idTagInfo.status === 'Invalid') {
-      throw new Error(
-        `OCPP Server rejected our Token UID during StartTransaction: ${this.options.uid}`
-      );
-    }
-
-    if (startTransactionResponse.idTagInfo.status === 'ConcurrentTx') {
-      throw new Error(
-        `OCPP Server did not start transaction due to ConcurrentTx: ${this.options.uid}`
-      );
-    }
-
-    this.transactionId = startTransactionResponse.transactionId;
-
-    await this.options.sendCommand('StatusNotification', {
-      connectorId: this.connectorId,
-      errorCode: 'NoError',
-      status: 'Preparing',
-    });
-    this.tickInterval = setInterval(() => {
-      this.tick(5);
-    }, 5000);
-    await sleep(500);
-    this.tick(0);
+    this.emitter.emitEvent('sessionStartedAttempt', this);
   }
   async stop() {
-    clearInterval(this.tickInterval);
-    await sleep(1000);
-    await this.options.sendCommand('StopTransaction', {
-      connectorId: this.connectorId,
-      idTag: this.options.uid,
-      meterStop: Math.round(this.kwhElapsed * 1000),
-      timestamp: this.now().toISOString(),
-      disconnectReason: 'EVDisconnected',
-      transactionId: this.transactionId,
-      transactionData: [
-        {
-          sampledValue: [
-            {
-              value: this.kwhElapsed.toString(),
-              context: 'Sample.Periodic',
-              format: 'Raw',
-              measurand: 'Energy.Active.Import.Register',
-              location: 'Outlet',
-              unit: 'kWh',
-            },
-          ],
-          timestamp: new Date().toISOString(),
-        },
-      ],
-    });
-    await sleep(1000);
-    await this.options.sendCommand('StatusNotification', {
-      connectorId: this.connectorId,
-      errorCode: 'NoError',
-      status: 'Available',
-    });
+    this.emitter.emitEvent('sessionStoppedAttempt', this);
   }
   async tick(secondsElapsed) {
     this.secondsElapsed += secondsElapsed;
     if (secondsElapsed === 0) {
-      await this.options.sendCommand('StatusNotification', {
-        connectorId: this.connectorId,
-        errorCode: 'NoError',
-        status: 'Charging',
-        info: 'Charging',
-      });
       return;
     }
     const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
@@ -404,6 +267,7 @@ class Session {
     }
     await sleep(100);
     this.lastMeterValuesTimestamp = this.now();
+
     await this.options.sendCommand('MeterValues', {
       connectorId: this.connectorId,
       transactionId: this.transactionId,
