@@ -1,5 +1,6 @@
 // Define custom handlers for each event and put them in the handlerConfig
 import { EventTypes16 } from '../event-types';
+import { sleep } from '../../../../utils/csv';
 
 export default async function sendAuthorize(chargepoint, emitter, session) {
   await sleep(1000);
