@@ -1,5 +1,5 @@
 import { sleep } from '../../../../utils/csv';
-import { EventTypes16 } from '../event-types';
+import { EventTypes } from '../event-types';
 
 export default async function handleStartCharging(
   chargepoint,
@@ -13,5 +13,5 @@ export default async function handleStartCharging(
   await sleep(500);
   session.tick(0);
 
-  emitter.emitEvent(EventTypes16.Charging, session);
+  emitter.emitEvent(EventTypes.Charging, session);
 }

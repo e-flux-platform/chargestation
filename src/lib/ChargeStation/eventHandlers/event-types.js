@@ -1,6 +1,8 @@
 export const EventTypes = {
   SessionStartInitiated: 'sessionInitiated',
   SessionStopInitiated: 'sessionStopInitiated',
+  Charging: 'charging',
+  SessionCancelled: 'sessionCancelled',
 };
 
 export const EventTypes16 = {
@@ -17,6 +19,4 @@ export const EventTypes16 = {
     'authorizationFailedDuringStopTransaction',
   StartTransactionAccepted: 'startTransactionAccepted',
   StopTransactionAccepted: 'stopTransactionAccepted',
-  Charging: 'charging',
-  SessionCancelled: 'sessionCancelled',
 };

@@ -1,5 +1,5 @@
 import { sleep } from '../../../../utils/csv';
-import { EventTypes16 } from '../event-types';
+import { EventTypes } from '../event-types';
 
 export default async function handleTokenRejection(
   chargepoint,
@@ -16,5 +16,5 @@ export default async function handleTokenRejection(
   await sleep(1000);
 
   delete chargepoint.sessions[connectorId];
-  emitter.emitEvent(EventTypes16.SessionCancelled, session);
+  emitter.emitEvent(EventTypes.SessionCancelled, session);
 }

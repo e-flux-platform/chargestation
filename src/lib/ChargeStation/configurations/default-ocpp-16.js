@@ -39,6 +39,6 @@ export default {
     sendStatusNotificationAvailable,
     handleTransactionStoppedUI,
   ],
-  [e16.Charging]: [sendStatusNotificationCharging],
-  [e16.SessionCancelled]: [sendStatusNotificationAvailable],
+  [e.Charging]: [sendStatusNotificationCharging],
+  [e.SessionCancelled]: [sendStatusNotificationAvailable],
 };
