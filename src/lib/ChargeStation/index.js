@@ -8,6 +8,7 @@ export default class ChargeStation {
   constructor(configuration, options = {}) {
     this.configuration = configuration;
     this.options = options;
+    this.callLog = {};
     this.sessions = {};
     this.emitter = createEventEmitter(this);
     this.numConnectionAttempts = 0;
@@ -37,23 +38,37 @@ export default class ChargeStation {
       this.disconnect();
       this.reconnect();
     };
-    this.connection.onCommand = (method, params) => {
-      let response = {};
-      if (this['receive' + method]) {
-        response = this['receive' + method](params);
-      } else {
-        console.warn(
-          `Received command from Central Server, but no implementation is known: ${method}`
-        );
-      }
-      this.log('command', `received ${method} command`, {
+    this.connection.onReceiveCall = (
+      method,
+      callMessageBody,
+      callMessageId
+    ) => {
+      this.emitter.emitEvent(`${method}Received`, {
+        callMessageBody,
+        callMessageId,
+      });
+
+      this.callLog[callMessageId] = {
         destination: 'charge-point',
         requestReceivedAt: new Date(),
-        request: { method, params },
-        response,
-        responseSentAt: new Date(),
+        request: { method, params: callMessageBody },
+      };
+    };
+    this.connection.onReceiveCallResult = (callMessageId, callMessageBody) => {
+      const call = this.callLog[callMessageId];
+      if (!call) {
+        console.warn(
+          `Received call result for unknown command with id ${callMessageId}`
+        );
+        return;
+      }
+      this.log('command', `received ${call.request.method} command`, {
+        destination: 'central-server',
+        requestSentAt: call.requestSentAt,
+        request: call.request,
+        response: callMessageBody,
+        responseReceivedAt: new Date(),
       });
-      return response;
     };
     this.connection.connect();
     this.numConnectionAttempts++;
@@ -115,8 +130,6 @@ export default class ChargeStation {
     );
   }
 
-  // Private
-
   error(error) {
     this.onError && this.onError(error);
   }
@@ -126,78 +139,33 @@ export default class ChargeStation {
     this.onLog && this.onLog({ id, type, message, command });
   }
 
-  async sendCommand(method, params) {
-    const requestSentAt = new Date();
-    const response = await this.connection.sendCommand(method, params);
-    this.log('command', `sent ${method} command`, {
+  async writeCallResult(callMessageId, messageBody) {
+    const call = this.callLog[callMessageId];
+    if (!call) {
+      console.warn(
+        `Received call result for unknown command with id ${callMessageId}`
+      );
+      return;
+    }
+
+    this.log('command', `sent ${call.request.method} command`, {
+      destination: 'charge-point',
+      requestReceivedAt: call.requestReceivedAt,
+      request: call.request,
+      response: messageBody,
+      responseSentAt: new Date(),
+    });
+
+    this.connection.writeCallResult(callMessageId, callMessageBody);
+  }
+
+  async writeCall(method, callMessageBody) {
+    const messageId = this.connection.writeCall(method, callMessageBody);
+
+    this.callLog[messageId] = {
       destination: 'central-server',
-      requestSentAt,
-      request: { method, params },
-      response,
-      responseReceivedAt: new Date(),
-    });
-    if (method === 'StatusNotification' && params.status && params.connectorId) {
-      this.currentStatus[params.connectorId] = params.status;
-    }
-    return response;
-  }
-
-  receiveGetConfiguration() {
-    return {
-      configurationKey: Object.keys(this.configuration).map((key) => {
-        return {
-          key,
-          value: this.configuration[key],
-          readOnly: false,
-        };
-      }),
-      unknownKey: [],
-    };
-  }
-
-  receiveChangeConfiguration({ key, value }) {
-    this.configuration[key] = value;
-    return {
-      status: 'Accepted',
-    };
-  }
-
-  receiveRemoteStartTransaction({ connectorId, idTag }) {
-    if (this.hasRunningSession(connectorId.toString())) {
-      return {
-        status: 'Rejected',
-      };
-    }
-    setTimeout(() => {
-      this.startSession(connectorId.toString(), {
-        uid: idTag,
-      });
-    }, 100);
-    return {
-      status: 'Accepted',
-    };
-  }
-
-  receiveRemoteStopTransaction({ transactionId }) {
-    let connectorId;
-    ['1', '2'].forEach((cId) => {
-      if (
-        this.sessions[cId] &&
-        this.sessions[cId].transactionId === transactionId
-      ) {
-        connectorId = cId.toString();
-      }
-    });
-    if (!connectorId || !this.hasRunningSession(connectorId)) {
-      return {
-        status: 'Rejected',
-      };
-    }
-    setTimeout(() => {
-      this.stopSession(connectorId);
-    }, 100);
-    return {
-      status: 'Accepted',
+      requestSentAt: new Date(),
+      request: { method, params: callMessageBody },
     };
   }
 }
@@ -258,7 +226,7 @@ class Session {
       return;
     }
     if (chargeLimitReached) {
-      await this.options.sendCommand('StatusNotification', {
+      await this.options.writeCall('StatusNotification', {
         connectorId: this.connectorId,
         errorCode: 'NoError',
         status: 'SuspendedEV',
@@ -269,7 +237,7 @@ class Session {
     await sleep(100);
     this.lastMeterValuesTimestamp = this.now();
 
-    await this.options.sendCommand('MeterValues', {
+    await this.options.writeCall('MeterValues', {
       connectorId: this.connectorId,
       transactionId: this.transactionId,
       meterValue: [

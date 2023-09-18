@@ -27,8 +27,13 @@ export class ChargeStationEventEmitter extends EventEmitter {
     }
   }
 
-  emitEvent(eventName, session) {
-    console.log(`Emitting event ${eventName}`);
-    this.emit(eventName, this.chargepoint, this, session);
+  emitEvent(eventName, { session, callMessageId, callMessageBody } = {}) {
+    this.emit(eventName, {
+      chargepoint: this.chargepoint,
+      emitter: this,
+      session,
+      callMessageId,
+      callMessageBody,
+    });
   }
 }

@@ -9,7 +9,7 @@ export default async function sendStartTransaction({
   chargepoint.sessions[session.connectorId].isStartingSession = true;
 
   await sleep(1000);
-  const startTransactionResponse = await session.options.sendCommand(
+  const startTransactionResponse = await session.options.writeCall(
     'StartTransaction',
     {
       connectorId: session.connectorId,

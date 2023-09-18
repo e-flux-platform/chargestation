@@ -7,7 +7,7 @@ export default async function sendStatusNotificationAvailable({
   await sleep(200);
 
   if (session?.connectorId) {
-    await chargepoint.sendCommand('StatusNotification', {
+    await chargepoint.writeCall('StatusNotification', {
       connectorId: session.connectorId,
       errorCode: 'NoError',
       status: 'Available',
@@ -16,7 +16,7 @@ export default async function sendStatusNotificationAvailable({
   }
 
   for (let i = 0; i < chargepoint.configuration.NumberOfConnectors; i++) {
-    await chargepoint.sendCommand('StatusNotification', {
+    await chargepoint.writeCall('StatusNotification', {
       connectorId: i + 1,
       errorCode: 'NoError',
       status: 'Available',

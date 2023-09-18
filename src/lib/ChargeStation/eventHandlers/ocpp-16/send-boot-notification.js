@@ -4,7 +4,7 @@ import { EventTypes16 } from '../event-types';
 export default async function sendBootNotification({ chargepoint, emitter }) {
   await sleep(2000);
 
-  await chargepoint.sendCommand('BootNotification', {
+  await chargepoint.writeCall('BootNotification', {
     chargePointVendor: chargepoint.options.chargePointVendor,
     chargePointModel: chargepoint.options.chargePointModel,
     chargePointSerialNumber: chargepoint.options.chargePointSerialNumber,

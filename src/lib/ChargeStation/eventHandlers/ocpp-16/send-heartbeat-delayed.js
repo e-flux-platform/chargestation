@@ -7,7 +7,7 @@ export default async function sendHeartbeatDelayed({ chargepoint, emitter }) {
 
   await sleep(interval);
   if (chargepoint.connected) {
-    await chargepoint.sendCommand('Heartbeat', {});
+    await chargepoint.writeCall('Heartbeat', {});
     emitter.emitEvent(EventTypes16.HeartbeatAccepted);
   }
 }

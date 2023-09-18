@@ -12,7 +12,7 @@ export default async function sendStopTransaction({
   await sleep(1000);
 
   // TODO: Listen for failures
-  await chargepoint.sendCommand('StopTransaction', {
+  await chargepoint.writeCall('StopTransaction', {
     connectorId: session.connectorId,
     idTag: session.options.uid,
     meterStop: Math.round(session.kwhElapsed * 1000),

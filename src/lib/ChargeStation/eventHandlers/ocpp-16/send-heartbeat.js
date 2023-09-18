@@ -3,6 +3,6 @@ import { EventTypes16 } from '../event-types';
 
 export default async function sendHeartbeat({ chargepoint, emitter }) {
   await sleep(1000);
-  await chargepoint.sendCommand('Heartbeat', {});
+  await chargepoint.writeCall('Heartbeat', {});
   emitter.emitEvent(EventTypes16.HeartbeatAccepted);
 }

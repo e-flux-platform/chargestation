@@ -19,14 +19,9 @@ class Connection {
     this.ws.addEventListener('message', (event) => {
       const data = JSON.parse(event.data);
       if (data[0] === 3) {
-        const command = this.commandCallbacks[data[1].toString()];
-        if (command.callback) {
-          command.callback(null, data[2]);
-        }
+        this.onReceiveCallResult(data[1], data[2]);
       } else if (data[0] === 2) {
-        const result = this.onCommand(data[2], data[3]);
-        const message = [3, data[1], result];
-        this.ws.send(JSON.stringify(message));
+        this.onReceiveCall(data[2], data[3], data[1]);
       } else if (data[0] === 4) {
         const command = this.commandCallbacks[data[1].toString()];
         if (command) {
@@ -59,30 +54,51 @@ class Connection {
     this.ws.close();
   }
 
-  sendCommand(method, params) {
-    return new Promise((resolve, reject) => {
-      const messageId = this.messageId++;
-      const message = [2, messageId.toString(), method, params];
-      let responded = false;
-      let timeout = setTimeout(() => {
-        if (!responded) {
-          reject(new Error(`Command ${method} did not respond in 30 seconds`));
-        }
-      }, 30000);
-      this.commandCallbacks[messageId.toString()] = {
-        method,
-        callback: (error, response) => {
-          responded = true;
-          clearTimeout(timeout);
-          if (error) {
-            reject(error);
-          } else {
-            resolve(response);
-          }
-        },
-      };
-      this.ws.send(JSON.stringify(message));
-    });
+  generateMessageId() {
+    this.messageId++;
+    return this.messageId.toString();
+  }
+
+  writeCall(method, params) {
+    const messageId = this.generateMessageId();
+    const formattedMessage = [2, messageId, method, params];
+
+    this.ws.send(JSON.stringify(formattedMessage));
+
+    return messageId;
+
+    // let responded = false;
+    // let timeout = setTimeout(() => {
+    //   if (!responded) {
+    //     reject(new Error(`Command ${method} did not respond in 30 seconds`));
+    //   }
+    // }, 30000);
+    // this.commandCallbacks[messageId] = {
+    //   method,
+    //   callback: (error, response) => {
+    //     responded = true;
+    //     clearTimeout(timeout);
+    //     if (error) {
+    //       reject(error);
+    //     } else {
+    //       resolve(response);
+    //     }
+    //   },
+    // };
+    //
+    // this.ws.send(JSON.stringify(formattedMessage));
+  }
+
+  writeCallResult(messageId, params) {
+    const call = this.calls[messageId];
+
+    if (!call) {
+      throw new Error(`No call found for message id ${messageId}`);
+    }
+
+    const formattedMessage = [3, messageId, params];
+
+    this.ws.send(JSON.stringify(formattedMessage));
   }
 }
 

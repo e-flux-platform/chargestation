@@ -4,7 +4,7 @@ import { sleep } from '../../../../utils/csv';
 
 export default async function sendAuthorize({ emitter, session }) {
   await sleep(1000);
-  const authorizeResponse = await session.options.sendCommand('Authorize', {
+  const authorizeResponse = await session.options.writeCall('Authorize', {
     idTag: session.options.uid,
   });
   if (authorizeResponse.idTagInfo.status === 'Invalid') {
