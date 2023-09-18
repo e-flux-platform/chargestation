@@ -1,11 +1,11 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
 
-export default async function handleTokenRejection(
+export default async function handleTokenRejection({
   chargepoint,
   emitter,
-  session
-) {
+  session,
+}) {
   if (chargepoint.sessions[session.connectorId]) {
     return;
   }

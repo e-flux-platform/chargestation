@@ -1,7 +1,7 @@
-export default async function handleTransactionStartedUI(
+export default async function handleTransactionStartedUI({
   chargepoint,
   emitter,
-  session
-) {
+  session,
+}) {
   chargepoint.onSessionStop && chargepoint.onSessionStop(session.connectorId);
 }

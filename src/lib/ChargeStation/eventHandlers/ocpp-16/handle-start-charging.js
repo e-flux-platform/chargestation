@@ -1,11 +1,7 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
 
-export default async function handleStartCharging(
-  chargepoint,
-  emitter,
-  session
-) {
+export default async function handleStartCharging({ emitter, session }) {
   await sleep(1000);
   session.tickInterval = setInterval(() => {
     session.tick(5);
