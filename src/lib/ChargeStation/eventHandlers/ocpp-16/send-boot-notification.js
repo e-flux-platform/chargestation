@@ -1,7 +1,7 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes16 } from '../event-types';
 
-export default async function sendBootNotification(chargepoint, emitter) {
+export default async function sendBootNotification({ chargepoint, emitter }) {
   await sleep(2000);
 
   await chargepoint.sendCommand('BootNotification', {

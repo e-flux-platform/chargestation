@@ -1,9 +1,8 @@
-export default async function sendStatusNotificationCharging(
+export default async function sendStatusNotificationCharging({
   chargepoint,
-  emitter,
-  session
-) {
-  await chargepoint.sendCommand('StatusNotification', {
+  session,
+}) {
+  await chargepoint.writeCall('StatusNotification', {
     connectorId: session.connectorId,
     errorCode: 'NoError',
     status: 'Charging',

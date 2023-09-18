@@ -2,7 +2,7 @@
 import { EventTypes16 } from '../event-types';
 import { sleep } from '../../../../utils/csv';
 
-export default async function sendAuthorize(chargepoint, emitter, session) {
+export default async function sendAuthorize({ emitter, session }) {
   await sleep(1000);
   const authorizeResponse = await session.options.sendCommand('Authorize', {
     idTag: session.options.uid,

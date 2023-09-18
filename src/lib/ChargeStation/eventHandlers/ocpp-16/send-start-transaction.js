@@ -1,11 +1,11 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes16 } from '../event-types';
 
-export default async function sendStartTransaction(
+export default async function sendStartTransaction({
   chargepoint,
   emitter,
-  session
-) {
+  session,
+}) {
   chargepoint.sessions[session.connectorId].isStartingSession = true;
 
   await sleep(1000);

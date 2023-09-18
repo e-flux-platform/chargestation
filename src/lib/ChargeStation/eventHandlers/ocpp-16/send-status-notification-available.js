@@ -1,10 +1,9 @@
 import { sleep } from '../../../../utils/csv';
 
-export default async function sendStatusNotificationAvailable(
+export default async function sendStatusNotificationAvailable({
   chargepoint,
-  emitter,
-  session
-) {
+  session,
+}) {
   await sleep(200);
 
   if (session?.connectorId) {
