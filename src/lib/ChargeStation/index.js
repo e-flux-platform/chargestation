@@ -39,16 +39,16 @@ export default class ChargeStation {
       this.reconnect();
     };
     this.connection.onReceiveCall = (method, body, messageId) => {
-      this.emitter.emitEvent(`${method}Received`, {
-        callMessageBody: body,
-        callMessageId: messageId,
-      });
-
       this.callLog[messageId] = {
         destination: 'charge-point',
         requestReceivedAt: new Date(),
         request: { method, params: body },
       };
+
+      this.emitter.emitEvent(`${toCamelCase(method)}Received`, {
+        callMessageBody: body,
+        callMessageId: messageId,
+      });
     };
     this.connection.onReceiveCallResult = (messageId, body) => {
       const call = this.callLog[messageId];
@@ -147,9 +147,10 @@ export default class ChargeStation {
 
   writeCallResult(callMessageId, messageBody) {
     const call = this.callLog[callMessageId];
+
     if (!call) {
       console.warn(
-        `Received call result for unknown command with id ${callMessageId}`
+        `Received call result for unknown call with id ${callMessageId}`
       );
       return;
     }
