@@ -9,5 +9,5 @@ export default async function handleStartCharging({ emitter, session }) {
   await sleep(500);
   session.tick(0);
 
-  emitter.emitEvent(EventTypes.Charging, session);
+  emitter.emitEvent(EventTypes.Charging, { session });
 }

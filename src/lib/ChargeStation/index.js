@@ -44,10 +44,10 @@ export default class ChargeStation {
         callMessageId: messageId,
       });
 
-      this.callLog[callMessageId] = {
+      this.callLog[messageId] = {
         destination: 'charge-point',
         requestReceivedAt: new Date(),
-        request: { method, params: callMessageBody },
+        request: { method, params: body },
       };
     };
     this.connection.onReceiveCallResult = (messageId, body) => {
@@ -63,6 +63,7 @@ export default class ChargeStation {
         `${toCamelCase(call.request.method)}CallResultReceived`,
         {
           callResultMessageBody: body,
+          session: call.session,
         }
       );
 
@@ -103,7 +104,8 @@ export default class ChargeStation {
       connectorId,
       {
         ...session,
-        sendCommand: this.sendCommand.bind(this),
+        writeCall: this.writeCall.bind(this),
+        writeCallResult: this.writeCallResult.bind(this),
         meterValuesInterval: parseInt(
           this.configuration['MeterValueSampleInterval'] || '60',
           10
@@ -163,13 +165,16 @@ export default class ChargeStation {
     this.connection.writeCallResult(callMessageId, messageBody);
   }
 
-  writeCall(method, callMessageBody) {
+  writeCall(method, callMessageBody, session) {
     const messageId = this.connection.writeCall(method, callMessageBody);
 
     this.callLog[messageId] = {
       destination: 'central-server',
       requestSentAt: new Date(),
       request: { method, params: callMessageBody },
+      // Keep a reference to the session so that we can use it in the call result handler
+      // (it's not pretty...)
+      session,
     };
   }
 }
@@ -203,10 +208,10 @@ class Session {
     return new Date();
   }
   async start() {
-    this.emitter.emitEvent(EventTypes.SessionStartInitiated, this);
+    this.emitter.emitEvent(EventTypes.SessionStartInitiated, { session: this });
   }
   async stop() {
-    this.emitter.emitEvent(EventTypes.SessionStopInitiated, this);
+    this.emitter.emitEvent(EventTypes.SessionStopInitiated, { session: this });
   }
   async tick(secondsElapsed) {
     this.secondsElapsed += secondsElapsed;

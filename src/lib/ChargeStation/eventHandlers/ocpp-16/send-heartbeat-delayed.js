@@ -1,6 +1,6 @@
 import { sleep } from '../../../../utils/csv';
 
-export default async function sendHeartbeatDelayed({ chargepoint, emitter }) {
+export default async function sendHeartbeatDelayed({ chargepoint }) {
   const interval =
     parseInt(chargepoint.configuration['HeartbeatInterval'] || '30', 10) * 1000;
 

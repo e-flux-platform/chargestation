@@ -21,5 +21,5 @@ export default async function handleRemoteStartTransaction({
     status: 'Accepted',
   };
 
-  chargepoint.connection.writeCallResult(callMessageId, response);
+  chargepoint.writeCallResult(callMessageId, response);
 }

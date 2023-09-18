@@ -9,5 +9,5 @@ export default async function handleStopTransactionCallResultReceived({
 
   delete chargepoint.sessions[session.connectorId];
 
-  emitter.emitEvent(EventTypes16.StopTransactionAccepted, session);
+  emitter.emitEvent(EventTypes16.StopTransactionAccepted, { session });
 }

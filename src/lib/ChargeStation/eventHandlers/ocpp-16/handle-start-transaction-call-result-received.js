@@ -7,14 +7,13 @@ export default async function handleStartTransactionCallResultReceived({
   chargepoint,
 }) {
   if (callResultMessageBody.idTagInfo.status === 'Invalid') {
-    emitter.emitEvent(
-      EventTypes16.AuthorizationFailedDuringStartTransaction,
-      session
-    );
+    emitter.emitEvent(EventTypes16.AuthorizationFailedDuringStartTransaction, {
+      session,
+    });
     return;
   }
   session.transactionId = callResultMessageBody.transactionId;
   chargepoint.sessions[session.connectorId].isStartingSession = false;
 
-  emitter.emitEvent(EventTypes16.StartTransactionAccepted, session);
+  emitter.emitEvent(EventTypes16.StartTransactionAccepted, { session });
 }

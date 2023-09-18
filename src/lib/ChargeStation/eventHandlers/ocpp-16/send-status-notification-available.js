@@ -16,10 +16,14 @@ export default async function sendStatusNotificationAvailable({
   }
 
   for (let i = 0; i < chargepoint.configuration.NumberOfConnectors; i++) {
-    await chargepoint.writeCall('StatusNotification', {
-      connectorId: i + 1,
-      errorCode: 'NoError',
-      status: 'Available',
-    });
+    await chargepoint.writeCall(
+      'StatusNotification',
+      {
+        connectorId: i + 1,
+        errorCode: 'NoError',
+        status: 'Available',
+      },
+      session
+    );
   }
 }

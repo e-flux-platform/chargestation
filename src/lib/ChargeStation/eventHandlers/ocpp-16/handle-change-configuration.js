@@ -10,5 +10,5 @@ export default async function handleChangeConfiguration({
     status: 'Accepted',
   };
 
-  chargepoint.connection.writeCallResult(callMessageId, response);
+  chargepoint.writeCallResult(callMessageId, response);
 }
