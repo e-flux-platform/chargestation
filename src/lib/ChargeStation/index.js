@@ -1,4 +1,4 @@
-import { extractOcppBaseUrlFromConfiguration } from './utils';
+import { extractOcppBaseUrlFromConfiguration, toCamelCase } from './utils';
 import { Connection } from '../protocols/ocpp-1.6';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
@@ -38,14 +38,10 @@ export default class ChargeStation {
       this.disconnect();
       this.reconnect();
     };
-    this.connection.onReceiveCall = (
-      method,
-      callMessageBody,
-      callMessageId
-    ) => {
+    this.connection.onReceiveCall = (method, body, messageId) => {
       this.emitter.emitEvent(`${method}Received`, {
-        callMessageBody,
-        callMessageId,
+        callMessageBody: body,
+        callMessageId: messageId,
       });
 
       this.callLog[callMessageId] = {
@@ -54,19 +50,27 @@ export default class ChargeStation {
         request: { method, params: callMessageBody },
       };
     };
-    this.connection.onReceiveCallResult = (callMessageId, callMessageBody) => {
-      const call = this.callLog[callMessageId];
+    this.connection.onReceiveCallResult = (messageId, body) => {
+      const call = this.callLog[messageId];
       if (!call) {
         console.warn(
-          `Received call result for unknown command with id ${callMessageId}`
+          `Received call result for unknown command with id ${messageId}`
         );
         return;
       }
+
+      this.emitter.emitEvent(
+        `${toCamelCase(call.request.method)}CallResultReceived`,
+        {
+          callResultMessageBody: body,
+        }
+      );
+
       this.log('command', `received ${call.request.method} command`, {
         destination: 'central-server',
         requestSentAt: call.requestSentAt,
         request: call.request,
-        response: callMessageBody,
+        response: body,
         responseReceivedAt: new Date(),
       });
     };
@@ -139,7 +143,7 @@ export default class ChargeStation {
     this.onLog && this.onLog({ id, type, message, command });
   }
 
-  async writeCallResult(callMessageId, messageBody) {
+  writeCallResult(callMessageId, messageBody) {
     const call = this.callLog[callMessageId];
     if (!call) {
       console.warn(
@@ -156,10 +160,10 @@ export default class ChargeStation {
       responseSentAt: new Date(),
     });
 
-    this.connection.writeCallResult(callMessageId, callMessageBody);
+    this.connection.writeCallResult(callMessageId, messageBody);
   }
 
-  async writeCall(method, callMessageBody) {
+  writeCall(method, callMessageBody) {
     const messageId = this.connection.writeCall(method, callMessageBody);
 
     this.callLog[messageId] = {

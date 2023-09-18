@@ -19,25 +19,41 @@ import handleRemoteStartTransaction from '../eventHandlers/ocpp-16/handle-remote
 import handleRemoteStopTransaction from '../eventHandlers/ocpp-16/handle-remote-stop-transaction';
 import handleGetConfiguration from '../eventHandlers/ocpp-16/handle-get-configuration';
 import handleChangeConfiguration from '../eventHandlers/ocpp-16/handle-change-configuration';
+import handleAuthorizeCallResultReceived from '../eventHandlers/ocpp-16/handle-authorize-call-result-received';
+import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-16/handle-boot-notification-call-result-received';
+import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-16/handle-heartbeat-call-result-received';
+import handleStartTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-start-transaction-call-result-received';
+import handleStopTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-stop-transaction-call-result-received';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
 export default {
   [e16.StationConnected]: [sendBootNotification],
+  [e16.BootNotificationCallResultReceived]: [
+    handleBootNotificationCallResultReceived,
+  ],
   [e16.BootNotificationAccepted]: [
     sendStatusNotificationAvailable,
     sendHeartbeat,
   ],
+  [e16.HeartbeatCallResultReceived]: [handleHeartbeatCallResultReceived],
   [e16.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
+  [e16.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e16.AuthorizationFailed]: [handleTokenRejection],
   [e16.AuthorizationAccepted]: [sendStartTransaction],
   [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
+  [e16.StartTransactionCallResultReceived]: [
+    handleStartTransactionCallResultReceived,
+  ],
   [e16.StartTransactionAccepted]: [
     sendStatusNotificationPreparing,
     handleStartCharging,
     handleTransactionStartedUI,
+  ],
+  [e16.StopTransactionCallResultReceived]: [
+    handleStopTransactionCallResultReceived,
   ],
   [e16.StopTransactionAccepted]: [
     sendStatusNotificationAvailable,

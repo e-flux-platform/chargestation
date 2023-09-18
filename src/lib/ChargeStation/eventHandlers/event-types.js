@@ -10,7 +10,6 @@ export const EventTypes16 = {
   StationConnected: 'stationConnected',
   BootNotificationAccepted: 'bootNotificationAccepted',
   HeartbeatAccepted: 'heartbeatAccepted',
-
   AuthorizationFailed: 'authorizationFailed',
   AuthorizationAccepted: 'authorizationAccepted',
   AuthorizationFailedDuringStartTransaction:
@@ -23,4 +22,9 @@ export const EventTypes16 = {
   ChangeConfigurationReceived: 'changeConfigurationReceived',
   RemoteStartTransactionReceived: 'remoteStartTransactionReceived',
   RemoteStopTransactionReceived: 'remoteStopTransactionReceived',
+  BootNotificationCallResultReceived: 'bootNotificationCallResultReceived',
+  HeartbeatCallResultReceived: 'heartbeatCallResultReceived',
+  AuthorizeCallResultReceived: 'authorizeCallResultReceived',
+  StartTransactionCallResultReceived: 'startTransactionCallResultReceived',
+  StopTransactionCallResultReceived: 'stopTransactionCallResultReceived',
 };

@@ -11,7 +11,6 @@ export default async function sendStopTransaction({
   clearInterval(session.tickInterval);
   await sleep(1000);
 
-  // TODO: Listen for failures
   await chargepoint.writeCall('StopTransaction', {
     connectorId: session.connectorId,
     idTag: session.options.uid,
@@ -35,8 +34,4 @@ export default async function sendStopTransaction({
       },
     ],
   });
-
-  delete chargepoint.sessions[session.connectorId];
-
-  emitter.emitEvent(EventTypes16.StopTransactionAccepted, session);
 }

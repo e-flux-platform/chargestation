@@ -1,8 +1,6 @@
 import { sleep } from '../../../../utils/csv';
-import { EventTypes16 } from '../event-types';
 
-export default async function sendHeartbeat({ chargepoint, emitter }) {
+export default async function sendHeartbeat({ chargepoint }) {
   await sleep(1000);
   await chargepoint.writeCall('Heartbeat', {});
-  emitter.emitEvent(EventTypes16.HeartbeatAccepted);
 }

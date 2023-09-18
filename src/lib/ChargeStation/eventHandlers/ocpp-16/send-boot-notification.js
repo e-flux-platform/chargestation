@@ -4,7 +4,7 @@ import { EventTypes16 } from '../event-types';
 export default async function sendBootNotification({ chargepoint, emitter }) {
   await sleep(2000);
 
-  await chargepoint.writeCall('BootNotification', {
+  chargepoint.writeCall('BootNotification', {
     chargePointVendor: chargepoint.options.chargePointVendor,
     chargePointModel: chargepoint.options.chargePointModel,
     chargePointSerialNumber: chargepoint.options.chargePointSerialNumber,
@@ -13,6 +13,4 @@ export default async function sendBootNotification({ chargepoint, emitter }) {
     iccid: chargepoint.options.iccid,
     imsi: chargepoint.options.imsi,
   });
-
-  emitter.emitEvent(EventTypes16.BootNotificationAccepted);
 }
