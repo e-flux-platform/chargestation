@@ -15,6 +15,10 @@ import handleTransactionStartedUI from '../eventHandlers/ocpp-16/handle-transact
 import sendStatusNotificationAvailable from '../eventHandlers/ocpp-16/send-status-notification-available';
 import handleTransactionStoppedUI from '../eventHandlers/ocpp-16/handle-transaction-stopped-ui';
 import sendStatusNotificationCharging from '../eventHandlers/ocpp-16/send-status-notification-charging';
+import handleRemoteStartTransaction from '../eventHandlers/ocpp-16/handle-remote-start-transaction';
+import handleRemoteStopTransaction from '../eventHandlers/ocpp-16/handle-remote-stop-transaction';
+import handleGetConfiguration from '../eventHandlers/ocpp-16/handle-get-configuration';
+import handleChangeConfiguration from '../eventHandlers/ocpp-16/handle-change-configuration';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -41,4 +45,8 @@ export default {
   ],
   [e.Charging]: [sendStatusNotificationCharging],
   [e.SessionCancelled]: [sendStatusNotificationAvailable],
+  [e16.RemoteStartTransactionReceived]: [handleRemoteStartTransaction],
+  [e16.RemoteStopTransactionReceived]: [handleRemoteStopTransaction],
+  [e16.GetConfigurationReceived]: [handleGetConfiguration],
+  [e16.ChangeConfigurationReceived]: [handleChangeConfiguration],
 };
