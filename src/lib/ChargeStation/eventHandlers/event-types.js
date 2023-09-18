@@ -19,4 +19,8 @@ export const EventTypes16 = {
     'authorizationFailedDuringStopTransaction',
   StartTransactionAccepted: 'startTransactionAccepted',
   StopTransactionAccepted: 'stopTransactionAccepted',
+  GetConfigurationReceived: 'getConfigurationReceived',
+  ChangeConfigurationReceived: 'changeConfigurationReceived',
+  RemoteStartTransactionReceived: 'remoteStartTransactionReceived',
+  RemoteStopTransactionReceived: 'remoteStopTransactionReceived',
 };
