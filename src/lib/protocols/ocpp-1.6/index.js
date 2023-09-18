@@ -62,42 +62,12 @@ class Connection {
   writeCall(method, params) {
     const messageId = this.generateMessageId();
     const formattedMessage = [2, messageId, method, params];
-
     this.ws.send(JSON.stringify(formattedMessage));
-
     return messageId;
-
-    // let responded = false;
-    // let timeout = setTimeout(() => {
-    //   if (!responded) {
-    //     reject(new Error(`Command ${method} did not respond in 30 seconds`));
-    //   }
-    // }, 30000);
-    // this.commandCallbacks[messageId] = {
-    //   method,
-    //   callback: (error, response) => {
-    //     responded = true;
-    //     clearTimeout(timeout);
-    //     if (error) {
-    //       reject(error);
-    //     } else {
-    //       resolve(response);
-    //     }
-    //   },
-    // };
-    //
-    // this.ws.send(JSON.stringify(formattedMessage));
   }
 
   writeCallResult(messageId, params) {
-    const call = this.calls[messageId];
-
-    if (!call) {
-      throw new Error(`No call found for message id ${messageId}`);
-    }
-
     const formattedMessage = [3, messageId, params];
-
     this.ws.send(JSON.stringify(formattedMessage));
   }
 }

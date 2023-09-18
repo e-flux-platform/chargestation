@@ -12,6 +12,5 @@ export default async function handleGetConfiguration({
     }),
     unknownKey: [],
   };
-
   chargepoint.writeCallResult(callMessageId, response);
 }
