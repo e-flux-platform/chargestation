@@ -339,7 +339,7 @@ class Session {
         {
           sampledValue: [
             {
-              value: this.charge.kwhElapsed.toFixed(5),
+              value: parseFloat(this.charge.kwhElapsed.toFixed(5)),
               context: 'Transaction.Begin',
               measurand: 'Energy.Active.Import.Register',
               location: 'Outlet',
@@ -402,7 +402,7 @@ class Session {
           {
             sampledValue: [
               {
-                value: this.charge.kwhElapsed.toFixed(5),
+                value: parseFloat(this.charge.kwhElapsed.toFixed(5)),
                 context: 'Transaction.Begin',
                 measurand: 'Energy.Active.Import.Register',
                 location: 'Outlet',
@@ -482,7 +482,7 @@ class Session {
         {
           sampledValue: [
             {
-              value: this.charge.kwhElapsed.toFixed(5),
+              value: parseFloat(this.charge.kwhElapsed.toFixed(5)),
               context: 'Sample.Periodic',
               measurand: 'Energy.Active.Import.Register',
               location: 'Outlet',
