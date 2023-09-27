@@ -327,6 +327,10 @@ class Session {
       triggerReason: 'Authorized',
       timestamp: this.now().toISOString(),
       seqNo: this.sequenceNumber++,
+      evse: {
+        id: 1,
+        connectorId: parseInt(this.connectorId),
+      },
       transactionInfo: {
         transactionId: this.transactionId,
         chargingState: 'EVConnected',
