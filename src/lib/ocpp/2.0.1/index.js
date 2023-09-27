@@ -326,7 +326,7 @@ class Session {
       eventType: 'Started',
       triggerReason: 'Authorized',
       timestamp: this.now().toISOString(),
-      sequenceNumber: this.sequenceNumber++,
+      seqNo: this.sequenceNumber++,
       transactionInfo: {
         transactionId: this.transactionId,
         chargingState: 'EVConnected',
@@ -389,7 +389,7 @@ class Session {
         eventType: 'Ended',
         triggerReason: 'EVCommunicationLost',
         timestamp: this.now().toISOString(),
-        sequenceNumber: this.sequenceNumber++,
+        seqNo: this.sequenceNumber++,
         transactionInfo: {
           transactionId: this.transactionId,
           stoppedReason: 'EVDisconnected',
@@ -433,7 +433,7 @@ class Session {
           eventType: 'update',
           triggerReason: 'ChargingStateChanged',
           timestamp: this.now().toISOString(),
-          sequenceNumber: this.sequenceNumber++,
+          seqNo: this.sequenceNumber++,
           transactionInfo: {
             transactionId: this.transactionId,
             chargingState: 'Charging',
@@ -460,7 +460,7 @@ class Session {
         eventType: 'Updated',
         triggerReason: 'ChargingStateChanged',
         timestamp: this.now().toISOString(),
-        sequenceNumber: this.sequenceNumber++,
+        seqNo: this.sequenceNumber++,
         transactionInfo: {
           transactionId: this.transactionId,
           chargingState: 'SuspendedEV',
@@ -473,7 +473,7 @@ class Session {
       eventType: 'Updated',
       triggerReason: 'MeterValuePeriodic',
       timestamp: this.now().toISOString(),
-      sequenceNumber: this.sequenceNumber++,
+      seqNo: this.sequenceNumber++,
       transactionInfo: {
         transactionId: this.transactionId,
         chargingState: this.charge.chargeLimitReached ? 'SuspendedEV' : 'Charging',
