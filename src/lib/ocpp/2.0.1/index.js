@@ -294,9 +294,9 @@ export default class ChargingStation {
 
 class Session {
   constructor(connectorId, evseId, options = {}) {
-    this.connectorId = connectorId;
+    this.connectorId = parseInt(connectorId);
     this.transactionId = Math.random().toString(16).slice(2);
-    this.evseId = evseId;
+    this.evseId = parseInt(evseId);
     this.sequenceNumber = 0;
     this.options = options;
     this.meterValuesInterval = options.meterValuesInterval || 60;
@@ -328,8 +328,8 @@ class Session {
       timestamp: this.now().toISOString(),
       seqNo: this.sequenceNumber++,
       evse: {
-        id: 1,
-        connectorId: parseInt(this.connectorId),
+        id: this.evseId,
+        connectorId: this.connectorId,
       },
       transactionInfo: {
         transactionId: this.transactionId,
@@ -434,7 +434,7 @@ class Session {
       await this.options.sendCommand(
         'TransactionEvent',
         {
-          eventType: 'update',
+          eventType: 'Updated',
           triggerReason: 'ChargingStateChanged',
           timestamp: this.now().toISOString(),
           seqNo: this.sequenceNumber++,
@@ -456,7 +456,7 @@ class Session {
     }
 
     const chargeLimitWasReached = this.charge.chargeLimitReached;
-    this.charge.progress(this.options.getCurrentStatus() === 'Charging', secondsElapsed);
+    this.charge.progress(this.options.getCurrentStatus() === 'Occupied', secondsElapsed);
 
     if (!chargeLimitWasReached && this.charge.chargeLimitReached) {
       // We've just reached the charge limit, so let's send a ChargingStateChanged type event

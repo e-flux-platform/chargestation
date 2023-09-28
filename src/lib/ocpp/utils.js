@@ -23,6 +23,8 @@ export function summarizeCommandParams(protocol, { method, params }) {
         return { connectorId: params.connectorId, connectorStatus: params.connectorStatus };
       case 'NotifyReport':
         return { requestId: params.requestId, seqNo: params.seqNo, tbc: params.tbc ? 'true' : 'false' };
+      case 'TransactionEvent':
+        return { eventType: params.eventType, triggerReason: params.triggerReason };
       default:
         return null;
     }
