@@ -244,9 +244,7 @@ export default class ChargingStation {
     };
   }
 
-  async receiveGetBaseReport({ chargingProfileId, chargingProfileCriteria }) {
-    await this.sendCommand('ClearChargingStation', {});
-
+  async receiveClearChargingProfile({ chargingProfileId, chargingProfileCriteria }) {
     return {};
   }
 
