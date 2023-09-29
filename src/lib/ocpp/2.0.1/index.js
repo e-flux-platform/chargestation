@@ -244,6 +244,12 @@ export default class ChargingStation {
     };
   }
 
+  async receiveGetBaseReport({ chargingProfileId, chargingProfileCriteria }) {
+    await this.sendCommand('ClearChargingStation', {});
+
+    return {};
+  }
+
   async sendBootNotification() {
     await this.sendCommand('BootNotification', {
       reason: 'PowerUp',

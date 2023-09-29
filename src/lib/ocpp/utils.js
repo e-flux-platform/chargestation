@@ -25,6 +25,8 @@ export function summarizeCommandParams(protocol, { method, params }) {
         return { requestId: params.requestId, seqNo: params.seqNo, tbc: params.tbc ? 'true' : 'false' };
       case 'TransactionEvent':
         return { eventType: params.eventType, triggerReason: params.triggerReason };
+      case 'ClearChargingProfile':
+        return { chargingProfileId: params.chargingProfileId, chargingProfileCriteria: params.chargingProfileCriteria };
       default:
         return null;
     }
