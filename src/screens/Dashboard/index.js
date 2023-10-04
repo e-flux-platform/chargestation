@@ -261,7 +261,9 @@ export default class Home extends React.Component {
                         </span>
                       )}
                     </div>
-                    <div className="response">
+                    <div
+                      className="response"
+                      data-method={command.request.method}>
                       {command.destination === 'central-server' ? `<` : `>`}{' '}
                       {JSON.stringify(command.response)}
                     </div>
