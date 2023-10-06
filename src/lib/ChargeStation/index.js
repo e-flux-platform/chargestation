@@ -169,6 +169,10 @@ export default class ChargeStation {
   writeCall(method, callMessageBody, session) {
     const messageId = this.connection.writeCall(method, callMessageBody);
 
+		if (method === 'StatusNotification' && callMessageBody.status && callMessageBody.connectorId) {
+			this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
+		}
+
     this.callLog[messageId] = {
       destination: 'central-server',
       requestSentAt: new Date(),

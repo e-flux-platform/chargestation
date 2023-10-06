@@ -15,6 +15,6 @@ export default async function handleTokenRejection({
   clearInterval(chargepoint.tickInterval);
   await sleep(1000);
 
-  delete chargepoint.sessions[connectorId];
+  delete chargepoint.sessions[session.connectorId];
   emitter.emitEvent(EventTypes.SessionCancelled, { session });
 }
