@@ -1,5 +1,4 @@
-import { sleep } from '../../../../utils/csv';
-import { EventTypes, EventTypes16 } from '../event-types';
+import { EventTypes16 } from '../event-types';
 
 export default async function handleAuthorizeCallResultReceived({
   emitter,
@@ -8,6 +7,7 @@ export default async function handleAuthorizeCallResultReceived({
 }) {
   if (callResultMessageBody.idTagInfo.status === 'Invalid') {
     emitter.emitEvent(EventTypes16.AuthorizationFailed, { session });
+    alert('RFID card UID is invalid');
     return;
   }
 

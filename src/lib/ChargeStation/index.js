@@ -17,9 +17,11 @@ export default class ChargeStation {
       2: 'Available',
     };
   }
+
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
   }
+
   setup() {
     try {
       this.emitter = createEventEmitter(this, this.options?.ocppConfiguration);
