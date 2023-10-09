@@ -41,5 +41,6 @@ export function summarizeCommandParams({ method, params }) {
 }
 
 export function toCamelCase(string) {
+	// Works only for strings that were originally in pascal case
   return string.charAt(0).toLowerCase() + string.slice(1);
 }
