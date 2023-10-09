@@ -10,7 +10,7 @@ export const settingsList = [
   {
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
-    description: 'OCPP Configuration to use',
+    description: 'OCPP Configuration to use (default-1.6 or default-2.0.1)',
     defaultValue: 'default-1.6',
   },
   {

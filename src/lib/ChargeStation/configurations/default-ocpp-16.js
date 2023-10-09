@@ -28,16 +28,16 @@ import handleStopTransactionCallResultReceived from '../eventHandlers/ocpp-16/ha
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
 export default {
-  [e16.StationConnected]: [sendBootNotification],
-  [e16.BootNotificationCallResultReceived]: [
+  [e.StationConnected]: [sendBootNotification],
+  [e.BootNotificationCallResultReceived]: [
     handleBootNotificationCallResultReceived,
   ],
-  [e16.BootNotificationAccepted]: [
+  [e.BootNotificationAccepted]: [
     sendStatusNotificationAvailable,
     sendHeartbeat,
   ],
-  [e16.HeartbeatCallResultReceived]: [handleHeartbeatCallResultReceived],
-  [e16.HeartbeatAccepted]: [sendHeartbeatDelayed],
+  [e.HeartbeatCallResultReceived]: [handleHeartbeatCallResultReceived],
+  [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e16.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
