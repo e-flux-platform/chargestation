@@ -9,9 +9,9 @@ class Connection {
     this.incomingCommand;
   }
 
-  connect(version) {
+  connect() {
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
-    this.ws = new WebSocket(url, version);
+    this.ws = new WebSocket(url, this.version);
     this.ws.addEventListener('open', () => {
       this.ready = true;
       this.onConnected && this.onConnected();
