@@ -119,6 +119,349 @@ export const sessionSettingsList = [
   },
 ];
 
+export const configurationList201 = [
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'Interval',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      unit: 'seconds',
+      dataType: 'integer',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'Measurands',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'SignReadings',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'TxEndedInterval',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      unit: 'seconds',
+      dataType: 'integer',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'TxEndedMeasurands',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'OfflineTxForUnknownIdEnabled',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'AuthorizeRemoteStart',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'LocalAuthorizeOffline',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'LocalPreAuthorize',
+    },
+    variableAttribute: [
+      {
+        value: 'false',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'MasterPassGroupId',
+    },
+    variableAttribute: [
+      {
+        value: '                                     ',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      maxLimit: 36,
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCacheCtrlr',
+    },
+    variable: {
+      name: 'Enabled',
+    },
+    variableAttribute: [
+      {
+        value: 'false',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NtpServerUri',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NtpSource',
+    },
+    variableAttribute: [
+      {
+        value: 'DHCP',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'OptionList',
+      valuesList: 'DHCP,manual',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeOffset',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NextTimeOffsetTransitionDateTime',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'dateTime',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeOffsetNextTransition',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeSource',
+    },
+    variableAttribute: [
+      {
+        value: 'Heartbeat,RealTimeClock',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'SequenceList',
+      valuesList:
+        'Heartbeat,NTP,GPS,RealTimeClock,MobileNetwork,RadioTimeTransmitter',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeZone',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+];
+
 function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
