@@ -5,6 +5,14 @@ export const settingsList = [
     description: 'Websocket server to connect with',
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
   },
+  // TODO: Make dropdown
+  // Eventually a configuration should be selected automatically based on the Chargepoint model
+  {
+    key: 'ocppConfiguration',
+    name: 'OCPP Configuration',
+    description: 'OCPP Configuration to use',
+    defaultValue: 'default-1.6',
+  },
   {
     key: 'chargePointVendor',
     name: 'Boot / Vendor',

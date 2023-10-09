@@ -39,3 +39,7 @@ export function summarizeCommandParams({ method, params }) {
   }
   return null;
 }
+
+export function toCamelCase(string) {
+  return string.charAt(0).toLowerCase() + string.slice(1);
+}
