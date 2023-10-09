@@ -3,7 +3,7 @@ export const settingsList = [
     key: 'ocppBaseUrl',
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
-    defaultValue: 'ws://localhost:2600/e-flux',
+    defaultValue: 'ws://localhost:2600/1.6/e-flux',
   },
   // TODO: Make dropdown
   // Eventually a configuration should be selected automatically based on the Chargepoint model
@@ -11,8 +11,7 @@ export const settingsList = [
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (default-1.6 or default-2.0.1)',
-    // defaultValue: 'default-1.6',
-    defaultValue: 'default-2.0.1',
+    defaultValue: 'default-1.6',
   },
   {
     key: 'chargePointVendor',
@@ -55,7 +54,7 @@ export const configurationList = [
   {
     key: 'HeartbeatInterval',
     description: 'Frequency of Heartbeat commands in seconds',
-    defaultValue: 5,
+    defaultValue: 50,
   },
   {
     key: 'MeterValueSampleInterval',

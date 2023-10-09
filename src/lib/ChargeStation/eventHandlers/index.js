@@ -1,15 +1,12 @@
 import { EventEmitter } from 'events';
 import { getOCPPConfiguration } from '../configurations';
 
-export function createEventEmitter(chargepoint, ocppConfiguration) {
+export function createEventEmitter(chargepoint, ocppVersion) {
   const emitter = new ChargeStationEventEmitter(chargepoint);
 
-  // TODO: decide which configuration to use
-
-  const handlerConfig = getOCPPConfiguration(ocppConfiguration);
-
+  const handlerConfig = getOCPPConfiguration(ocppVersion);
   if (!handlerConfig) {
-    throw new Error(`No configuration found for ${ocppConfiguration}`);
+    throw new Error(`No configuration found for ${ocppVersion}`);
   }
 
   emitter.registerHandlers(handlerConfig);

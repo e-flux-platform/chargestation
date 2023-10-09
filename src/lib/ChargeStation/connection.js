@@ -1,16 +1,17 @@
 class Connection {
-  constructor(ocppBaseUrl, ocppIdentity) {
+  constructor(ocppBaseUrl, ocppIdentity, version) {
     this.ocppBaseUrl = ocppBaseUrl;
     this.ocppIdentity = ocppIdentity;
+    this.version = version;
     this.ready = false;
     this.messageId = 1;
     this.commandCallbacks = {};
     this.incomingCommand;
   }
 
-  connect() {
+  connect(version) {
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
-    this.ws = new WebSocket(url, 'ocpp2.0.1');
+    this.ws = new WebSocket(url, version);
     this.ws.addEventListener('open', () => {
       this.ready = true;
       this.onConnected && this.onConnected();

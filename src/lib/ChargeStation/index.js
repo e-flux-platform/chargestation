@@ -1,6 +1,5 @@
 import { extractOcppBaseUrlFromConfiguration, toCamelCase } from './utils';
-import { Connection as Connection16 } from '../protocols/ocpp-1.6';
-import { Connection as Connection201 } from '../protocols/ocpp-2.0.1';
+import { Connection } from './connection';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
@@ -33,15 +32,16 @@ export default class ChargeStation {
   getConnection(ocppBaseUrl, ocppIdentity) {
     switch (this.options?.ocppConfiguration) {
       case 'default-1.6':
-        return new Connection16(ocppBaseUrl, ocppIdentity);
+        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
       case 'default-2.0.1':
-        return new Connection201(ocppBaseUrl, ocppIdentity);
+        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp2.0.1');
       default:
-        return new Connection16(ocppBaseUrl, ocppIdentity);
+        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
     }
   }
 
   connect() {
+    this.setup();
     const ocppBaseUrl =
       extractOcppBaseUrlFromConfiguration(this.configuration) ||
       this.options.ocppBaseUrl;
