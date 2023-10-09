@@ -216,6 +216,7 @@ export default class Home extends React.Component {
                     chargeStation.options = settings;
                     chargeStation.disconnect();
                     setTimeout(() => {
+                      chargeStation.setup();
                       chargeStation.connect();
                     }, 1000);
                   });

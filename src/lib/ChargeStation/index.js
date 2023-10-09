@@ -1,8 +1,9 @@
 import { extractOcppBaseUrlFromConfiguration, toCamelCase } from './utils';
-import { Connection } from '../protocols/ocpp-1.6';
+import { Connection as Connection16 } from '../protocols/ocpp-1.6';
+import { Connection as Connection201 } from '../protocols/ocpp-2.0.1';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
-import { EventTypes, EventTypes16 } from './eventHandlers/event-types';
+import { EventTypes } from './eventHandlers/event-types';
 
 export default class ChargeStation {
   constructor(configuration, options = {}) {
@@ -10,30 +11,52 @@ export default class ChargeStation {
     this.options = options;
     this.callLog = {};
     this.sessions = {};
-    this.emitter = createEventEmitter(this);
+    this.emitter = createEventEmitter(this, options?.ocppConfiguration);
     this.numConnectionAttempts = 0;
     this.currentStatus = {
-      '1': 'Available',
-      '2': 'Available',
+      1: 'Available',
+      2: 'Available',
     };
   }
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
   }
+  setup() {
+    try {
+      this.emitter = createEventEmitter(this, this.options?.ocppConfiguration);
+    } catch (error) {
+      this.emitter = null;
+      alert(`${error.message}. Try to refresh the page.`);
+    }
+  }
+
+  getConnection(ocppBaseUrl, ocppIdentity) {
+    switch (this.options?.ocppConfiguration) {
+      case 'default-1.6':
+        return new Connection16(ocppBaseUrl, ocppIdentity);
+      case 'default-2.0.1':
+        return new Connection201(ocppBaseUrl, ocppIdentity);
+      default:
+        return new Connection16(ocppBaseUrl, ocppIdentity);
+    }
+  }
+
   connect() {
     const ocppBaseUrl =
       extractOcppBaseUrlFromConfiguration(this.configuration) ||
       this.options.ocppBaseUrl;
     const ocppIdentity = this.configuration['Identity'];
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
-    this.connection = new Connection(ocppBaseUrl, ocppIdentity);
+
+    this.connection = this.getConnection(ocppBaseUrl, ocppIdentity);
+
     this.connection.onConnected = () => {
       this.connected = true;
       this.log('message-response', '< Connected!');
-      this.emitter.emitEvent(EventTypes16.StationConnected);
+      this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error) => {
-      this.connection = false;
+      this.connected = false;
       this.log('error', error.message);
       this.disconnect();
       this.reconnect();
@@ -78,11 +101,12 @@ export default class ChargeStation {
     this.connection.connect();
     this.numConnectionAttempts++;
   }
+
   disconnect() {
     this.connection.disconnect();
-    this.stopHeartbeat();
     this.connected = false;
   }
+
   reconnect() {
     if (this.numConnectionAttempts > 100) {
       this.log('error', 'Too many connection attempts, giving up');
@@ -110,26 +134,30 @@ export default class ChargeStation {
           this.configuration['MeterValueSampleInterval'] || '60',
           10
         ),
-				getCurrentStatus: () => this.currentStatus[connectorId],
+        getCurrentStatus: () => this.currentStatus[connectorId],
       },
       this.emitter
     );
     await this.sessions[connectorId].start();
   }
+
   async stopSession(connectorId) {
     if (!this.sessions[connectorId]) {
       return;
     }
     await this.sessions[connectorId].stop();
   }
+
   hasRunningSession(connectorId) {
     return !!this.sessions[connectorId];
   }
+
   isStartingSession(connectorId) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
     );
   }
+
   isStoppingSession(connectorId) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStoppingSession
@@ -169,9 +197,13 @@ export default class ChargeStation {
   writeCall(method, callMessageBody, session) {
     const messageId = this.connection.writeCall(method, callMessageBody);
 
-		if (method === 'StatusNotification' && callMessageBody.status && callMessageBody.connectorId) {
-			this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
-		}
+    if (
+      method === 'StatusNotification' &&
+      callMessageBody.status &&
+      callMessageBody.connectorId
+    ) {
+      this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
+    }
 
     this.callLog[messageId] = {
       destination: 'central-server',
@@ -229,7 +261,9 @@ class Session {
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
     console.info(
-      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.options.getCurrentStatus()}`
+      `Charge session tick (connectorId=${
+        this.connectorId
+      }, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.options.getCurrentStatus()}`
     );
 
     if (

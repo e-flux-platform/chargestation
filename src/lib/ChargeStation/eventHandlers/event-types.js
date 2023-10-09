@@ -1,15 +1,18 @@
 export const EventTypes = {
+  StationBooted: 'stationBooted',
+  StationConnected: 'stationConnected',
+  BootNotificationAccepted: 'bootNotificationAccepted',
+  HeartbeatAccepted: 'heartbeatAccepted',
+  BootNotificationCallResultReceived: 'bootNotificationCallResultReceived',
+  HeartbeatCallResultReceived: 'heartbeatCallResultReceived',
   SessionStartInitiated: 'sessionInitiated',
   SessionStopInitiated: 'sessionStopInitiated',
   Charging: 'charging',
   SessionCancelled: 'sessionCancelled',
 };
 
+// OCPP 1.6 specific events
 export const EventTypes16 = {
-  StationBooted: 'stationBooted',
-  StationConnected: 'stationConnected',
-  BootNotificationAccepted: 'bootNotificationAccepted',
-  HeartbeatAccepted: 'heartbeatAccepted',
   AuthorizationFailed: 'authorizationFailed',
   AuthorizationAccepted: 'authorizationAccepted',
   AuthorizationFailedDuringStartTransaction:
@@ -22,9 +25,10 @@ export const EventTypes16 = {
   ChangeConfigurationReceived: 'changeConfigurationReceived',
   RemoteStartTransactionReceived: 'remoteStartTransactionReceived',
   RemoteStopTransactionReceived: 'remoteStopTransactionReceived',
-  BootNotificationCallResultReceived: 'bootNotificationCallResultReceived',
-  HeartbeatCallResultReceived: 'heartbeatCallResultReceived',
   AuthorizeCallResultReceived: 'authorizeCallResultReceived',
   StartTransactionCallResultReceived: 'startTransactionCallResultReceived',
   StopTransactionCallResultReceived: 'stopTransactionCallResultReceived',
 };
+
+// Specific to OCPP 2.0.1
+export const EventTypes201 = {};
