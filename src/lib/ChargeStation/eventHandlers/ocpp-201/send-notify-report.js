@@ -13,7 +13,7 @@ export default async function sendNotifyReportRequest(params) {
   const secondHalf = list.splice(-middleIndex);
 
   await chargepoint.writeCall('NotifyReport', {
-    requestId: 0, // TODO
+    requestId: 1, // TODO
     generatedAt: new Date().toISOString(),
     tbc: true,
     seqNo: 0,
@@ -23,7 +23,7 @@ export default async function sendNotifyReportRequest(params) {
   await sleep(sleepTime);
 
   await chargepoint.writeCall('NotifyReport', {
-    requestId: 0, // TODO
+    requestId: 1, // TODO
     generatedAt: new Date().toISOString(),
     tbc: true,
     seqNo: 1,
