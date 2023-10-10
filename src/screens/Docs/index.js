@@ -10,7 +10,6 @@ import {
   settingsList,
   sessionSettingsList,
   configurationList16,
-  configurationList201,
 } from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
