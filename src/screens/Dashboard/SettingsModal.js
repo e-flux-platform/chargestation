@@ -1,20 +1,18 @@
 import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import {
-  settingsList,
-  getConfiguration,
-  getConfigurationItem,
-} from 'lib/settings';
 import { HelpTip } from 'components';
 
 @modal
 export default class SettingsModal extends React.Component {
   state = {
-    settings: this.props.settings,
-    configuration: this.props.configuration,
+    settings: this.props.settings || {},
+    configuration: this.props.configuration || {},
+    settingsList: this.props.settingsList || [],
+    configurationList: this.props.configurationList || [],
   };
-  setField = (e, { name, value }) => {
+
+  setSettingsField = (e, { name, value }) => {
     this.setState({
       settings: {
         ...this.state.settings,
@@ -23,22 +21,25 @@ export default class SettingsModal extends React.Component {
       configuration: this.state.configuration,
     });
   };
+
   setConfigurationField = (e, { name, value }) => {
     this.setState({
       configuration: {
-        ...this.state.settings,
+        ...this.state.configuration,
         [name]: value,
       },
       settings: this.state.settings,
     });
   };
+
   onSubmit = () => {
     this.props.onSave(this.state);
     this.props.close();
   };
   render() {
-    const { settings, configuration } = this.state;
-    const ocppVersion = this.props.settings.ocppConfiguration;
+    const { settings, configuration, settingsList, configurationList } =
+      this.state;
+
     return (
       <>
         <Modal.Header>Settings &amp; Configuration</Modal.Header>
@@ -63,30 +64,29 @@ export default class SettingsModal extends React.Component {
                     }
                     name={item.key}
                     value={settings[item.key]}
-                    onChange={this.setField}
+                    onChange={this.setSettingsField}
                   />
                 </div>
               );
             })}
             <Divider hidden />
             <Header as="h3" content="Configuration Keys" />
-            {Object.keys(getConfiguration(ocppVersion)).map((key) => {
-              const item = getConfigurationItem(ocppVersion, key);
+            {configurationList.map((item) => {
               return (
                 <Form.Input
-                  key={key}
+                  key={item.key}
                   label={
                     <strong
                       style={{
                         marginBottom: '4px',
                         display: 'inline-block',
                       }}>
-                      {key}
+                      {item.key}
                       {item?.description && <HelpTip text={item.description} />}
                     </strong>
                   }
-                  name={key}
-                  value={configuration[key]}
+                  name={item.key}
+                  value={configuration[item.key]}
                   onChange={this.setConfigurationField}
                 />
               );

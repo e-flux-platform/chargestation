@@ -12,47 +12,56 @@ class Connection {
   connect() {
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
     this.ws = new WebSocket(url, this.version);
-    this.ws.addEventListener('open', () => {
-      this.ready = true;
-      this.onConnected && this.onConnected();
-    });
 
-    this.ws.addEventListener('message', (event) => {
-      const data = JSON.parse(event.data);
-      if (data[0] === 3) {
-        this.onReceiveCallResult(data[1], data[2]);
-      } else if (data[0] === 2) {
-        this.onReceiveCall(data[2], data[3], data[1]);
-      } else if (data[0] === 4) {
-        const command = this.commandCallbacks[data[1].toString()];
-        if (command) {
-          command.callback(
-            new Error(
-              `Command ${command.method} returned error: ${data[2]}: ${data[3]}`
-            )
-          );
-        }
-      } else {
-        throw new Error(`Not implemented: ${JSON.stringify(data)}`);
-      }
-    });
-
-    this.ws.addEventListener('close', (event) => {
-      this.onError &&
-        this.onError(new Error(`WebSocket closed (no connection)`));
-    });
-
-    this.ws.addEventListener('error', (error) => {
-      console.error(error);
-      if (error.message) {
-        this.onError &&
-          this.onError(new Error(`WebSocket Error: ${error.message}`));
-      }
-    });
+    this.ws.addEventListener('open', this.onOpen.bind(this));
+    this.ws.addEventListener('message', this.onMessage.bind(this));
+    this.ws.addEventListener('close', this.onClose.bind(this));
+    this.ws.addEventListener('error', this.onError.bind(this));
   }
 
   disconnect() {
     this.ws.close();
+  }
+
+  onOpen() {
+    if (this.ready) {
+      return;
+    }
+
+    this.ready = true;
+    this.onConnected && this.onConnected();
+  }
+
+  onMessage(event) {
+    const data = JSON.parse(event.data);
+    if (data[0] === 3) {
+      this.onReceiveCallResult(data[1], data[2]);
+    } else if (data[0] === 2) {
+      this.onReceiveCall(data[2], data[3], data[1]);
+    } else if (data[0] === 4) {
+      const command = this.commandCallbacks[data[1].toString()];
+      if (command) {
+        command.callback(
+          new Error(
+            `Command ${command.method} returned error: ${data[2]}: ${data[3]}`
+          )
+        );
+      }
+    } else {
+      throw new Error(`Not implemented: ${JSON.stringify(data)}`);
+    }
+  }
+
+  onClose(event) {
+    this.onError && this.onError(new Error(`WebSocket closed (no connection)`));
+  }
+
+  onError(error) {
+    console.error(error);
+    if (error.message) {
+      this.onError &&
+        this.onError(new Error(`WebSocket Error: ${error.message}`));
+    }
   }
 
   generateMessageId() {

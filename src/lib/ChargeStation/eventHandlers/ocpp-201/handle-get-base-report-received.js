@@ -1,4 +1,4 @@
-import { configurationList201, getConfiguration } from 'lib/settings';
+import { configurationList201 } from 'lib/settings';
 import { sleep } from 'utils/csv';
 
 export default async function handleGetBaseReportReceived({

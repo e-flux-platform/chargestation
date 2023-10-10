@@ -1,37 +1,16 @@
 import React, { createRef } from 'react';
-import { Switch, Route, Link, NavLink } from 'react-router-dom';
-import { startCase, kebabCase } from 'lodash';
-import {
-  Breadcrumb,
-  Container,
-  Divider,
-  Menu,
-  Message,
-  Ref,
-  Button,
-  Icon,
-} from 'semantic';
-
-import { Layout } from 'components/Layout';
-import { Menu as ResponsiveMenu } from 'components/Responsive';
-import { APP_NAME } from 'utils/env';
+import { Link } from 'react-router-dom';
+import { Breadcrumb, Container, Divider } from 'semantic';
 
 import StandardPage from './StandardPage';
-import PageLoader from 'components/PageLoader';
-
-import { request } from 'utils/api';
-import screen from 'helpers/screen';
 
 import DOCS from 'docs';
-import PortalSettings from 'modals/PortalSettings';
-import { userHasAccess } from 'utils/permissions';
 import { withSession } from 'stores';
 import {
   settingsList,
   sessionSettingsList,
-  configurationList,
-  getConfiguration,
-  ocppVersion,
+  configurationList16,
+  configurationList201,
 } from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
@@ -55,16 +34,16 @@ function getDynamicMarkdown() {
     sessionSettingsMarkdown += `\`${item.key}\`|${item.name}|${item.description}\n`;
   });
 
-  let configurationMarkdown = 'Key|description\n';
-  configurationMarkdown += '-|-\n';
-  getConfiguration(ocppVersion()).forEach((item) => {
-    configurationMarkdown += `\`${item.key}\`|${item.description}\n`;
+  let configurationMarkdown16 = 'Key|description\n';
+  configurationMarkdown16 += '-|-\n';
+  configurationList16.forEach((item) => {
+    configurationMarkdown16 += `\`${item.key}\`|${item.description}\n`;
   });
 
   return {
     '<SETTINGS_MARKDOWN>': settingsMarkdown,
     '<SESSION_SETTINGS_MARKDOWN>': sessionSettingsMarkdown,
-    '<CONFIGURATION_MARKDOWN>': configurationMarkdown,
+    '<CONFIGURATION_MARKDOWN_16>': configurationMarkdown16,
   };
 }
 

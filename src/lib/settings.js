@@ -508,12 +508,6 @@ export function getConfiguration(ocppVersion) {
   return buildConfigurationMap16();
 }
 
-export function getConfigurationItem(ocppVersion, key) {
-  return getConfigurationList(ocppVersion).filter(
-    (item) => item.key === key
-  )[0];
-}
-
 export function ocppVersion() {
   return getSettings().ocppConfiguration;
 }
@@ -538,24 +532,8 @@ function buildConfigurationMap201() {
   const result = {};
 
   for (const item of list) {
-    const variableName = item.variable.name;
-    const evseId = item.component.evse?.id;
-    const connectorId = item.component.evse?.connectorId;
-    const variableInstance = item.variable.instance;
-    const componentName = item.component.name;
-    const componentInstance = item.component.instance;
-    const value = item.variableAttribute[0].value;
-
-    const key = [
-      componentName,
-      evseId,
-      connectorId,
-      componentInstance,
-      variableName,
-      variableInstance,
-    ]
-      .filter((v) => v)
-      .join('.');
+    const key = getConfigurationKey201(item);
+    const value = getConfigurationValue201(item);
 
     if (query.get(key)) {
       result[key] = query.get(key);
@@ -566,6 +544,32 @@ function buildConfigurationMap201() {
 
   return result;
 }
+
+const getConfigurationKey201 = (item) => {
+  const variableName = item.variable.name;
+  const evseId = item.component.evse?.id;
+  const connectorId = item.component.evse?.connectorId;
+  const variableInstance = item.variable.instance;
+  const componentName = item.component.name;
+  const componentInstance = item.component.instance;
+
+  const key = [
+    componentName,
+    evseId,
+    connectorId,
+    componentInstance,
+    variableName,
+    variableInstance,
+  ]
+    .filter((v) => v)
+    .join('.');
+
+  return key;
+};
+
+const getConfigurationValue201 = (item) => {
+  return item.variableAttribute[0].value;
+};
 
 function buildConfigurationMap16() {
   const list = configurationList16;
@@ -584,9 +588,14 @@ function buildConfigurationMap16() {
   return result;
 }
 
-function getConfigurationList(ocppVersion) {
+export function getConfigurationList(ocppVersion) {
   if (ocppVersion === 'ocpp2.0.1') {
-    return configurationList201;
+    return configurationList201.map((item) => {
+      const key = getConfigurationKey201(item);
+      const value = getConfigurationValue201(item);
+
+      return { key, defaultValue: value };
+    });
   }
   return configurationList16;
 }
