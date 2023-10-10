@@ -95,6 +95,7 @@ export default class Home extends React.Component {
       inspectCommand,
       session1OnceStarted,
       session2OnceStarted,
+      configurationList,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
@@ -217,16 +218,15 @@ export default class Home extends React.Component {
                 settings={settings}
                 configuration={configuration}
                 settingsList={settingsList}
-                configurationList={this.state.configurationList}
+                configurationList={configurationList}
                 onSave={({ settings, configuration }) => {
-                  let configurationList = this.state.configurationList;
+                  let configList = configurationList;
                   let config = configuration;
 
                   if (
-                    settings.ocppConfiguration !==
-                    this.state.settings.ocppConfiguration
+                    settings.ocppConfiguration !== settings.ocppConfiguration
                   ) {
-                    configurationList = getConfigurationList(
+                    configList = getConfigurationList(
                       settings.ocppConfiguration
                     );
 
@@ -234,7 +234,11 @@ export default class Home extends React.Component {
                   }
 
                   this.setState(
-                    { settings, configurationList, configuration: config },
+                    {
+                      settings,
+                      configurationList: configList,
+                      configuration: config,
+                    },
                     () => {
                       chargeStation.configuration = config;
                       chargeStation.options = settings;
