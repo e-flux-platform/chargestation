@@ -10,8 +10,8 @@ export const settingsList = [
   {
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
-    description: 'OCPP Configuration to use (default-1.6 or default-2.0.1)',
-    defaultValue: 'default-1.6',
+    description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
+    defaultValue: 'ocpp1.6',
   },
   {
     key: 'chargePointVendor',
@@ -45,7 +45,7 @@ export const settingsList = [
   },
 ];
 
-export const configurationList = [
+export const configurationList16 = [
   {
     key: 'Identity',
     description: 'OCPP Identity used in authenticating the charge station',
@@ -120,6 +120,26 @@ export const sessionSettingsList = [
 ];
 
 export const configurationList201 = [
+  {
+    component: {
+      name: 'SecurityCtrlr',
+    },
+    variable: {
+      name: 'Identity',
+    },
+    variableAttribute: [
+      {
+        value: 'ChargeStationOne',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      maxLimit: 48,
+      supportsMonitoring: false,
+    },
+  },
   {
     component: {
       name: 'AlignedDataCtrlr',
@@ -480,22 +500,22 @@ export function getSettings() {
   return result;
 }
 
-export function getConfiguration() {
-  const query = getDocumentQuery();
-  const result = {};
-  for (const item of configurationList) {
-    const { key } = item;
-    if (query.get(key)) {
-      result[key] = query.get(key);
-      continue;
-    }
-    result[key] = item.defaultValue;
+export function getConfiguration(ocppVersion) {
+  if (ocppVersion === 'ocpp2.0.1') {
+    return buildConfigurationMap201();
   }
-  return result;
+
+  return buildConfigurationMap16();
 }
 
-export function getConfigurationItem(key) {
-  return configurationList.filter((item) => item.key === key)[0];
+export function getConfigurationItem(ocppVersion, key) {
+  return getConfigurationList(ocppVersion).filter(
+    (item) => item.key === key
+  )[0];
+}
+
+export function ocppVersion() {
+  return getSettings().ocppConfiguration;
 }
 
 export function getDefaultSession() {
@@ -510,4 +530,63 @@ export function getDefaultSession() {
     result[key] = item.defaultValue;
   }
   return result;
+}
+
+function buildConfigurationMap201() {
+  const query = getDocumentQuery();
+  const list = configurationList201;
+  const result = {};
+
+  for (const item of list) {
+    const variableName = item.variable.name;
+    const evseId = item.component.evse?.id;
+    const connectorId = item.component.evse?.connectorId;
+    const variableInstance = item.variable.instance;
+    const componentName = item.component.name;
+    const componentInstance = item.component.instance;
+    const value = item.variableAttribute[0].value;
+
+    const key = [
+      componentName,
+      evseId,
+      connectorId,
+      componentInstance,
+      variableName,
+      variableInstance,
+    ]
+      .filter((v) => v)
+      .join('.');
+
+    if (query.get(key)) {
+      result[key] = query.get(key);
+      continue;
+    }
+    result[key] = value;
+  }
+
+  return result;
+}
+
+function buildConfigurationMap16() {
+  const list = configurationList16;
+  const query = getDocumentQuery();
+  const result = {};
+
+  for (const item of list) {
+    const { key } = item;
+    if (query.get(key)) {
+      result[key] = query.get(key);
+      continue;
+    }
+    result[key] = item.defaultValue;
+  }
+
+  return result;
+}
+
+function getConfigurationList(ocppVersion) {
+  if (ocppVersion === 'ocpp2.0.1') {
+    return configurationList201;
+  }
+  return configurationList16;
 }

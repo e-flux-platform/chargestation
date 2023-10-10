@@ -30,6 +30,8 @@ import {
   settingsList,
   sessionSettingsList,
   configurationList,
+  getConfiguration,
+  ocppVersion,
 } from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
@@ -55,7 +57,7 @@ function getDynamicMarkdown() {
 
   let configurationMarkdown = 'Key|description\n';
   configurationMarkdown += '-|-\n';
-  configurationList.forEach((item) => {
+  getConfiguration(ocppVersion()).forEach((item) => {
     configurationMarkdown += `\`${item.key}\`|${item.description}\n`;
   });
 

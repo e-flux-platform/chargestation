@@ -38,6 +38,7 @@ export default class SettingsModal extends React.Component {
   };
   render() {
     const { settings, configuration } = this.state;
+    const ocppVersion = this.props.settings.ocppConfiguration;
     return (
       <>
         <Modal.Header>Settings &amp; Configuration</Modal.Header>
@@ -69,8 +70,8 @@ export default class SettingsModal extends React.Component {
             })}
             <Divider hidden />
             <Header as="h3" content="Configuration Keys" />
-            {Object.keys(getConfiguration()).map((key) => {
-              const item = getConfigurationItem(key);
+            {Object.keys(getConfiguration(ocppVersion)).map((key) => {
+              const item = getConfigurationItem(ocppVersion, key);
               return (
                 <Form.Input
                   key={key}

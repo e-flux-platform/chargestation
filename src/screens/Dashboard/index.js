@@ -5,7 +5,12 @@ import { Link } from 'react-router-dom';
 import { Transition } from 'semantic-ui-react';
 
 import ChargeStation from 'lib/ChargeStation';
-import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
+import {
+  getConfiguration,
+  getSettings,
+  getDefaultSession,
+  ocppVersion,
+} from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
 import chargeStationStatusSvg from 'assets/charge-station-status.svg';
@@ -30,7 +35,7 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(),
+    configuration: getConfiguration(ocppVersion()),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],

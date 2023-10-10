@@ -31,9 +31,6 @@ export const EventTypes16 = {
 };
 
 // Specific to OCPP 2.0.1
-export const EventTypes201 = {};
-
-// Specific to OCPP 2.0.1
 export const EventTypes201 = {
   GetBaseReportReceived: 'getBaseReportReceived',
   GetBaseReportAccepted: 'getBaseReportAccepted',

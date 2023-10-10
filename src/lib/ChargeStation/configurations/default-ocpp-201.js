@@ -5,7 +5,6 @@ import {
 import sendBootNotification from '../eventHandlers/ocpp-201/send-boot-notification';
 import sendHeartbeat from '../eventHandlers/ocpp-201/send-heartbeat';
 import sendHeartbeatDelayed from '../eventHandlers/ocpp-201/send-heartbeat-delayed';
-import sendNotifyReport from '../eventHandlers/ocpp-201/send-notify-report';
 import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-201/handle-boot-notification-call-result-received';
 import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-201/handle-heartbeat-call-result-received';
 import handleGetBaseReportReceived from '../eventHandlers/ocpp-201/handle-get-base-report-received';
@@ -21,5 +20,4 @@ export default {
   [e.HeartbeatCallResultReceived]: [handleHeartbeatCallResultReceived],
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e201.GetBaseReportReceived]: [handleGetBaseReportReceived],
-  [e201.GetBaseReportAccepted]: [sendNotifyReport],
 };
