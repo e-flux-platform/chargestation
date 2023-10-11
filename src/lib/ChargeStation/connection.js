@@ -7,6 +7,7 @@ class Connection {
     this.messageId = 1;
     this.commandCallbacks = {};
     this.incomingCommand;
+    this.onConnected = null;
   }
 
   connect() {
@@ -24,10 +25,6 @@ class Connection {
   }
 
   onOpen() {
-    if (this.ready) {
-      return;
-    }
-
     this.ready = true;
     this.onConnected && this.onConnected();
   }

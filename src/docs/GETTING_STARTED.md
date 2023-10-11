@@ -33,6 +33,10 @@ Here's a list of configuration keys that are implemented:
 OCPP 2.0.1 has many different keys. Therefore, we have not implemented them all.
 We just provide a few configuration keys for testing.
 
+| Key                      | description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| `SecurityCtrlr.Identity` | OCPP Identity used in authenticating the charge station' |
+
 ## Learn More
 
 Need more tools for building EV applications? Contact us at https://road.io

@@ -219,29 +219,32 @@ export default class Home extends React.Component {
                 configuration={configuration}
                 settingsList={settingsList}
                 configurationList={configurationList}
-                onSave={({ settings, configuration }) => {
+                onSave={({
+                  settings: savedSettings,
+                  configuration: savedConfiguration,
+                }) => {
                   let configList = configurationList;
-                  let config = configuration;
+                  let config = savedConfiguration;
 
                   if (
-                    settings.ocppConfiguration !== settings.ocppConfiguration
+                    settings.ocppConfiguration !==
+                    savedSettings.ocppConfiguration
                   ) {
                     configList = getConfigurationList(
-                      settings.ocppConfiguration
+                      savedSettings.ocppConfiguration
                     );
-
-                    config = getConfiguration(settings.ocppConfiguration);
+                    config = getConfiguration(savedSettings.ocppConfiguration);
                   }
 
                   this.setState(
                     {
-                      settings,
+                      settings: savedSettings,
                       configurationList: configList,
                       configuration: config,
                     },
                     () => {
                       chargeStation.configuration = config;
-                      chargeStation.options = settings;
+                      chargeStation.options = savedSettings;
                       chargeStation.disconnect();
                       setTimeout(() => {
                         chargeStation.connect();

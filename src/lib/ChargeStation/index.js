@@ -69,6 +69,8 @@ export default class ChargeStation {
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error) => {
+      if (!this.connected) return;
+
       this.connected = false;
       this.log('error', error.message);
       this.disconnect();
