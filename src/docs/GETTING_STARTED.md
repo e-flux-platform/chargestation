@@ -18,7 +18,7 @@ it. For example, to set the OCPP backend it is connecting to:
 
 <SESSION_SETTINGS_MARKDOWN>
 
-## Configuration
+## Configuration OCPP 1.6
 
 Any GET query parameter that is not in the above Settings list will be set as a
 charge station configuration key. These can be retrieved or changed using the
@@ -26,7 +26,16 @@ charge station configuration key. These can be retrieved or changed using the
 
 Here's a list of configuration keys that are implemented:
 
-<CONFIGURATION_MARKDOWN>
+<CONFIGURATION_MARKDOWN_16>
+
+## Configuration OCPP 2.0.1
+
+OCPP 2.0.1 has many different keys. Therefore, we have not implemented them all.
+We just provide a few configuration keys for testing.
+
+| Key                      | description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| `SecurityCtrlr.Identity` | OCPP Identity used in authenticating the charge station' |
 
 ## Learn More
 

@@ -2,15 +2,20 @@ import React from 'react';
 import screen from 'helpers/screen';
 import { Button, Loader } from 'semantic';
 import { Link } from 'react-router-dom';
-import { Transition } from 'semantic-ui-react';
 
 import ChargeStation from 'lib/ChargeStation';
-import { getConfiguration, getSettings, getDefaultSession } from 'lib/settings';
+import {
+  getConfiguration,
+  getSettings,
+  getDefaultSession,
+  ocppVersion,
+  settingsList,
+  getConfigurationList,
+} from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
 import chargeStationStatusSvg from 'assets/charge-station-status.svg';
 import car1Svg from 'assets/car-1.svg';
-import car1ConnectorSvg from 'assets/car-1-connector.svg';
 import car2Svg from 'assets/car-2.svg';
 import roadLogoSvg from 'assets/road-logo-dark-mode.svg';
 
@@ -30,12 +35,13 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(),
+    configuration: getConfiguration(ocppVersion()),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],
     session1OnceStarted: false,
     session2OnceStarted: false,
+    configurationList: getConfigurationList(ocppVersion()),
   };
 
   componentDidMount() {
@@ -89,6 +95,7 @@ export default class Home extends React.Component {
       inspectCommand,
       session1OnceStarted,
       session2OnceStarted,
+      configurationList,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
@@ -210,15 +217,40 @@ export default class Home extends React.Component {
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}
                 configuration={configuration}
-                onSave={({ settings, configuration }) => {
-                  this.setState({ settings, configuration }, () => {
-                    chargeStation.configuration = configuration;
-                    chargeStation.options = settings;
-                    chargeStation.disconnect();
-                    setTimeout(() => {
-                      chargeStation.connect();
-                    }, 1000);
-                  });
+                settingsList={settingsList}
+                configurationList={configurationList}
+                onSave={({
+                  settings: savedSettings,
+                  configuration: savedConfiguration,
+                }) => {
+                  let configList = configurationList;
+                  let config = savedConfiguration;
+
+                  if (
+                    settings.ocppConfiguration !==
+                    savedSettings.ocppConfiguration
+                  ) {
+                    configList = getConfigurationList(
+                      savedSettings.ocppConfiguration
+                    );
+                    config = getConfiguration(savedSettings.ocppConfiguration);
+                  }
+
+                  this.setState(
+                    {
+                      settings: savedSettings,
+                      configurationList: configList,
+                      configuration: config,
+                    },
+                    () => {
+                      chargeStation.configuration = config;
+                      chargeStation.options = savedSettings;
+                      chargeStation.disconnect();
+                      setTimeout(() => {
+                        chargeStation.connect();
+                      }, 1000);
+                    }
+                  );
                 }}
               />
             </div>

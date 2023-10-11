@@ -10,8 +10,8 @@ export const settingsList = [
   {
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
-    description: 'OCPP Configuration to use (default-1.6 or default-2.0.1)',
-    defaultValue: 'default-1.6',
+    description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
+    defaultValue: 'ocpp1.6',
   },
   {
     key: 'chargePointVendor',
@@ -45,7 +45,7 @@ export const settingsList = [
   },
 ];
 
-export const configurationList = [
+export const configurationList16 = [
   {
     key: 'Identity',
     description: 'OCPP Identity used in authenticating the charge station',
@@ -119,6 +119,369 @@ export const sessionSettingsList = [
   },
 ];
 
+export const configurationList201 = [
+  {
+    component: {
+      name: 'SecurityCtrlr',
+    },
+    variable: {
+      name: 'Identity',
+    },
+    variableAttribute: [
+      {
+        value: 'ChargeStationOne',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      maxLimit: 48,
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'Interval',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      unit: 'seconds',
+      dataType: 'integer',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'Measurands',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'SignReadings',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'TxEndedInterval',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      unit: 'seconds',
+      dataType: 'integer',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AlignedDataCtrlr',
+    },
+    variable: {
+      name: 'TxEndedMeasurands',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'OfflineTxForUnknownIdEnabled',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'AuthorizeRemoteStart',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'LocalAuthorizeOffline',
+    },
+    variableAttribute: [
+      {
+        value: 'true',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'LocalPreAuthorize',
+    },
+    variableAttribute: [
+      {
+        value: 'false',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCtrlr',
+    },
+    variable: {
+      name: 'MasterPassGroupId',
+    },
+    variableAttribute: [
+      {
+        value: '                                     ',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      maxLimit: 36,
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'AuthCacheCtrlr',
+    },
+    variable: {
+      name: 'Enabled',
+    },
+    variableAttribute: [
+      {
+        value: 'false',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'boolean',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NtpServerUri',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NtpSource',
+    },
+    variableAttribute: [
+      {
+        value: 'DHCP',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'OptionList',
+      valuesList: 'DHCP,manual',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeOffset',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'NextTimeOffsetTransitionDateTime',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'dateTime',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeOffsetNextTransition',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeSource',
+    },
+    variableAttribute: [
+      {
+        value: 'Heartbeat,RealTimeClock',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'SequenceList',
+      valuesList:
+        'Heartbeat,NTP,GPS,RealTimeClock,MobileNetwork,RadioTimeTransmitter',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'ClockCtrlr',
+    },
+    variable: {
+      name: 'TimeZone',
+    },
+    variableAttribute: [
+      {
+        value: '',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+];
+
 function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
@@ -137,22 +500,16 @@ export function getSettings() {
   return result;
 }
 
-export function getConfiguration() {
-  const query = getDocumentQuery();
-  const result = {};
-  for (const item of configurationList) {
-    const { key } = item;
-    if (query.get(key)) {
-      result[key] = query.get(key);
-      continue;
-    }
-    result[key] = item.defaultValue;
+export function getConfiguration(ocppVersion) {
+  if (ocppVersion === 'ocpp2.0.1') {
+    return buildConfigurationMap201();
   }
-  return result;
+
+  return buildConfigurationMap16();
 }
 
-export function getConfigurationItem(key) {
-  return configurationList.filter((item) => item.key === key)[0];
+export function ocppVersion() {
+  return getSettings().ocppConfiguration;
 }
 
 export function getDefaultSession() {
@@ -167,4 +524,78 @@ export function getDefaultSession() {
     result[key] = item.defaultValue;
   }
   return result;
+}
+
+function buildConfigurationMap201() {
+  const query = getDocumentQuery();
+  const list = configurationList201;
+  const result = {};
+
+  for (const item of list) {
+    const key = getConfigurationKey201(item);
+    const value = getConfigurationValue201(item);
+
+    if (query.get(key)) {
+      result[key] = query.get(key);
+      continue;
+    }
+    result[key] = value;
+  }
+
+  return result;
+}
+
+const getConfigurationKey201 = (item) => {
+  const variableName = item.variable.name;
+  const evseId = item.component.evse?.id;
+  const connectorId = item.component.evse?.connectorId;
+  const variableInstance = item.variable.instance;
+  const componentName = item.component.name;
+  const componentInstance = item.component.instance;
+
+  const key = [
+    componentName,
+    evseId,
+    connectorId,
+    componentInstance,
+    variableName,
+    variableInstance,
+  ]
+    .filter((v) => v)
+    .join('.');
+
+  return key;
+};
+
+const getConfigurationValue201 = (item) => {
+  return item.variableAttribute[0].value;
+};
+
+function buildConfigurationMap16() {
+  const list = configurationList16;
+  const query = getDocumentQuery();
+  const result = {};
+
+  for (const item of list) {
+    const { key } = item;
+    if (query.get(key)) {
+      result[key] = query.get(key);
+      continue;
+    }
+    result[key] = item.defaultValue;
+  }
+
+  return result;
+}
+
+export function getConfigurationList(ocppVersion) {
+  if (ocppVersion === 'ocpp2.0.1') {
+    return configurationList201.map((item) => {
+      const key = getConfigurationKey201(item);
+      const value = getConfigurationValue201(item);
+
+      return { key, defaultValue: value };
+    });
+  }
+  return configurationList16;
 }

@@ -33,12 +33,23 @@ export default class ChargeStation {
 
   getConnection(ocppBaseUrl, ocppIdentity) {
     switch (this.options?.ocppConfiguration) {
-      case 'default-1.6':
+      case 'ocpp1.6':
         return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
-      case 'default-2.0.1':
+      case 'ocpp2.0.1':
         return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp2.0.1');
       default:
         return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
+    }
+  }
+
+  getOCPPIdentity() {
+    switch (this.options?.ocppConfiguration) {
+      case 'ocpp1.6':
+        return this.configuration['Identity'];
+      case 'ocpp2.0.1':
+        return this.configuration['SecurityCtrlr.Identity'];
+      default:
+        return this.configuration['Identity'];
     }
   }
 
@@ -47,7 +58,7 @@ export default class ChargeStation {
     const ocppBaseUrl =
       extractOcppBaseUrlFromConfiguration(this.configuration) ||
       this.options.ocppBaseUrl;
-    const ocppIdentity = this.configuration['Identity'];
+    const ocppIdentity = this.getOCPPIdentity();
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
 
     this.connection = this.getConnection(ocppBaseUrl, ocppIdentity);
@@ -58,6 +69,8 @@ export default class ChargeStation {
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error) => {
+      if (!this.connected) return;
+
       this.connected = false;
       this.log('error', error.message);
       this.disconnect();
