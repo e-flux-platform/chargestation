@@ -77,6 +77,11 @@ class Connection {
     const formattedMessage = [3, messageId, params];
     this.ws.send(JSON.stringify(formattedMessage));
   }
+
+  writeCallError(messageId, code, description, details) {
+    const formattedMessage = [4, messageId, code, description, details];
+    this.ws.send(JSON.stringify(formattedMessage));
+  }
 }
 
 export { Connection };

@@ -188,6 +188,27 @@ export default class ChargeStation {
     this.onLog && this.onLog({ id, type, message, command });
   }
 
+  writeCallError(callMessageId, code, description, details) {
+    const call = this.callLog[callMessageId];
+
+    if (!call) {
+      console.warn(
+        `Received call error for unknown call with id ${callMessageId}`
+      );
+      return;
+    }
+
+    this.log('command', `sent ${call.request.method} command`, {
+      destination: 'charge-point',
+      requestReceivedAt: call.requestReceivedAt,
+      request: call.request,
+      response: { code, description, details },
+      responseSentAt: new Date(),
+    });
+
+    this.connection.writeCallError(callMessageId, code, description, details);
+  }
+
   writeCallResult(callMessageId, messageBody) {
     const call = this.callLog[callMessageId];
 
