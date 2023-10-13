@@ -314,7 +314,7 @@ export const defaultVariableConfig201 = [
     },
     variableAttribute: [
       {
-        value: '                                     ',
+        value: '',
         persistent: true,
         constant: false,
       },
@@ -528,25 +528,6 @@ export function getDefaultSession() {
   }
   return result;
 }
-//
-// function buildConfigurationMap201() {
-//   const query = getDocumentQuery();
-//   const list = configurationList201;
-//   const result = {};
-//
-//   for (const item of list) {
-//     const key = getConfigurationKey201(item);
-//     const value = getConfigurationValue201(item);
-//
-//     if (query.get(key)) {
-//       result[key] = query.get(key);
-//       continue;
-//     }
-//     result[key] = value;
-//   }
-//
-//   return result;
-// }
 
 class Configuration201 {
   constructor(variables) {
@@ -773,36 +754,3 @@ export const getConfigurationKey201 = (item) => {
 
   return key;
 };
-
-const getConfigurationValue201 = (item) => {
-  return item.variableAttribute[0].value;
-};
-
-// function buildConfigurationMap16() {
-//   const list = configurationList16;
-//   const query = getDocumentQuery();
-//   const result = {};
-//
-//   for (const item of list) {
-//     const { key } = item;
-//     if (query.get(key)) {
-//       result[key] = query.get(key);
-//       continue;
-//     }
-//     result[key] = item.defaultValue;
-//   }
-//
-//   return result;
-// }
-//
-// export function getConfigurationList(ocppVersion) {
-//   if (ocppVersion === 'ocpp2.0.1') {
-//     return configurationList201.map((item) => {
-//       const key = getConfigurationKey201(item);
-//       const value = getConfigurationValue201(item);
-//
-//       return { key, defaultValue: value };
-//     });
-//   }
-//   return configurationList16;
-// }
