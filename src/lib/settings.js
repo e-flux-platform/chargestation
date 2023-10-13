@@ -45,50 +45,6 @@ export const settingsList = [
   },
 ];
 
-export const configurationList16 = [
-  {
-    key: 'Identity',
-    description: 'OCPP Identity used in authenticating the charge station',
-    defaultValue: 'ChargeStationOne',
-  },
-  {
-    key: 'HeartbeatInterval',
-    description: 'Frequency of Heartbeat commands in seconds',
-    defaultValue: 50,
-  },
-  {
-    key: 'MeterValueSampleInterval',
-    description: 'Frequency of MeterValues commands in seconds',
-    defaultValue: 60,
-  },
-  {
-    key: 'NumberOfConnectors',
-    description:
-      'The number of sockets connected to this EVSE (only applies to configuration)',
-    defaultValue: 2,
-  },
-  {
-    key: 'Connector1-Type',
-    description: 'Meta data about connector type on connector 1',
-    defaultValue: 'Type 2 socket',
-  },
-  {
-    key: 'Connector1-MaxCurrent',
-    description: 'Meta data about max current on connector 1',
-    defaultValue: 32,
-  },
-  {
-    key: 'Connector2-Type',
-    description: 'Meta data about connector type on connector 2',
-    defaultValue: 'Type 2 socket',
-  },
-  {
-    key: 'Connector2-MaxCurrent',
-    description: 'Meta data about max current on connector 2',
-    defaultValue: 32,
-  },
-];
-
 export const sessionSettingsList = [
   {
     key: 'uid',
@@ -119,7 +75,51 @@ export const sessionSettingsList = [
   },
 ];
 
-export const configurationList201 = [
+export const defaultVariableConfig16 = [
+  {
+    key: 'Identity',
+    description: 'OCPP Identity used in authenticating the charge station',
+    value: 'ChargeStationOne',
+  },
+  {
+    key: 'HeartbeatInterval',
+    description: 'Frequency of Heartbeat commands in seconds',
+    value: 50,
+  },
+  {
+    key: 'MeterValueSampleInterval',
+    description: 'Frequency of MeterValues commands in seconds',
+    value: 60,
+  },
+  {
+    key: 'NumberOfConnectors',
+    description:
+      'The number of sockets connected to this EVSE (only applies to configuration)',
+    value: 2,
+  },
+  {
+    key: 'Connector1-Type',
+    description: 'Meta data about connector type on connector 1',
+    value: 'Type 2 socket',
+  },
+  {
+    key: 'Connector1-MaxCurrent',
+    description: 'Meta data about max current on connector 1',
+    value: 32,
+  },
+  {
+    key: 'Connector2-Type',
+    description: 'Meta data about connector type on connector 2',
+    value: 'Type 2 socket',
+  },
+  {
+    key: 'Connector2-MaxCurrent',
+    description: 'Meta data about max current on connector 2',
+    value: 32,
+  },
+];
+
+export const defaultVariableConfig201 = [
   {
     component: {
       name: 'SecurityCtrlr',
@@ -501,11 +501,14 @@ export function getSettings() {
 }
 
 export function getConfiguration(ocppVersion) {
-  if (ocppVersion === 'ocpp2.0.1') {
-    return buildConfigurationMap201();
+  switch (ocppVersion) {
+    case 'ocpp1.6':
+      return new Configuration201(defaultVariableConfig16);
+    case 'ocpp2.0.1':
+      return new Configuration201(defaultVariableConfig201);
+    default:
+      throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
   }
-
-  return buildConfigurationMap16();
 }
 
 export function ocppVersion() {
@@ -525,27 +528,231 @@ export function getDefaultSession() {
   }
   return result;
 }
+//
+// function buildConfigurationMap201() {
+//   const query = getDocumentQuery();
+//   const list = configurationList201;
+//   const result = {};
+//
+//   for (const item of list) {
+//     const key = getConfigurationKey201(item);
+//     const value = getConfigurationValue201(item);
+//
+//     if (query.get(key)) {
+//       result[key] = query.get(key);
+//       continue;
+//     }
+//     result[key] = value;
+//   }
+//
+//   return result;
+// }
 
-function buildConfigurationMap201() {
-  const query = getDocumentQuery();
-  const list = configurationList201;
-  const result = {};
-
-  for (const item of list) {
-    const key = getConfigurationKey201(item);
-    const value = getConfigurationValue201(item);
-
-    if (query.get(key)) {
-      result[key] = query.get(key);
-      continue;
-    }
-    result[key] = value;
+class Configuration201 {
+  constructor(variables) {
+    this.variables = variables.reduce((acc, item) => {
+      const key = getConfigurationKey201(item);
+      acc[key] = item;
+      return acc;
+    }, {});
   }
 
-  return result;
+  getOCPPIdentityString() {
+    return this.getVariableActualValue('SecurityCtrlr.Identity');
+  }
+
+  getMeterValueSampleInterval() {
+    const defaultInterval = 60;
+
+    const intervalConfig = this.variables['MeterValueSampleInterval'];
+
+    const actualValue = intervalConfig.variableAttribute.find(
+      (attr) => attr.type === 'Actual' || !attr.type
+    );
+
+    if (!actualValue) return defaultInterval;
+
+    // Not sure if parseInt is necessary here
+    return parseInt(actualValue.value);
+  }
+
+  getBaseURL() {
+    // Alfen
+    if (
+      this.variables['BackOffice-URL-wired'] &&
+      this.variables['BackOffice-Path-wired']
+    ) {
+      return `${this.variables['BackOffice-URL-wired']}${this.variables['BackOffice-Path-wired']}`;
+    }
+    if (
+      this.variables['BackOffice-URL-APN'] &&
+      this.variables['BackOffice-Path-APN']
+    ) {
+      return `${this.variables['BackOffice-URL-APN']}${this.variables['BackOffice-Path-APN']}`;
+    }
+
+    // Evnex
+    if (this.variables['OCPPEndPoint']) {
+      return this.variables['OCPPEndPoint'];
+    }
+
+    return null;
+  }
+
+  variablesToSimpleSettingsMap() {
+    return Object.keys(this.variables).reduce((acc, key) => {
+      acc[key] = {
+        key,
+        value: this.getVariableActualValue(key),
+      };
+      return acc;
+    }, {});
+  }
+
+  updateVariablesFromSimpleSettingsMap(variables) {
+    for (const variable of Object.values(variables)) {
+      if (!this.variables[variable.key]) {
+        throw new Error(`Variable ${variable.key} not found in configuration`);
+      }
+
+      const varAttrIndex = this.variables[
+        variable.key
+      ].variableAttribute?.findIndex(
+        (attr) => attr.type === 'Actual' || !attr.type
+      );
+
+      if (varAttrIndex === -1) {
+        this.variables[variable.key].variableAttribute.push({
+          type: 'Actual',
+          value: variable.value,
+        });
+        continue;
+      }
+
+      this.variables[variable.key].variableAttribute[varAttrIndex].value =
+        variable.value;
+    }
+  }
+
+  setVariable(key, variable) {
+    if (!this.variables[key]) {
+      this.variables[key] = {
+        component: variable.component,
+        variable: variable.variable,
+        variableAttribute: [
+          {
+            type: variable.attributeType,
+            value: variable.attributeValue,
+          },
+        ],
+      };
+      return;
+    }
+
+    const varAttrIndex = this.variables[key].variableAttribute?.findIndex(
+      (attr) => attr.type === (variable.attributeType || 'Actual') || !attr.type
+    );
+
+    if (varAttrIndex === -1) {
+      this.variables[key].variableAttribute.push({
+        type: variable.attributeType,
+        value: variable.attributeValue,
+      });
+      return;
+    }
+
+    this.variables[key].variableAttribute[varAttrIndex].value =
+      variable.attributeValue;
+  }
+
+  getVariableActualValue(key) {
+    const intervalConfig = this.variables[key];
+
+    const actualValue = intervalConfig.variableAttribute.find(
+      (attr) => attr.type === 'Actual' || !attr.type
+    );
+
+    return actualValue.value;
+  }
+
+  getVariablesArray() {
+    return Object.values(this.variables);
+  }
 }
 
-const getConfigurationKey201 = (item) => {
+class VariableConfiguration16 {
+  constructor(variables) {
+    this.variables = variables.reduce((acc, item) => {
+      acc[item.key] = item;
+      return acc;
+    }, {});
+  }
+
+  getOCPPIdentityString() {
+    return this.variables['Identity']?.value;
+  }
+
+  getMeterValueSampleInterval() {
+    const defaultInterval = 60;
+
+    const intervalConfig = this.variables['MeterValueSampleInterval']?.value;
+    if (!intervalConfig) return defaultInterval;
+
+    return parseInt(intervalConfig);
+  }
+
+  getBaseURL() {
+    // Alfen
+    if (
+      this.variables['BackOffice-URL-wired'] &&
+      this.variables['BackOffice-Path-wired']
+    ) {
+      return `${this.variables['BackOffice-URL-wired']}${this.variables['BackOffice-Path-wired']}`;
+    }
+    if (
+      this.variables['BackOffice-URL-APN'] &&
+      this.variables['BackOffice-Path-APN']
+    ) {
+      return `${this.variables['BackOffice-URL-APN']}${this.variables['BackOffice-Path-APN']}`;
+    }
+
+    // Evnex
+    if (this.variables['OCPPEndPoint']) {
+      return this.variables['OCPPEndPoint'];
+    }
+
+    return null;
+  }
+
+  variablesToSimpleSettingsMap() {
+    return this.variables;
+  }
+
+  updateVariablesFromSimpleSettingsMap(variables) {
+    for (const variable of Object.values(variables)) {
+      if (!this.variables[variable.key]) {
+        throw new Error(`Variable ${variable.key} not found in configuration`);
+      }
+
+      this.variables[variable.key].value = variable.value;
+    }
+  }
+
+  setVariable(key, variable) {
+    if (!this.variables[key]) {
+      this.variables[key] = variable;
+      return;
+    }
+
+    this.variables[key].value = variable.value;
+  }
+
+  getVariablesArray() {
+    return Object.values(this.variables);
+  }
+}
+
+export const getConfigurationKey201 = (item) => {
   const variableName = item.variable.name;
   const evseId = item.component.evse?.id;
   const connectorId = item.component.evse?.connectorId;
@@ -571,31 +778,31 @@ const getConfigurationValue201 = (item) => {
   return item.variableAttribute[0].value;
 };
 
-function buildConfigurationMap16() {
-  const list = configurationList16;
-  const query = getDocumentQuery();
-  const result = {};
-
-  for (const item of list) {
-    const { key } = item;
-    if (query.get(key)) {
-      result[key] = query.get(key);
-      continue;
-    }
-    result[key] = item.defaultValue;
-  }
-
-  return result;
-}
-
-export function getConfigurationList(ocppVersion) {
-  if (ocppVersion === 'ocpp2.0.1') {
-    return configurationList201.map((item) => {
-      const key = getConfigurationKey201(item);
-      const value = getConfigurationValue201(item);
-
-      return { key, defaultValue: value };
-    });
-  }
-  return configurationList16;
-}
+// function buildConfigurationMap16() {
+//   const list = configurationList16;
+//   const query = getDocumentQuery();
+//   const result = {};
+//
+//   for (const item of list) {
+//     const { key } = item;
+//     if (query.get(key)) {
+//       result[key] = query.get(key);
+//       continue;
+//     }
+//     result[key] = item.defaultValue;
+//   }
+//
+//   return result;
+// }
+//
+// export function getConfigurationList(ocppVersion) {
+//   if (ocppVersion === 'ocpp2.0.1') {
+//     return configurationList201.map((item) => {
+//       const key = getConfigurationKey201(item);
+//       const value = getConfigurationValue201(item);
+//
+//       return { key, defaultValue: value };
+//     });
+//   }
+//   return configurationList16;
+// }

@@ -10,7 +10,6 @@ import {
   getDefaultSession,
   ocppVersion,
   settingsList,
-  getConfigurationList,
 } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -41,7 +40,6 @@ export default class Home extends React.Component {
     logEntries: [],
     session1OnceStarted: false,
     session2OnceStarted: false,
-    configurationList: getConfigurationList(ocppVersion()),
   };
 
   componentDidMount() {
@@ -95,7 +93,6 @@ export default class Home extends React.Component {
       inspectCommand,
       session1OnceStarted,
       session2OnceStarted,
-      configurationList,
     } = this.state;
     if (!chargeStation) {
       return <Loader />;
@@ -218,32 +215,26 @@ export default class Home extends React.Component {
                 settings={settings}
                 configuration={configuration}
                 settingsList={settingsList}
-                configurationList={configurationList}
-                onSave={({
-                  settings: savedSettings,
-                  configuration: savedConfiguration,
-                }) => {
-                  let configList = configurationList;
-                  let config = savedConfiguration;
+                onSave={({ config, settings: savedSettings }) => {
+                  configuration.updateVariablesFromSimpleSettingsMap(config);
 
-                  if (
-                    settings.ocppConfiguration !==
-                    savedSettings.ocppConfiguration
-                  ) {
-                    configList = getConfigurationList(
-                      savedSettings.ocppConfiguration
-                    );
-                    config = getConfiguration(savedSettings.ocppConfiguration);
-                  }
+                  // if (
+                  // 	settings.ocppConfiguration !==
+                  // 	savedSettings.ocppConfiguration
+                  // ) {
+                  // 	configList = getConfigurationList(
+                  // 		savedSettings.ocppConfiguration
+                  // 	);
+                  // 	config = getConfiguration(savedSettings.ocppConfiguration);
+                  // }
 
                   this.setState(
                     {
                       settings: savedSettings,
-                      configurationList: configList,
-                      configuration: config,
+                      // configurationList: configList,
+                      // configuration: config,
                     },
                     () => {
-                      chargeStation.configuration = config;
                       chargeStation.options = savedSettings;
                       chargeStation.disconnect();
                       setTimeout(() => {

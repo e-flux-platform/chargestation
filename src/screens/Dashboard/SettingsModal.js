@@ -6,10 +6,9 @@ import { HelpTip } from 'components';
 @modal
 export default class SettingsModal extends React.Component {
   state = {
-    settings: this.props.settings || {},
-    configuration: this.props.configuration || {},
+    config: this.props.configuration.variablesToSimpleSettingsMap(),
+    settings: this.props.settings || [],
     settingsList: this.props.settingsList || [],
-    configurationList: this.props.configurationList || [],
   };
 
   setSettingsField = (e, { name, value }) => {
@@ -24,9 +23,12 @@ export default class SettingsModal extends React.Component {
 
   setConfigurationField = (e, { name, value }) => {
     this.setState({
-      configuration: {
-        ...this.state.configuration,
-        [name]: value,
+      config: {
+        ...this.state.config,
+        [name]: {
+          ...this.state.config[name],
+          value,
+        },
       },
       settings: this.state.settings,
     });
@@ -37,8 +39,7 @@ export default class SettingsModal extends React.Component {
     this.props.close();
   };
   render() {
-    const { settings, configuration, settingsList, configurationList } =
-      this.state;
+    const { config, settings, settingsList } = this.state;
 
     return (
       <>
@@ -46,7 +47,7 @@ export default class SettingsModal extends React.Component {
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="edit-settings">
             <Header as="h3" content="Settings" />
-            {settingsList.map((item) => {
+            {settingsList?.map((item) => {
               return (
                 <div key={item.key} style={{ marginBottom: '8px' }}>
                   <Form.Input
@@ -71,7 +72,7 @@ export default class SettingsModal extends React.Component {
             })}
             <Divider hidden />
             <Header as="h3" content="Configuration Keys" />
-            {configurationList.map((item) => {
+            {Object.values(config).map((item) => {
               return (
                 <Form.Input
                   key={item.key}
@@ -86,7 +87,7 @@ export default class SettingsModal extends React.Component {
                     </strong>
                   }
                   name={item.key}
-                  value={configuration[item.key]}
+                  value={item.value}
                   onChange={this.setConfigurationField}
                 />
               );
