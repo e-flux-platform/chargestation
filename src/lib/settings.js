@@ -503,9 +503,9 @@ export function getSettings() {
 export function getConfiguration(ocppVersion) {
   switch (ocppVersion) {
     case 'ocpp1.6':
-      return new Configuration201(defaultVariableConfig16);
+      return new VariableConfiguration16(defaultVariableConfig16);
     case 'ocpp2.0.1':
-      return new Configuration201(defaultVariableConfig201);
+      return new VariableConfiguration201(defaultVariableConfig201);
     default:
       throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
   }
@@ -529,7 +529,7 @@ export function getDefaultSession() {
   return result;
 }
 
-class Configuration201 {
+class VariableConfiguration201 {
   constructor(variables) {
     this.variables = variables.reduce((acc, item) => {
       const key = getConfigurationKey201(item);
