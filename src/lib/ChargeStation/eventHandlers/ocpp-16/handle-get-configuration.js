@@ -5,7 +5,6 @@ export default async function handleGetConfiguration({
   const response = {
     configurationKey: chargepoint.configuration
       .getVariablesArray()
-      // TODO: Move mapping to configuration class
       .map((variable) => {
         return {
           key: variable.key,

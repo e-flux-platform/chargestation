@@ -547,7 +547,7 @@ class VariableConfiguration201 {
 
     const intervalConfig = this.variables['MeterValueSampleInterval'];
 
-    const actualValue = intervalConfig.variableAttribute.find(
+    const actualValue = intervalConfig?.variableAttribute?.find(
       (attr) => attr.type === 'Actual' || !attr.type
     );
 
@@ -557,7 +557,7 @@ class VariableConfiguration201 {
     return parseInt(actualValue.value);
   }
 
-  variablesToSimpleSettingsMap() {
+  variablesToSimpleConfigurationMap() {
     return Object.keys(this.variables).reduce((acc, key) => {
       acc[key] = {
         key,
@@ -567,7 +567,7 @@ class VariableConfiguration201 {
     }, {});
   }
 
-  updateVariablesFromSimpleSettingsMap(variables) {
+  updateVariablesFromSimpleConfigurationMap(variables) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
@@ -659,11 +659,11 @@ class VariableConfiguration16 {
     return parseInt(intervalConfig);
   }
 
-  variablesToSimpleSettingsMap() {
+  variablesToSimpleConfigurationMap() {
     return this.variables;
   }
 
-  updateVariablesFromSimpleSettingsMap(variables) {
+  updateVariablesFromSimpleConfigurationMap(variables) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
