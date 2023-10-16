@@ -18,6 +18,10 @@ export default class ChargeStation {
     };
   }
 
+  changeConfiguration(configuration) {
+    this.configuration = configuration;
+  }
+
   availableConnectors() {
     return ['1', '2'].filter((id) => !this.sessions[id]);
   }

@@ -216,23 +216,24 @@ export default class Home extends React.Component {
                 configuration={configuration}
                 settingsList={settingsList}
                 onSave={({ config, settings: savedSettings }) => {
-                  configuration.updateVariablesFromSimpleSettingsMap(config);
+                  if (
+                    settings.ocppConfiguration !==
+                    savedSettings.ocppConfiguration
+                  ) {
+                    const newConfiguration = getConfiguration(
+                      savedSettings.ocppConfiguration
+                    );
 
-                  // if (
-                  // 	settings.ocppConfiguration !==
-                  // 	savedSettings.ocppConfiguration
-                  // ) {
-                  // 	configList = getConfigurationList(
-                  // 		savedSettings.ocppConfiguration
-                  // 	);
-                  // 	config = getConfiguration(savedSettings.ocppConfiguration);
-                  // }
-
+                    this.setState({
+                      configuration: newConfiguration,
+                    });
+                    chargeStation.changeConfiguration(newConfiguration);
+                  } else {
+                    configuration.updateVariablesFromSimpleSettingsMap(config);
+                  }
                   this.setState(
                     {
                       settings: savedSettings,
-                      // configurationList: configList,
-                      // configuration: config,
                     },
                     () => {
                       chargeStation.options = savedSettings;
