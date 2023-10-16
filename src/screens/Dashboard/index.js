@@ -229,9 +229,7 @@ export default class Home extends React.Component {
                     });
                     chargeStation.changeConfiguration(newConfiguration);
                   } else {
-                    configuration.updateVariablesFromSimpleConfigurationMap(
-                      config
-                    );
+                    configuration.updateVariablesFromKeyValueMap(config);
                   }
                   this.setState(
                     {

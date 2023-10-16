@@ -6,7 +6,7 @@ import { HelpTip } from 'components';
 @modal
 export default class SettingsModal extends React.Component {
   state = {
-    config: this.props.configuration.variablesToSimpleConfigurationMap(),
+    config: this.props.configuration.variablesToKeyValueMap(),
     settings: this.props.settings || [],
     settingsList: this.props.settingsList || [],
   };

@@ -529,8 +529,33 @@ export function getDefaultSession() {
   return result;
 }
 
-class VariableConfiguration201 {
+class VariableConfiguration {
+  getOCPPIdentityString() {
+    throw new Error('Not implemented');
+  }
+  getMeterValueSampleInterval() {
+    throw new Error('Not implemented');
+  }
+  variablesToKeyValueMap() {
+    throw new Error('Not implemented');
+  }
+  updateVariablesFromKeyValueMap(variables) {
+    throw new Error('Not implemented');
+  }
+  setVariable(key, variable) {
+    throw new Error('Not implemented');
+  }
+  getVariableActualValue(key) {
+    throw new Error('Not implemented');
+  }
+  getVariablesArray() {
+    throw new Error('Not implemented');
+  }
+}
+
+class VariableConfiguration201 extends VariableConfiguration {
   constructor(variables) {
+    super();
     this.variables = variables.reduce((acc, item) => {
       const key = getConfigurationKey201(item);
       acc[key] = item;
@@ -548,7 +573,7 @@ class VariableConfiguration201 {
     return value || defaultInterval;
   }
 
-  variablesToSimpleConfigurationMap() {
+  variablesToKeyValueMap() {
     return Object.keys(this.variables).reduce((acc, key) => {
       acc[key] = {
         key,
@@ -558,7 +583,7 @@ class VariableConfiguration201 {
     }, {});
   }
 
-  updateVariablesFromSimpleConfigurationMap(variables) {
+  updateVariablesFromKeyValueMap(variables) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
@@ -629,8 +654,9 @@ class VariableConfiguration201 {
   }
 }
 
-class VariableConfiguration16 {
+class VariableConfiguration16 extends VariableConfiguration {
   constructor(variables) {
+    super();
     this.variables = variables.reduce((acc, item) => {
       acc[item.key] = item;
       return acc;
@@ -650,11 +676,11 @@ class VariableConfiguration16 {
     return parseInt(intervalConfig);
   }
 
-  variablesToSimpleConfigurationMap() {
+  variablesToKeyValueMap() {
     return this.variables;
   }
 
-  updateVariablesFromSimpleConfigurationMap(variables) {
+  updateVariablesFromKeyValueMap(variables) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
