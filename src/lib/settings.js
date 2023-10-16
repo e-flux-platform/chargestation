@@ -544,17 +544,8 @@ class VariableConfiguration201 {
 
   getMeterValueSampleInterval() {
     const defaultInterval = 60;
-
-    const intervalConfig = this.variables['MeterValueSampleInterval'];
-
-    const actualValue = intervalConfig?.variableAttribute?.find(
-      (attr) => attr.type === 'Actual' || !attr.type
-    );
-
-    if (!actualValue) return defaultInterval;
-
-    // Not sure if parseInt is necessary here
-    return parseInt(actualValue.value);
+    const value = this.getVariableActualValue('MeterValueSampleInterval');
+    return value || defaultInterval;
   }
 
   variablesToSimpleConfigurationMap() {
