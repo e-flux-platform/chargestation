@@ -1,4 +1,4 @@
-import { extractOcppBaseUrlFromConfiguration, toCamelCase } from './utils';
+import { toCamelCase } from './utils';
 import { Connection } from './connection';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
@@ -48,8 +48,7 @@ export default class ChargeStation {
 
   connect() {
     this.setup();
-    const ocppBaseUrl =
-      this.configuration.getBaseURL() || this.options.ocppBaseUrl;
+    const ocppBaseUrl = this.options.ocppBaseUrl || this.options.ocppBaseUrl;
     const ocppIdentity = this.configuration.getOCPPIdentityString();
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
 

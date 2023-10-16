@@ -557,29 +557,6 @@ class VariableConfiguration201 {
     return parseInt(actualValue.value);
   }
 
-  getBaseURL() {
-    // Alfen
-    if (
-      this.variables['BackOffice-URL-wired'] &&
-      this.variables['BackOffice-Path-wired']
-    ) {
-      return `${this.variables['BackOffice-URL-wired']}${this.variables['BackOffice-Path-wired']}`;
-    }
-    if (
-      this.variables['BackOffice-URL-APN'] &&
-      this.variables['BackOffice-Path-APN']
-    ) {
-      return `${this.variables['BackOffice-URL-APN']}${this.variables['BackOffice-Path-APN']}`;
-    }
-
-    // Evnex
-    if (this.variables['OCPPEndPoint']) {
-      return this.variables['OCPPEndPoint'];
-    }
-
-    return null;
-  }
-
   variablesToSimpleSettingsMap() {
     return Object.keys(this.variables).reduce((acc, key) => {
       acc[key] = {
@@ -680,29 +657,6 @@ class VariableConfiguration16 {
     if (!intervalConfig) return defaultInterval;
 
     return parseInt(intervalConfig);
-  }
-
-  getBaseURL() {
-    // Alfen
-    if (
-      this.variables['BackOffice-URL-wired'] &&
-      this.variables['BackOffice-Path-wired']
-    ) {
-      return `${this.variables['BackOffice-URL-wired']}${this.variables['BackOffice-Path-wired']}`;
-    }
-    if (
-      this.variables['BackOffice-URL-APN'] &&
-      this.variables['BackOffice-Path-APN']
-    ) {
-      return `${this.variables['BackOffice-URL-APN']}${this.variables['BackOffice-Path-APN']}`;
-    }
-
-    // Evnex
-    if (this.variables['OCPPEndPoint']) {
-      return this.variables['OCPPEndPoint'];
-    }
-
-    return null;
   }
 
   variablesToSimpleSettingsMap() {
