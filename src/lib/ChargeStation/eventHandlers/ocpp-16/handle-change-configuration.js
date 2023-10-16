@@ -3,6 +3,8 @@ export default async function handleChangeConfiguration({
   callMessageId,
   callMessageBody,
 }) {
+  const { key } = callMessageBody;
+
   chargepoint.configuration.setVariable(key, callMessageBody);
 
   if (chargepoint.configuration[key]) {
