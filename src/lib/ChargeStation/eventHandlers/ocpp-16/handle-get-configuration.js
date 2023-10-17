@@ -3,13 +3,15 @@ export default async function handleGetConfiguration({
   callMessageId,
 }) {
   const response = {
-    configurationKey: Object.keys(chargepoint.configuration).map((key) => {
-      return {
-        key,
-        value: chargepoint.configuration[key],
-        readOnly: false,
-      };
-    }),
+    configurationKey: chargepoint.configuration
+      .getVariablesArray()
+      .map((variable) => {
+        return {
+          key: variable.key,
+          value: variable.value,
+          readOnly: false,
+        };
+      }),
     unknownKey: [],
   };
   chargepoint.writeCallResult(callMessageId, response);

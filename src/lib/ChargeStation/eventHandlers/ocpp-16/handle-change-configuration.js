@@ -3,8 +3,9 @@ export default async function handleChangeConfiguration({
   callMessageId,
   callMessageBody,
 }) {
-  const { key, value } = callMessageBody;
-  chargepoint.configuration[key] = value;
+  const { key } = callMessageBody;
+
+  chargepoint.configuration.setVariable(key, callMessageBody);
 
   const response = {
     status: 'Accepted',

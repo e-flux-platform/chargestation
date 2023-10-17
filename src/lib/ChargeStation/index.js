@@ -1,4 +1,4 @@
-import { extractOcppBaseUrlFromConfiguration, toCamelCase } from './utils';
+import { toCamelCase } from './utils';
 import { Connection } from './connection';
 import { sleep } from 'utils/csv';
 import { createEventEmitter } from './eventHandlers';
@@ -16,6 +16,10 @@ export default class ChargeStation {
       1: 'Available',
       2: 'Available',
     };
+  }
+
+  changeConfiguration(configuration) {
+    this.configuration = configuration;
   }
 
   availableConnectors() {
@@ -42,23 +46,10 @@ export default class ChargeStation {
     }
   }
 
-  getOCPPIdentity() {
-    switch (this.options?.ocppConfiguration) {
-      case 'ocpp1.6':
-        return this.configuration['Identity'];
-      case 'ocpp2.0.1':
-        return this.configuration['SecurityCtrlr.Identity'];
-      default:
-        return this.configuration['Identity'];
-    }
-  }
-
   connect() {
     this.setup();
-    const ocppBaseUrl =
-      extractOcppBaseUrlFromConfiguration(this.configuration) ||
-      this.options.ocppBaseUrl;
-    const ocppIdentity = this.getOCPPIdentity();
+    const ocppBaseUrl = this.options.ocppBaseUrl || this.options.ocppBaseUrl;
+    const ocppIdentity = this.configuration.getOCPPIdentityString();
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
 
     this.connection = this.getConnection(ocppBaseUrl, ocppIdentity);
@@ -145,10 +136,7 @@ export default class ChargeStation {
         ...session,
         writeCall: this.writeCall.bind(this),
         writeCallResult: this.writeCallResult.bind(this),
-        meterValuesInterval: parseInt(
-          this.configuration['MeterValueSampleInterval'] || '60',
-          10
-        ),
+        meterValuesInterval: this.configuration.getMeterValueSampleInterval(),
         getCurrentStatus: () => this.currentStatus[connectorId],
       },
       this.emitter

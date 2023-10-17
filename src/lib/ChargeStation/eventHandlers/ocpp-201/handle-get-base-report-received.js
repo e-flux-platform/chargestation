@@ -1,4 +1,3 @@
-import { configurationList201 } from 'lib/settings';
 import { sleep } from 'utils/csv';
 
 export default async function handleGetBaseReportReceived({
@@ -13,10 +12,10 @@ export default async function handleGetBaseReportReceived({
 
   const { requestId } = callMessageBody;
 
-  const list = [...configurationList201];
-  const middleIndex = Math.ceil(list.length / 2);
-  const firstHalf = list.splice(0, middleIndex);
-  const secondHalf = list.splice(-middleIndex);
+  const variables = chargepoint.configuration.getVariablesArray();
+  const middleIndex = Math.ceil(variables.length / 2);
+  const firstHalf = variables.splice(0, middleIndex);
+  const secondHalf = variables.splice(-middleIndex);
 
   await chargepoint.writeCall('NotifyReport', {
     requestId,
