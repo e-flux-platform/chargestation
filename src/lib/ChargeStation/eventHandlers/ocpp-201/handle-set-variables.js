@@ -12,9 +12,12 @@ export default async function handleSetVariables({
     chargepoint.configuration.setVariable(key, variable);
   }
 
-  const response = {
-    status: 'Accepted',
-  };
-
-  chargepoint.writeCallResult(callMessageId, response);
+  chargepoint.writeCallResult(callMessageId, {
+    setVariableResult: setVariableData.map((variable) => ({
+      attributeType: variable.attributeType,
+      attributeStatus: 'Accepted',
+      component: variable.component,
+      variable: variable.variable,
+    })),
+  });
 }
