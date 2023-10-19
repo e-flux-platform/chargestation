@@ -15,7 +15,9 @@ export default async function sendStatusNotificationAvailable({
     return;
   }
 
-  for (let i = 0; i < chargepoint.configuration.NumberOfConnectors; i++) {
+  const numConnectors =
+    chargepoint.configuration.getVariableValue('NumberOfConnectors');
+  for (let i = 0; i < numConnectors; i++) {
     await chargepoint.writeCall(
       'StatusNotification',
       {
