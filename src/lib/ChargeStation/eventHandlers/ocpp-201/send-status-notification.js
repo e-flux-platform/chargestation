@@ -10,7 +10,7 @@ export default async function sendStatusNotification({ chargepoint }) {
     connectorId: 0,
   });
 
-  await sleep(2000);
+  await sleep(1000);
 
   chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
