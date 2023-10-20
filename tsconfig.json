@@ -19,14 +19,23 @@
       "components/*": [
         "./src/components/*"
       ],
-      "contexts/*": [
-        "./src/contexts/*"
-      ],
       "helpers/*": [
         "./src/helpers/*"
       ],
+      "layouts/*": [
+        "./src/layouts/*"
+      ],
+      "lib/*": [
+        "./src/lib/*"
+      ],
+      "modals/*": [
+        "./src/modals/*"
+      ],
       "screens/*": [
         "./src/screens/*"
+      ],
+      "stores/*": [
+        "./src/stores/*"
       ],
       "utils/*": [
         "./src/utils/*"
