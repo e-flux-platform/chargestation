@@ -11,7 +11,8 @@
     "static": "node ./serve/static",
     "lint": "eslint",
     "test": "jest",
-    "generate": "cd ../../generator && yarn install && yarn generate"
+    "generate": "cd ../../generator && yarn install && yarn generate",
+    "postinstall": "cd serve && yarn install"
   },
   "dependencies": {
     "@babel/core": "^7.15.5",
