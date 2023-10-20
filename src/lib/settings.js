@@ -702,6 +702,14 @@ class VariableConfiguration16 extends VariableConfiguration {
   getVariablesArray() {
     return Object.values(this.variables);
   }
+
+  getVariableValue(key) {
+    const variable = this.variables[key];
+    if (variable) {
+      return variable.value;
+    }
+    return null;
+  }
 }
 
 export const getConfigurationKey201 = (item) => {
