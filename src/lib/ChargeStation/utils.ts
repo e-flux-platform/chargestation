@@ -1,3 +1,4 @@
+// TODO: Improve this interface. Preferably based on the OCPP 2.0.1 specification types
 interface SummarizeCommandParams {
   method: string;
   params: {
