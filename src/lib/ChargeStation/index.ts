@@ -1,13 +1,30 @@
 import { toCamelCase } from './utils';
 import { Connection } from './connection';
 import { sleep } from 'utils/csv';
-import { createEventEmitter } from './eventHandlers';
+import { ChargeStationEventEmitter, createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
+import {
+  OCPPVersion,
+  SettingsListSetting,
+  Variable,
+  VariableConfiguration,
+} from 'lib/settings';
+import { Map } from '../../types/generic';
 
 export default class ChargeStation {
-  constructor(configuration, options = {}) {
+  private callLog: object;
+  private sessions: object;
+  private emitter: ChargeStationEventEmitter;
+  private numConnectionAttempts: number;
+  private currentStatus: object;
+  private connection: Connection | undefined;
+  private connected = false;
+
+  constructor(
+    private configuration: VariableConfiguration<Variable>,
+    private options: Map<SettingsListSetting>
+  ) {
     this.configuration = configuration;
-    this.options = options;
     this.callLog = {};
     this.sessions = {};
     this.emitter = createEventEmitter(this, options?.ocppConfiguration);
@@ -18,7 +35,7 @@ export default class ChargeStation {
     };
   }
 
-  changeConfiguration(configuration) {
+  changeConfiguration(configuration: VariableConfiguration<Variable>) {
     this.configuration = configuration;
   }
 
@@ -30,19 +47,18 @@ export default class ChargeStation {
     try {
       this.emitter = createEventEmitter(this, this.options?.ocppConfiguration);
     } catch (error) {
-      this.emitter = null;
       alert(`${error.message}. Try to refresh the page.`);
     }
   }
 
-  getConnection(ocppBaseUrl, ocppIdentity) {
+  getConnection(ocppBaseUrl: string, ocppIdentity: string): Connection {
     switch (this.options?.ocppConfiguration) {
-      case 'ocpp1.6':
-        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
-      case 'ocpp2.0.1':
-        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp2.0.1');
+      case OCPPVersion.ocpp16:
+        return new Connection(ocppBaseUrl, ocppIdentity, OCPPVersion.ocpp16);
+      case OCPPVersion.ocpp201:
+        return new Connection(ocppBaseUrl, ocppIdentity, OCPPVersion.ocpp201);
       default:
-        return new Connection(ocppBaseUrl, ocppIdentity, 'ocpp1.6');
+        return new Connection(ocppBaseUrl, ocppIdentity, OCPPVersion.ocpp16);
     }
   }
 
@@ -67,7 +83,11 @@ export default class ChargeStation {
       this.disconnect();
       this.reconnect();
     };
-    this.connection.onReceiveCall = (method, body, messageId) => {
+    this.connection.onReceiveCall = (
+      method: string,
+      body: unknown,
+      messageId: string
+    ) => {
       this.callLog[messageId] = {
         destination: 'charge-point',
         requestReceivedAt: new Date(),
@@ -109,8 +129,10 @@ export default class ChargeStation {
   }
 
   disconnect() {
-    this.connection.disconnect();
-    this.connected = false;
+    if (this.connection) {
+      this.connection.disconnect();
+      this.connected = false;
+    }
   }
 
   reconnect() {
@@ -125,7 +147,7 @@ export default class ChargeStation {
       this.numConnectionAttempts++;
     }, numSeconds * 1000);
   }
-  async startSession(connectorId, session) {
+  async startSession(connectorId: string, session: Session) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
@@ -252,9 +274,20 @@ DC Charger Medium	25kW	150km	1.5 hours (to 80%)
 DC Rapid Charger	50kW	300km	1 hour (to 80%)
 DC Ultra Rapid Charger	175kW	1000km	15 minutes (to 80%)
 */
-class Session {
-  constructor(connectorId, options = {}, emitter) {
-    this.connectorId = parseInt(connectorId, 10);
+export class Session {
+  private meterValuesInterval: number;
+  private maxPowerKw: number;
+  private carBatteryKwh: number;
+  private carBatteryStateOfCharge: number;
+  private secondsElapsed: number;
+  private kwhElapsed: number;
+  private lastMeterValuesTimestamp: Date | undefined;
+
+  constructor(
+    private connectorId: number,
+    private options: Map<SettingsListSetting> = {},
+    private emitter: ChargeStationEventEmitter
+  ) {
     this.options = options;
     this.meterValuesInterval = options.meterValuesInterval || 60;
     this.maxPowerKw = options.maxPowerKw || 22;
@@ -263,7 +296,6 @@ class Session {
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
-    this.emitter = emitter;
   }
   now() {
     return new Date();
@@ -274,7 +306,7 @@ class Session {
   async stop() {
     this.emitter.emitEvent(EventTypes.SessionStopInitiated, { session: this });
   }
-  async tick(secondsElapsed) {
+  async tick(secondsElapsed: number) {
     this.secondsElapsed += secondsElapsed;
     if (secondsElapsed === 0) {
       return;

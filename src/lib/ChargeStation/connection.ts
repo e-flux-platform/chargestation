@@ -1,5 +1,35 @@
+enum MessageType {
+  CALL = 2,
+  CALL_RESULT = 3,
+  CALL_ERROR = 4,
+}
+
+type Call = [MessageType, string, string, unknown];
+
+type CallResult = [MessageType, string, unknown];
+
+interface CommandCallback {
+  method: string;
+  callback: (...params: unknown[]) => unknown;
+}
+
 class Connection {
-  constructor(ocppBaseUrl, ocppIdentity, version) {
+  private ocppBaseUrl: string;
+  private ocppIdentity: string;
+  private version: string;
+  private ready: boolean;
+  private messageId: number;
+  private commandCallbacks: {
+    [key: string]: CommandCallback;
+  };
+  private incomingCommand: unknown;
+  onConnected: null | (() => unknown);
+  private ws: WebSocket;
+
+  onReceiveCall = (method: string, payload: unknown, messageId: string) => {};
+  onReceiveCallResult = (messageId: string, payload: unknown) => {};
+
+  constructor(ocppBaseUrl: string, ocppIdentity: string, version: string) {
     this.ocppBaseUrl = ocppBaseUrl;
     this.ocppIdentity = ocppIdentity;
     this.version = version;
@@ -8,9 +38,7 @@ class Connection {
     this.commandCallbacks = {};
     this.incomingCommand;
     this.onConnected = null;
-  }
 
-  connect() {
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
     this.ws = new WebSocket(url, this.version);
 
@@ -29,7 +57,7 @@ class Connection {
     this.onConnected && this.onConnected();
   }
 
-  onMessage(event) {
+  onMessage(event: MessageEvent) {
     const data = JSON.parse(event.data);
     if (data[0] === 3) {
       this.onReceiveCallResult(data[1], data[2]);
@@ -49,36 +77,37 @@ class Connection {
     }
   }
 
-  onClose(event) {
-    this.onError && this.onError(new Error(`WebSocket closed (no connection)`));
+  onClose() {
+    console.error(`WebSocket closed (no connection)`);
   }
 
-  onError(error) {
-    console.error(error);
-    if (error.message) {
-      this.onError &&
-        this.onError(new Error(`WebSocket Error: ${error.message}`));
-    }
+  onError(event: Event) {
+    console.error(event);
   }
 
-  generateMessageId() {
+  generateMessageId(): string {
     this.messageId++;
     return this.messageId.toString();
   }
 
-  writeCall(method, params) {
+  writeCall(method: string, params: object) {
     const messageId = this.generateMessageId();
     const formattedMessage = [2, messageId, method, params];
     this.ws.send(JSON.stringify(formattedMessage));
     return messageId;
   }
 
-  writeCallResult(messageId, params) {
+  writeCallResult(messageId: string, params: object) {
     const formattedMessage = [3, messageId, params];
     this.ws.send(JSON.stringify(formattedMessage));
   }
 
-  writeCallError(messageId, code, description, details) {
+  writeCallError(
+    messageId: string,
+    code: string,
+    description: string,
+    details: object
+  ) {
     const formattedMessage = [4, messageId, code, description, details];
     this.ws.send(JSON.stringify(formattedMessage));
   }

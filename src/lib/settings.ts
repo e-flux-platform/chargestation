@@ -1,5 +1,6 @@
 import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
 import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
+import { Map } from '../types/generic';
 
 export interface SettingsListSetting {
   key: string;
@@ -536,13 +537,13 @@ function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
 
-export function getSettings(): { [key: string]: string | number } {
+export function getSettings(): Map<string | number> {
   const query = getDocumentQuery();
-  const result = {};
+  const result: Map<string | number> = {};
   for (const item of settingsList) {
     const { key } = item;
     if (query.get(key)) {
-      result[key] = query.get(key);
+      result[key] = query.get(key) as string | number;
       continue;
     }
     result[key] = item.defaultValue;
@@ -550,7 +551,7 @@ export function getSettings(): { [key: string]: string | number } {
   return result;
 }
 
-type Variable = Variable16 | Variable201;
+export type Variable = Variable16 | Variable201;
 
 export function getConfiguration(
   ocppVersion: OCPPVersion
@@ -571,11 +572,11 @@ export function ocppVersion() {
 
 export function getDefaultSession() {
   const query = getDocumentQuery();
-  const result = {};
+  const result: Map<string | number> = {};
   for (const item of sessionSettingsList) {
     const { key } = item;
     if (query.get(key)) {
-      result[key] = query.get(key);
+      result[key] = query.get(key) as string | number;
       continue;
     }
     result[key] = item.defaultValue;
@@ -583,51 +584,61 @@ export function getDefaultSession() {
   return result;
 }
 
-interface VariableKeyValueMap {
-  [key: string]: {
+interface VariableKeyValueMap
+  extends Map<{
     key: string;
     value: string | number;
-  };
-}
+  }> {}
 
-interface VariableConfiguration<Variable> {
+export interface VariableConfiguration<Variable> {
   getOCPPIdentityString(): string;
   getMeterValueSampleInterval(): number;
   variablesToKeyValueMap(): VariableKeyValueMap;
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap): void;
-  setVariable(key, variable): void;
+  setVariable(
+    key: string,
+    variable: SetVariableDataType | ChangeConfigurationRequest
+  ): void;
   getVariablesArray(): Variable[];
 }
 
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
-  private variables: { [key: string]: Variable201 } = {};
+  private variables: Map<Variable201> = {};
 
   constructor(variables: Variable201[]) {
-    this.variables = variables.reduce((acc, item) => {
+    this.variables = variables.reduce((acc: Map<Variable201>, item) => {
       const key = getConfigurationKey201(item);
       acc[key] = item;
       return acc;
     }, {});
   }
 
-  getOCPPIdentityString() {
-    return this.getVariableActualValue('SecurityCtrlr.Identity');
+  getOCPPIdentityString(): string {
+    const ocppIdentity = this.getVariableActualValue('SecurityCtrlr.Identity');
+    if (!ocppIdentity) {
+      throw new Error('OCPP Identity not found in configuration');
+    }
+
+    return ocppIdentity;
   }
 
   getMeterValueSampleInterval() {
     const defaultInterval = 60;
     const value = this.getVariableActualValue('MeterValueSampleInterval');
-    return parseInt(value) || defaultInterval;
+    return value ? parseInt(value) : defaultInterval;
   }
 
   variablesToKeyValueMap(): VariableKeyValueMap {
-    return Object.keys(this.variables).reduce((acc, key) => {
-      acc[key] = {
-        key,
-        value: this.getVariableActualValue(key),
-      };
-      return acc;
-    }, {});
+    return Object.keys(this.variables).reduce(
+      (acc: VariableKeyValueMap, key) => {
+        acc[key] = {
+          key,
+          value: this.getVariableActualValue(key),
+        };
+        return acc;
+      },
+      {}
+    );
   }
 
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
@@ -686,12 +697,15 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
       variable.attributeValue;
   }
 
-  getVariableActualValue(key): string {
+  getVariableActualValue(key: string): string {
     const intervalConfig = this.variables[key];
 
     const actualValue = intervalConfig.variableAttribute.find(
       (attr) => attr.type === 'Actual' || !attr.type
     );
+
+    if (!actualValue?.value)
+      throw new Error(`Variable ${key} not found in configuration`);
 
     return actualValue.value;
   }
@@ -702,10 +716,10 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 }
 
 class VariableConfiguration16 implements VariableConfiguration<Variable16> {
-  private variables: { [key: string]: Variable16 } = {};
+  private variables: Map<Variable16> = {};
 
-  constructor(variables) {
-    this.variables = variables.reduce((acc, item) => {
+  constructor(variables: Variable16[]) {
+    this.variables = variables.reduce((acc: Map<Variable16>, item) => {
       acc[item.key] = item;
       return acc;
     }, {});
@@ -753,7 +767,7 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
     return Object.values(this.variables);
   }
 
-  getVariableValue(key): string | number {
+  getVariableValue(key: string): string | number | null {
     const variable = this.variables[key];
     if (variable) {
       return variable.value;
