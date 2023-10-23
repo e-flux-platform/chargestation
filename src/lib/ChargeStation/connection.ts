@@ -5,8 +5,8 @@ enum MessageType {
 }
 
 type Call = [MessageType, string, string, unknown];
-
 type CallResult = [MessageType, string, unknown];
+type CallError = [MessageType, string, string, string, unknown];
 
 interface CommandCallback {
   method: string;
@@ -93,13 +93,13 @@ class Connection {
 
   writeCall(method: string, params: object) {
     const messageId = this.generateMessageId();
-    const formattedMessage = [2, messageId, method, params];
+    const formattedMessage: Call = [2, messageId, method, params];
     this.ws.send(JSON.stringify(formattedMessage));
     return messageId;
   }
 
   writeCallResult(messageId: string, params: object) {
-    const formattedMessage = [3, messageId, params];
+    const formattedMessage: CallResult = [3, messageId, params];
     this.ws.send(JSON.stringify(formattedMessage));
   }
 
@@ -109,7 +109,13 @@ class Connection {
     description: string,
     details: object
   ) {
-    const formattedMessage = [4, messageId, code, description, details];
+    const formattedMessage: CallError = [
+      4,
+      messageId,
+      code,
+      description,
+      details,
+    ];
     this.ws.send(JSON.stringify(formattedMessage));
   }
 }
