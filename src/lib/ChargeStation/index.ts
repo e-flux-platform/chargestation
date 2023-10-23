@@ -3,13 +3,24 @@ import { Connection } from './connection';
 import { sleep } from 'utils/csv';
 import { ChargeStationEventEmitter, createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
-import { OCPPVersion, Variable, VariableConfiguration } from 'lib/settings';
+import {
+  ChargeStationSetting,
+  OCPPVersion,
+  Variable,
+  VariableConfiguration,
+} from 'lib/settings';
 import { Map } from '../../types/generic';
 import { MeterValuesRequest as MeterValuesRequest16 } from 'schemas/ocpp/1.6/MeterValues';
 
 interface Options {
   ocppConfiguration: OCPPVersion;
   ocppBaseUrl: string;
+  chargePointVendor: string;
+  chargePointModel: string;
+  chargePointSerialNumber: string;
+  iccid: string;
+  imsi: string;
+  Identity: string;
 }
 
 interface CallLogItem {
@@ -40,7 +51,7 @@ export default class ChargeStation {
   private onError = (error: Error) => {};
 
   constructor(
-    private configuration: VariableConfiguration<Variable>,
+    public configuration: VariableConfiguration<Variable>,
     private options: Options
   ) {
     this.configuration = configuration;
@@ -52,6 +63,10 @@ export default class ChargeStation {
       1: 'Available',
       2: 'Available',
     };
+  }
+
+  getSetting(value: ChargeStationSetting) {
+    return this.options[value];
   }
 
   changeConfiguration(configuration: VariableConfiguration<Variable>) {
@@ -299,7 +314,7 @@ export default class ChargeStation {
   writeCall<T extends object>(
     method: string,
     callMessageBody: T,
-    session: Session
+    session?: Session
   ) {
     if (!this.connection) {
       throw new Error('Connection is undefined');

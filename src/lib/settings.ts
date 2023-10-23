@@ -2,8 +2,18 @@ import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
 import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
 import { Map } from '../types/generic';
 
+export enum ChargeStationSetting {
+  OCPPBaseUrl = 'ocppBaseUrl',
+  OCPPConfiguration = 'ocppConfiguration',
+  ChargePointVendor = 'chargePointVendor',
+  ChargePointModel = 'chargePointModel',
+  ChargePointSerialNumber = 'chargePointSerialNumber',
+  ICCID = 'iccid',
+  IMSI = 'imsi',
+}
+
 export interface SettingsListSetting {
-  key: string;
+  key: ChargeStationSetting;
   name: string;
   description: string;
   defaultValue: string | number;
@@ -17,7 +27,7 @@ export type OCPPVersion = typeof OCPPVersion[keyof typeof OCPPVersion];
 
 export const settingsList: SettingsListSetting[] = [
   {
-    key: 'ocppBaseUrl',
+    key: ChargeStationSetting.OCPPBaseUrl,
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
@@ -25,37 +35,37 @@ export const settingsList: SettingsListSetting[] = [
   // TODO: Make dropdown
   // Eventually a configuration should be selected automatically based on the Chargepoint model
   {
-    key: 'ocppConfiguration',
+    key: ChargeStationSetting.OCPPConfiguration,
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
     defaultValue: 'ocpp1.6',
   },
   {
-    key: 'chargePointVendor',
+    key: ChargeStationSetting.ChargePointVendor,
     name: 'Boot / Vendor',
     description: 'The chargePointVendor sent during BootNotification',
     defaultValue: 'Chargepoint.one',
   },
   {
-    key: 'chargePointModel',
+    key: ChargeStationSetting.ChargePointModel,
     name: 'Boot / Model',
     description: 'The chargePointModel sent during BootNotification',
     defaultValue: 'Chargepoint.one v1',
   },
   {
-    key: 'chargePointSerialNumber',
+    key: ChargeStationSetting.ChargePointSerialNumber,
     name: 'Boot / Serial Number',
     description: 'The chargePointSerialNumber sent during BootNotification',
     defaultValue: 'CP1-2919101',
   },
   {
-    key: 'iccid',
+    key: ChargeStationSetting.ICCID,
     name: 'Boot / MoICCID',
     description: 'The iccid sent during BootNotification',
     defaultValue: '8888888888088888888F',
   },
   {
-    key: 'imsi',
+    key: ChargeStationSetting.IMSI,
     name: 'Boot / IMSI',
     description: 'The imsi sent during BootNotification',
     defaultValue: '888888888888888',

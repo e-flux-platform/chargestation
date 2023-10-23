@@ -13,7 +13,7 @@ interface ChargeStationEventHandlerParams<CallBodyType, CallResultBodyType> {
   callResultMessageBody: CallResultBodyType;
 }
 
-type ChargeStationEventHandler = (
+export type ChargeStationEventHandler = (
   params: ChargeStationEventHandlerParams<unknown, unknown>
 ) => void;
 
