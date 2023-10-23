@@ -1,4 +1,20 @@
-export const settingsList = [
+import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
+import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
+
+export interface SettingsListSetting {
+  key: string;
+  name: string;
+  description: string;
+  defaultValue: string | number;
+}
+
+export const OCPPVersion = {
+  ocpp16: 'ocpp1.6',
+  ocpp201: 'ocpp2.0.1',
+} as const;
+export type OCPPVersion = typeof OCPPVersion[keyof typeof OCPPVersion];
+
+export const settingsList: SettingsListSetting[] = [
   {
     key: 'ocppBaseUrl',
     name: 'OCPP Base URL',
@@ -45,7 +61,7 @@ export const settingsList = [
   },
 ];
 
-export const sessionSettingsList = [
+export const sessionSettingsList: SettingsListSetting[] = [
   {
     key: 'uid',
     name: 'UID',
@@ -75,7 +91,13 @@ export const sessionSettingsList = [
   },
 ];
 
-export const defaultVariableConfig16 = [
+export interface Variable16 {
+  key: string;
+  description?: string;
+  value: string | number;
+}
+
+export const defaultVariableConfig16: Variable16[] = [
   {
     key: 'Identity',
     description: 'OCPP Identity used in authenticating the charge station',
@@ -119,7 +141,35 @@ export const defaultVariableConfig16 = [
   },
 ];
 
-export const defaultVariableConfig201 = [
+export interface Variable201 {
+  component: {
+    name: string;
+    instance?: string;
+    evse?: {
+      id: number;
+      connectorId?: number;
+    };
+  };
+  variable: {
+    name: string;
+    instance?: string;
+  };
+  variableAttribute: {
+    value: string;
+    persistent?: boolean;
+    constant?: boolean;
+    type?: 'Actual' | 'Target' | 'MinSet' | 'MaxSet' | 'Default' | 'Error';
+  }[];
+  variableCharacteristics?: {
+    dataType: string;
+    maxLimit?: number;
+    unit?: string;
+    valuesList?: string;
+    supportsMonitoring: boolean;
+  };
+}
+
+export const defaultVariableConfig201: Variable201[] = [
   {
     component: {
       name: 'SecurityCtrlr',
@@ -486,7 +536,7 @@ function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
 
-export function getSettings() {
+export function getSettings(): { [key: string]: string | number } {
   const query = getDocumentQuery();
   const result = {};
   for (const item of settingsList) {
@@ -500,11 +550,15 @@ export function getSettings() {
   return result;
 }
 
-export function getConfiguration(ocppVersion) {
+type Variable = Variable16 | Variable201;
+
+export function getConfiguration(
+  ocppVersion: OCPPVersion
+): VariableConfiguration<Variable> {
   switch (ocppVersion) {
-    case 'ocpp1.6':
+    case OCPPVersion.ocpp16:
       return new VariableConfiguration16(defaultVariableConfig16);
-    case 'ocpp2.0.1':
+    case OCPPVersion.ocpp201:
       return new VariableConfiguration201(defaultVariableConfig201);
     default:
       throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
@@ -529,33 +583,26 @@ export function getDefaultSession() {
   return result;
 }
 
-class VariableConfiguration {
-  getOCPPIdentityString() {
-    throw new Error('Not implemented');
-  }
-  getMeterValueSampleInterval() {
-    throw new Error('Not implemented');
-  }
-  variablesToKeyValueMap() {
-    throw new Error('Not implemented');
-  }
-  updateVariablesFromKeyValueMap(variables) {
-    throw new Error('Not implemented');
-  }
-  setVariable(key, variable) {
-    throw new Error('Not implemented');
-  }
-  getVariableActualValue(key) {
-    throw new Error('Not implemented');
-  }
-  getVariablesArray() {
-    throw new Error('Not implemented');
-  }
+interface VariableKeyValueMap {
+  [key: string]: {
+    key: string;
+    value: string | number;
+  };
 }
 
-class VariableConfiguration201 extends VariableConfiguration {
-  constructor(variables) {
-    super();
+interface VariableConfiguration<Variable> {
+  getOCPPIdentityString(): string;
+  getMeterValueSampleInterval(): number;
+  variablesToKeyValueMap(): VariableKeyValueMap;
+  updateVariablesFromKeyValueMap(variables: VariableKeyValueMap): void;
+  setVariable(key, variable): void;
+  getVariablesArray(): Variable[];
+}
+
+class VariableConfiguration201 implements VariableConfiguration<Variable201> {
+  private variables: { [key: string]: Variable201 } = {};
+
+  constructor(variables: Variable201[]) {
     this.variables = variables.reduce((acc, item) => {
       const key = getConfigurationKey201(item);
       acc[key] = item;
@@ -570,10 +617,10 @@ class VariableConfiguration201 extends VariableConfiguration {
   getMeterValueSampleInterval() {
     const defaultInterval = 60;
     const value = this.getVariableActualValue('MeterValueSampleInterval');
-    return value || defaultInterval;
+    return parseInt(value) || defaultInterval;
   }
 
-  variablesToKeyValueMap() {
+  variablesToKeyValueMap(): VariableKeyValueMap {
     return Object.keys(this.variables).reduce((acc, key) => {
       acc[key] = {
         key,
@@ -583,7 +630,7 @@ class VariableConfiguration201 extends VariableConfiguration {
     }, {});
   }
 
-  updateVariablesFromKeyValueMap(variables) {
+  updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
@@ -598,17 +645,17 @@ class VariableConfiguration201 extends VariableConfiguration {
       if (varAttrIndex === -1) {
         this.variables[variable.key].variableAttribute.push({
           type: 'Actual',
-          value: variable.value,
+          value: variable.value.toString(),
         });
         continue;
       }
 
       this.variables[variable.key].variableAttribute[varAttrIndex].value =
-        variable.value;
+        variable.value.toString();
     }
   }
 
-  setVariable(key, variable) {
+  setVariable(key: string, variable: SetVariableDataType) {
     if (!this.variables[key]) {
       this.variables[key] = {
         component: variable.component,
@@ -639,7 +686,7 @@ class VariableConfiguration201 extends VariableConfiguration {
       variable.attributeValue;
   }
 
-  getVariableActualValue(key) {
+  getVariableActualValue(key): string {
     const intervalConfig = this.variables[key];
 
     const actualValue = intervalConfig.variableAttribute.find(
@@ -649,38 +696,41 @@ class VariableConfiguration201 extends VariableConfiguration {
     return actualValue.value;
   }
 
-  getVariablesArray() {
+  getVariablesArray(): Variable201[] {
     return Object.values(this.variables);
   }
 }
 
-class VariableConfiguration16 extends VariableConfiguration {
+class VariableConfiguration16 implements VariableConfiguration<Variable16> {
+  private variables: { [key: string]: Variable16 } = {};
+
   constructor(variables) {
-    super();
     this.variables = variables.reduce((acc, item) => {
       acc[item.key] = item;
       return acc;
     }, {});
   }
 
-  getOCPPIdentityString() {
-    return this.variables['Identity']?.value;
+  getOCPPIdentityString(): string {
+    return this.variables['Identity']?.value as string;
   }
 
-  getMeterValueSampleInterval() {
+  getMeterValueSampleInterval(): number {
     const defaultInterval = 60;
 
     const intervalConfig = this.variables['MeterValueSampleInterval']?.value;
     if (!intervalConfig) return defaultInterval;
 
-    return parseInt(intervalConfig);
+    return typeof intervalConfig === 'number'
+      ? intervalConfig
+      : parseInt(intervalConfig);
   }
 
   variablesToKeyValueMap() {
     return this.variables;
   }
 
-  updateVariablesFromKeyValueMap(variables) {
+  updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
         throw new Error(`Variable ${variable.key} not found in configuration`);
@@ -690,7 +740,7 @@ class VariableConfiguration16 extends VariableConfiguration {
     }
   }
 
-  setVariable(key, variable) {
+  setVariable(key: string, variable: ChangeConfigurationRequest) {
     if (!this.variables[key]) {
       this.variables[key] = variable;
       return;
@@ -699,11 +749,11 @@ class VariableConfiguration16 extends VariableConfiguration {
     this.variables[key].value = variable.value;
   }
 
-  getVariablesArray() {
+  getVariablesArray(): Variable16[] {
     return Object.values(this.variables);
   }
 
-  getVariableValue(key) {
+  getVariableValue(key): string | number {
     const variable = this.variables[key];
     if (variable) {
       return variable.value;
@@ -712,7 +762,7 @@ class VariableConfiguration16 extends VariableConfiguration {
   }
 }
 
-export const getConfigurationKey201 = (item) => {
+export const getConfigurationKey201 = (item: Variable201): string => {
   const variableName = item.variable.name;
   const evseId = item.component.evse?.id;
   const connectorId = item.component.evse?.connectorId;
