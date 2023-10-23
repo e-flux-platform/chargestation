@@ -8,22 +8,25 @@ module.exports = {
   settings: {
     jest: { version: 26 },
   },
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/eslint-parser',
   parserOptions: {
     sourceType: 'module',
     ecmaFeatures: {
       legacyDecorators: true,
     },
-    babelOptions: {
-      configFile: path.join(__dirname, '.babelrc'),
-    },
+    tsconfigRootDir: __dirname,
+    project: ['./tsconfig.json'],
   },
   extends: [
     'plugin:bedrock/recommended',
     'plugin:bedrock/react',
     'plugin:bedrock/jest',
+    'plugin:@typescript-eslint/recommended',
   ],
   globals: {
     __ENV__: 'readonly',
   },
+	ignorePatterns: [
+		'.eslintrc.js'
+	]
 };

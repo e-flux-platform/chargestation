@@ -48,7 +48,7 @@ module.exports = {
     alias: {
       'react-dom': '@hot-loader/react-dom',
     },
-    extensions: ['.js', '.json', '.jsx'],
+    extensions: ['.js', '.json', '.jsx', '.ts', '.tsx'],
     modules: [path.join(__dirname, 'src'), 'node_modules'],
     // Node core modules were previously shimmed in webpack < v5.
     // These must now be opted into via the "fallback" option.
@@ -66,6 +66,20 @@ module.exports = {
         type: 'javascript/auto',
         use: 'babel-loader',
         exclude: /node_modules/,
+      },
+      {
+        test: /\.(ts|tsx)$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
+          },
+        },
       },
       {
         test: /\.(css|less)$/,

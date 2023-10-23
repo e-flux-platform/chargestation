@@ -11,7 +11,8 @@
     "static": "node ./serve/static",
     "lint": "eslint",
     "test": "jest",
-    "generate": "cd ../../generator && yarn install && yarn generate"
+    "generate": "cd ../../generator && yarn install && yarn generate",
+    "postinstall": "cd serve && yarn install"
   },
   "dependencies": {
     "@babel/core": "^7.15.5",
@@ -20,6 +21,7 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.6",
     "@babel/preset-react": "^7.14.5",
+    "@babel/preset-typescript": "^7.21.4",
     "@bedrockio/config": "^2.0.4",
     "@bedrockio/instrumentation": "^1.4.14",
     "@draft-js-plugins/alignment": "^5.0.2",
@@ -88,12 +90,18 @@
     "@testing-library/dom": "^7.30.3",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^13.1.1",
+    "@types/node": "^20.8.7",
+    "@types/react": "^18.2.30",
+    "@types/react-dom": "^18.2.14",
+    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@typescript-eslint/parser": "^6.8.0",
     "babel-jest": "^27.5.1",
     "eslint": "^7.22.0",
     "eslint-plugin-bedrock": "^1.0.9",
     "jest": "^26.6.3",
     "node-mocks-http": "^1.8.1",
     "prettier": "^2.4.1",
+    "typescript": "^5.0.3",
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "volta": {
