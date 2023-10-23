@@ -264,6 +264,7 @@ class Session {
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
     this.emitter = emitter;
+    this.seqNo = 0;
   }
   now() {
     return new Date();
@@ -309,23 +310,53 @@ class Session {
     await sleep(100);
     this.lastMeterValuesTimestamp = this.now();
 
-    await this.options.writeCall('MeterValues', {
-      connectorId: this.connectorId,
-      transactionId: this.transactionId,
-      meterValue: [
-        {
-          timestamp: this.now().toISOString(),
-          sampledValue: [
-            {
-              value: this.kwhElapsed.toFixed(5),
-              context: 'Sample.Periodic',
-              measurand: 'Energy.Active.Import.Register',
-              location: 'Outlet',
-              unit: 'kWh',
-            },
-          ],
+    this.seqNo += 1;
+
+    // TODO send TransactionEvent if it's OCPP2.0.1
+    if (this.options.version === 'ocpp2.0.1') {
+      await this.options.writeCall('TransactionEvent', {
+        eventType: 'Updated',
+        timestamp: this.now().toISOString(),
+        triggerReason: 'MeterValuePeriodic',
+        seqNo: this.seqNo,
+        transactionInfo: {
+          transactionId: this.transactionId,
         },
-      ],
-    });
+        meterValue: [
+          {
+            sampledValue: [
+              {
+                value: this.kwhElapsed.toFixed(3),
+                context: 'Sample.Periodic',
+                measurand: 'Energy.Active.Import.Register',
+                location: 'Outlet',
+                unitOfMeasure: { unit: 'kWh' },
+              },
+            ],
+            timestamp: this.now().toISOString(),
+          },
+        ],
+        evse: { id: 1, connectorId: this.connectorId },
+      });
+    } else {
+      await this.options.writeCall('MeterValues', {
+        connectorId: this.connectorId,
+        transactionId: this.transactionId,
+        meterValue: [
+          {
+            timestamp: this.now().toISOString(),
+            sampledValue: [
+              {
+                value: this.kwhElapsed.toFixed(5),
+                context: 'Sample.Periodic',
+                measurand: 'Energy.Active.Import.Register',
+                location: 'Outlet',
+                unit: 'kWh',
+              },
+            ],
+          },
+        ],
+      });
+    }
   }
 }

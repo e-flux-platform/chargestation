@@ -10,6 +10,12 @@ import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-201/
 import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-201/handle-heartbeat-call-result-received';
 import handleGetBaseReportReceived from '../eventHandlers/ocpp-201/handle-get-base-report-received';
 import handleSetVariables from '../eventHandlers/ocpp-201/handle-set-variables';
+import sendAuthorize from '../eventHandlers/ocpp-201/send-authorize';
+import sendStopTransaction from '../eventHandlers/ocpp-201/send-stop-transaction';
+import handleAuthorizeCallResultReceived from '../eventHandlers/ocpp-201/handle-authorize-call-result-received';
+import handleTokenRejection from '../eventHandlers/ocpp-201/handle-token-rejection';
+import sendStartTransaction from '../eventHandlers/ocpp-201/send-start-transaction';
+import handleTransactionEventCallResultReceived from '../eventHandlers/ocpp-201/handle-transaction-event-call-result-received';
 
 // This is the default configuration for OCPP 2.0.1
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -23,4 +29,13 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e201.GetBaseReportReceived]: [handleGetBaseReportReceived],
   [e201.SetVariablesReceived]: [handleSetVariables],
+  [e.SessionStartInitiated]: [sendAuthorize],
+  [e.SessionStopInitiated]: [sendStopTransaction],
+  [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
+  [e.AuthorizationFailed]: [handleTokenRejection],
+  [e.SessionCancelled]: [sendStatusNotification],
+  [e.AuthorizationAccepted]: [sendStartTransaction],
+  [e201.TransactionEventCallResultReceived]: [
+    handleTransactionEventCallResultReceived,
+  ],
 };

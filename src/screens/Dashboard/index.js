@@ -10,6 +10,7 @@ import {
   getDefaultSession,
   ocppVersion,
   settingsList,
+  getDocumentQuery,
 } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -34,7 +35,7 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(ocppVersion()),
+    configuration: getConfiguration(ocppVersion(), getDocumentQuery()),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],

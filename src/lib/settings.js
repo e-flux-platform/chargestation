@@ -11,7 +11,7 @@ export const settingsList = [
     key: 'ocppConfiguration',
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
-    defaultValue: 'ocpp1.6',
+    defaultValue: 'ocpp2.0.1',
   },
   {
     key: 'chargePointVendor',
@@ -482,7 +482,7 @@ export const defaultVariableConfig201 = [
   },
 ];
 
-function getDocumentQuery() {
+export function getDocumentQuery() {
   return new URLSearchParams(document.location.search);
 }
 
@@ -500,12 +500,12 @@ export function getSettings() {
   return result;
 }
 
-export function getConfiguration(ocppVersion) {
+export function getConfiguration(ocppVersion, query) {
   switch (ocppVersion) {
     case 'ocpp1.6':
-      return new VariableConfiguration16(defaultVariableConfig16);
+      return new VariableConfiguration16(defaultVariableConfig16, query);
     case 'ocpp2.0.1':
-      return new VariableConfiguration201(defaultVariableConfig201);
+      return new VariableConfiguration201(defaultVariableConfig201, query);
     default:
       throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
   }
@@ -554,11 +554,21 @@ class VariableConfiguration {
 }
 
 class VariableConfiguration201 extends VariableConfiguration {
-  constructor(variables) {
+  constructor(variables, query) {
     super();
     this.variables = variables.reduce((acc, item) => {
       const key = getConfigurationKey201(item);
-      acc[key] = item;
+      if (query && query.get(key)) {
+        acc[key] = {
+          ...item,
+          variableAttribute: [
+            { ...item.variableAttribute[0], value: query.get(key) },
+          ],
+        };
+      } else {
+        acc[key] = item;
+      }
+
       return acc;
     }, {});
   }
@@ -641,6 +651,7 @@ class VariableConfiguration201 extends VariableConfiguration {
 
   getVariableActualValue(key) {
     const intervalConfig = this.variables[key];
+    if (!intervalConfig) return null;
 
     const actualValue = intervalConfig.variableAttribute.find(
       (attr) => attr.type === 'Actual' || !attr.type
@@ -655,10 +666,15 @@ class VariableConfiguration201 extends VariableConfiguration {
 }
 
 class VariableConfiguration16 extends VariableConfiguration {
-  constructor(variables) {
+  constructor(variables, query) {
     super();
     this.variables = variables.reduce((acc, item) => {
-      acc[item.key] = item;
+      if (query && query.get(item.key)) {
+        acc[item.key] = { ...item, value: query.get(item.key) };
+      } else {
+        acc[item.key] = item;
+      }
+
       return acc;
     }, {});
   }

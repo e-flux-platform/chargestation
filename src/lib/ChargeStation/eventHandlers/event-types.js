@@ -9,12 +9,13 @@ export const EventTypes = {
   SessionStopInitiated: 'sessionStopInitiated',
   Charging: 'charging',
   SessionCancelled: 'sessionCancelled',
+  AuthorizationFailed: 'authorizationFailed',
+  AuthorizationAccepted: 'authorizationAccepted',
+  AuthorizeCallResultReceived: 'authorizeCallResultReceived',
 };
 
 // OCPP 1.6 specific events
 export const EventTypes16 = {
-  AuthorizationFailed: 'authorizationFailed',
-  AuthorizationAccepted: 'authorizationAccepted',
   AuthorizationFailedDuringStartTransaction:
     'authorizationFailedDuringStartTransaction',
   AuthorizationFailedDuringStopTransaction:
@@ -25,7 +26,6 @@ export const EventTypes16 = {
   ChangeConfigurationReceived: 'changeConfigurationReceived',
   RemoteStartTransactionReceived: 'remoteStartTransactionReceived',
   RemoteStopTransactionReceived: 'remoteStopTransactionReceived',
-  AuthorizeCallResultReceived: 'authorizeCallResultReceived',
   StartTransactionCallResultReceived: 'startTransactionCallResultReceived',
   StopTransactionCallResultReceived: 'stopTransactionCallResultReceived',
 };
@@ -34,4 +34,5 @@ export const EventTypes16 = {
 export const EventTypes201 = {
   GetBaseReportReceived: 'getBaseReportReceived',
   SetVariablesReceived: 'setVariablesReceived',
+  TransactionEventCallResultReceived: 'transactionEventCallResultReceived',
 };

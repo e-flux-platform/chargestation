@@ -40,9 +40,9 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
-  [e16.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
-  [e16.AuthorizationFailed]: [handleTokenRejection],
-  [e16.AuthorizationAccepted]: [sendStartTransaction],
+  [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
+  [e.AuthorizationFailed]: [handleTokenRejection],
+  [e.AuthorizationAccepted]: [sendStartTransaction],
   [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
   [e16.StartTransactionCallResultReceived]: [
     handleStartTransactionCallResultReceived,
