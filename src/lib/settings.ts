@@ -12,8 +12,15 @@ export enum ChargeStationSetting {
   IMSI = 'imsi',
 }
 
-export interface SettingsListSetting {
-  key: ChargeStationSetting;
+export enum SessionSetting {
+  uid = 'uid',
+  maxPowerKw = 'maxPowerKw',
+  carBatteryKwh = 'carBatteryKwh',
+  carBatteryStateOfCharge = 'carBatteryStateOfCharge',
+}
+
+export interface SettingsListSetting<T> {
+  key: T;
   name: string;
   description: string;
   defaultValue: string | number;
@@ -25,7 +32,7 @@ export const OCPPVersion = {
 } as const;
 export type OCPPVersion = typeof OCPPVersion[keyof typeof OCPPVersion];
 
-export const settingsList: SettingsListSetting[] = [
+export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
     key: ChargeStationSetting.OCPPBaseUrl,
     name: 'OCPP Base URL',
@@ -72,29 +79,29 @@ export const settingsList: SettingsListSetting[] = [
   },
 ];
 
-export const sessionSettingsList: SettingsListSetting[] = [
+export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
   {
-    key: 'uid',
+    key: SessionSetting.uid,
     name: 'UID',
     description: 'RFID card UID that would be used in a StartSession',
     defaultValue: 'FF88888801',
   },
   {
-    key: 'maxPowerKw',
+    key: SessionSetting.maxPowerKw,
     name: "Charge Station's Max Power (kW)",
     description:
       'The power in kW that this charge startion can deliver to a car (e.g. AC single phase is 7.4kW, AC three phase is 22kW, DC Fast charger is 25-175kW',
     defaultValue: 75,
   },
   {
-    key: 'carBatteryKwh',
+    key: SessionSetting.carBatteryKwh,
     name: 'Car Battery Capacity (kWh)',
     description:
       "The car battery capacity that we're simulating in kWh - is used for determinig when to flatten MeterValues and send SuspendedEV notice",
     defaultValue: 64,
   },
   {
-    key: 'carBatteryStateOfCharge',
+    key: SessionSetting.carBatteryStateOfCharge,
     name: 'Car Battery State of Charge (%)',
     description:
       'How full is the car battery we are simulating - is used for determinig when to flatten MeterValues and send SuspendedEV notice',
