@@ -5,6 +5,7 @@ import { ChargeStationEventEmitter, createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
 import { OCPPVersion, Variable, VariableConfiguration } from 'lib/settings';
 import { Map } from '../../types/generic';
+import { MeterValuesRequest as MeterValuesRequest16 } from 'schemas/ocpp/1.6/MeterValues';
 
 interface Options {
   ocppConfiguration: OCPPVersion;
@@ -25,15 +26,6 @@ interface CallLogItem {
   session?: Session;
 }
 
-// TODO: Replace with schemas for OCPP 1.6 and 2.0.1
-interface CallMessageBody {
-  status?: string;
-  errorCode?: string;
-  connectorId: string;
-  transactionId?: string;
-  meterValue?: unknown[];
-}
-
 type LogType = 'command' | 'message-response' | 'message' | 'error';
 
 export default class ChargeStation {
@@ -45,6 +37,7 @@ export default class ChargeStation {
   private connection?: Connection;
   private connected = false;
   private onLog = ({}) => {};
+  private onError = (error: Error) => {};
 
   constructor(
     private configuration: VariableConfiguration<Variable>,
@@ -114,6 +107,9 @@ export default class ChargeStation {
       if (!this.connected) return;
 
       this.connected = false;
+
+      // Not sure why this works but TS is complaining
+      // @ts-ignore
       this.log('error', error.message);
       this.disconnect();
       this.reconnect();
@@ -190,7 +186,14 @@ export default class ChargeStation {
       this.numConnectionAttempts++;
     }, numSeconds * 1000);
   }
-  async startSession(connectorId: string, session: object) {
+  async startSession(
+    connectorId: string,
+    session: {
+      maxPowerKw: number;
+      carBatteryKwh: number;
+      carBatteryStateOfCharge: number;
+    }
+  ) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
@@ -293,9 +296,9 @@ export default class ChargeStation {
     this.connection.writeCallResult(callMessageId, messageBody);
   }
 
-  writeCall(
+  writeCall<T extends object>(
     method: string,
-    callMessageBody: CallMessageBody,
+    callMessageBody: T,
     session: Session
   ) {
     if (!this.connection) {
@@ -304,11 +307,15 @@ export default class ChargeStation {
 
     const messageId = this.connection.writeCall(method, callMessageBody);
 
+    // TODO: This must be refactored
     if (
       method === 'StatusNotification' &&
+      // @ts-ignore
       callMessageBody.status &&
+      // @ts-ignore
       callMessageBody.connectorId
     ) {
+      // @ts-ignore
       this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
     }
 
@@ -348,7 +355,7 @@ export class Session {
   private secondsElapsed: number;
   private kwhElapsed: number;
   private lastMeterValuesTimestamp?: Date;
-  private transactionId?: string;
+  private transactionId?: number;
   private meterValuesInterval: number;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
@@ -422,10 +429,10 @@ export class Session {
     await sleep(100);
     this.lastMeterValuesTimestamp = this.now();
 
-    this.chargeStation.writeCall(
+    this.chargeStation.writeCall<MeterValuesRequest16>(
       'MeterValues',
       {
-        connectorId: this.connectorId,
+        connectorId: parseInt(this.connectorId),
         transactionId: this.transactionId,
         meterValue: [
           {
