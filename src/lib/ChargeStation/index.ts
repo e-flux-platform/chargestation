@@ -3,26 +3,52 @@ import { Connection } from './connection';
 import { sleep } from 'utils/csv';
 import { ChargeStationEventEmitter, createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
-import {
-  OCPPVersion,
-  SettingsListSetting,
-  Variable,
-  VariableConfiguration,
-} from 'lib/settings';
+import { OCPPVersion, Variable, VariableConfiguration } from 'lib/settings';
 import { Map } from '../../types/generic';
 
+interface Options {
+  ocppConfiguration: OCPPVersion;
+  ocppBaseUrl: string;
+}
+
+interface CallLogItem {
+  destination: 'charge-point' | 'central-server';
+  requestReceivedAt?: Date;
+  requestSentAt?: Date;
+  request: { method: string; params: unknown };
+  response?: {
+    code: string;
+    description: string;
+    details: unknown;
+  };
+  responseSentAt?: Date;
+  session?: Session;
+}
+
+// TODO: Replace with schemas for OCPP 1.6 and 2.0.1
+interface CallMessageBody {
+  status?: string;
+  errorCode?: string;
+  connectorId: string;
+  transactionId?: string;
+  meterValue?: unknown[];
+}
+
+type LogType = 'command' | 'message-response' | 'message' | 'error';
+
 export default class ChargeStation {
-  private callLog: object;
-  private sessions: object;
+  private callLog: Map<CallLogItem>;
+  private sessions: Map<Session>;
   private emitter: ChargeStationEventEmitter;
   private numConnectionAttempts: number;
-  private currentStatus: object;
-  private connection: Connection | undefined;
+  private currentStatus: Map<string>;
+  private connection?: Connection;
   private connected = false;
+  private onLog = ({}) => {};
 
   constructor(
     private configuration: VariableConfiguration<Variable>,
-    private options: Map<SettingsListSetting>
+    private options: Options
   ) {
     this.configuration = configuration;
     this.callLog = {};
@@ -43,11 +69,20 @@ export default class ChargeStation {
     return ['1', '2'].filter((id) => !this.sessions[id]);
   }
 
+  getMeterValueSampleInterval() {
+    return this.configuration.getMeterValueSampleInterval();
+  }
+
   setup() {
     try {
-      this.emitter = createEventEmitter(this, this.options?.ocppConfiguration);
-    } catch (error) {
-      alert(`${error.message}. Try to refresh the page.`);
+      this.emitter = createEventEmitter(
+        this,
+        this.options['ocppConfiguration'] as unknown as OCPPVersion
+      );
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        alert(`${error.message}. Try to refresh the page.`);
+      }
     }
   }
 
@@ -75,7 +110,7 @@ export default class ChargeStation {
       this.log('message-response', '< Connected!');
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
-    this.connection.onError = (error) => {
+    this.connection.onError = (error: Event) => {
       if (!this.connected) return;
 
       this.connected = false;
@@ -99,7 +134,10 @@ export default class ChargeStation {
         callMessageId: messageId,
       });
     };
-    this.connection.onReceiveCallResult = (messageId, body) => {
+    this.connection.onReceiveCallResult = (
+      messageId: string,
+      body: unknown
+    ) => {
       const call = this.callLog[messageId];
       if (!call) {
         console.warn(
@@ -128,6 +166,10 @@ export default class ChargeStation {
     this.numConnectionAttempts++;
   }
 
+  getConnectorStatus(connectorId: string) {
+    return this.currentStatus[connectorId];
+  }
+
   disconnect() {
     if (this.connection) {
       this.connection.disconnect();
@@ -143,11 +185,12 @@ export default class ChargeStation {
     const numSeconds = this.numConnectionAttempts < 5 ? 5 : 30;
     this.log('message', `> Reconnecting in ${numSeconds} seconds`);
     setTimeout(() => {
+      if (!this.connection) throw new Error('Connection is undefined');
       this.connection.connect();
       this.numConnectionAttempts++;
     }, numSeconds * 1000);
   }
-  async startSession(connectorId: string, session: Session) {
+  async startSession(connectorId: string, session: object) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
@@ -156,49 +199,55 @@ export default class ChargeStation {
       connectorId,
       {
         ...session,
-        writeCall: this.writeCall.bind(this),
-        writeCallResult: this.writeCallResult.bind(this),
-        meterValuesInterval: this.configuration.getMeterValueSampleInterval(),
-        getCurrentStatus: () => this.currentStatus[connectorId],
       },
-      this.emitter
+      this.emitter,
+      this
     );
     await this.sessions[connectorId].start();
   }
 
-  async stopSession(connectorId) {
+  async stopSession(connectorId: string) {
     if (!this.sessions[connectorId]) {
       return;
     }
     await this.sessions[connectorId].stop();
   }
 
-  hasRunningSession(connectorId) {
+  hasRunningSession(connectorId: string) {
     return !!this.sessions[connectorId];
   }
 
-  isStartingSession(connectorId) {
+  isStartingSession(connectorId: string) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
     );
   }
 
-  isStoppingSession(connectorId) {
+  isStoppingSession(connectorId: string) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStoppingSession
     );
   }
 
-  error(error) {
+  error(error: Error) {
     this.onError && this.onError(error);
   }
 
-  log(type, message, command = undefined) {
+  log(type: LogType, message: string, command: unknown = undefined) {
     const id = `${Date.now()}-${Math.random()}}`;
     this.onLog && this.onLog({ id, type, message, command });
   }
 
-  writeCallError(callMessageId, code, description, details) {
+  writeCallError(
+    callMessageId: string,
+    code: string,
+    description: string,
+    details: object
+  ) {
+    if (!this.connection) {
+      throw new Error('Connection is undefined');
+    }
+
     const call = this.callLog[callMessageId];
 
     if (!call) {
@@ -219,7 +268,11 @@ export default class ChargeStation {
     this.connection.writeCallError(callMessageId, code, description, details);
   }
 
-  writeCallResult(callMessageId, messageBody) {
+  writeCallResult(callMessageId: string, messageBody: object) {
+    if (!this.connection) {
+      throw new Error('Connection is undefined');
+    }
+
     const call = this.callLog[callMessageId];
 
     if (!call) {
@@ -240,7 +293,15 @@ export default class ChargeStation {
     this.connection.writeCallResult(callMessageId, messageBody);
   }
 
-  writeCall(method, callMessageBody, session) {
+  writeCall(
+    method: string,
+    callMessageBody: CallMessageBody,
+    session: Session
+  ) {
+    if (!this.connection) {
+      throw new Error('Connection is undefined');
+    }
+
     const messageId = this.connection.writeCall(method, callMessageBody);
 
     if (
@@ -274,32 +335,50 @@ DC Charger Medium	25kW	150km	1.5 hours (to 80%)
 DC Rapid Charger	50kW	300km	1 hour (to 80%)
 DC Ultra Rapid Charger	175kW	1000km	15 minutes (to 80%)
 */
+interface SessionOptions {
+  maxPowerKw: number;
+  carBatteryKwh: number;
+  carBatteryStateOfCharge: number;
+}
+
 export class Session {
-  private meterValuesInterval: number;
   private maxPowerKw: number;
   private carBatteryKwh: number;
   private carBatteryStateOfCharge: number;
   private secondsElapsed: number;
   private kwhElapsed: number;
-  private lastMeterValuesTimestamp: Date | undefined;
+  private lastMeterValuesTimestamp?: Date;
+  private transactionId?: string;
+  private meterValuesInterval: number;
+
+  // TODO: Should ideally have getters and setters, but we should first convert everything to TS
+  isStartingSession = false;
+  isStoppingSession = false;
 
   constructor(
-    private connectorId: number,
-    private options: Map<SettingsListSetting> = {},
-    private emitter: ChargeStationEventEmitter
+    private connectorId: string,
+    private options: SessionOptions,
+    private emitter: ChargeStationEventEmitter,
+    private chargeStation: ChargeStation
   ) {
     this.options = options;
-    this.meterValuesInterval = options.meterValuesInterval || 60;
+    this.meterValuesInterval =
+      chargeStation.getMeterValueSampleInterval() || 60;
     this.maxPowerKw = options.maxPowerKw || 22;
     this.carBatteryKwh = options.carBatteryKwh || 64;
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
-    this.lastMeterValuesTimestamp = undefined;
   }
-  now() {
+
+  get connectorStatus(): string {
+    return this.chargeStation.getConnectorStatus(this.connectorId);
+  }
+
+  now(): Date {
     return new Date();
   }
+
   async start() {
     this.emitter.emitEvent(EventTypes.SessionStartInitiated, { session: this });
   }
@@ -317,47 +396,53 @@ export class Session {
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
     console.info(
-      `Charge session tick (connectorId=${
-        this.connectorId
-      }, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.options.getCurrentStatus()}`
+      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
     );
 
     if (
       this.lastMeterValuesTimestamp &&
-      this.lastMeterValuesTimestamp >
-        this.now() - this.meterValuesInterval * 1000
+      this.lastMeterValuesTimestamp.valueOf() >
+        this.now().valueOf() - this.meterValuesInterval * 1000
     ) {
       return;
     }
     if (chargeLimitReached) {
-      await this.options.writeCall('StatusNotification', {
-        connectorId: this.connectorId,
-        errorCode: 'NoError',
-        status: 'SuspendedEV',
-      });
-    } else if (this.options.getCurrentStatus() === 'Charging') {
+      this.chargeStation.writeCall(
+        'StatusNotification',
+        {
+          connectorId: this.connectorId,
+          errorCode: 'NoError',
+          status: 'SuspendedEV',
+        },
+        this
+      );
+    } else if (this.connectorStatus === 'Charging') {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);
     this.lastMeterValuesTimestamp = this.now();
 
-    await this.options.writeCall('MeterValues', {
-      connectorId: this.connectorId,
-      transactionId: this.transactionId,
-      meterValue: [
-        {
-          timestamp: this.now().toISOString(),
-          sampledValue: [
-            {
-              value: this.kwhElapsed.toFixed(5),
-              context: 'Sample.Periodic',
-              measurand: 'Energy.Active.Import.Register',
-              location: 'Outlet',
-              unit: 'kWh',
-            },
-          ],
-        },
-      ],
-    });
+    this.chargeStation.writeCall(
+      'MeterValues',
+      {
+        connectorId: this.connectorId,
+        transactionId: this.transactionId,
+        meterValue: [
+          {
+            timestamp: this.now().toISOString(),
+            sampledValue: [
+              {
+                value: this.kwhElapsed.toFixed(5),
+                context: 'Sample.Periodic',
+                measurand: 'Energy.Active.Import.Register',
+                location: 'Outlet',
+                unit: 'kWh',
+              },
+            ],
+          },
+        ],
+      },
+      this
+    );
   }
 }

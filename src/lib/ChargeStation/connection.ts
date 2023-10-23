@@ -25,6 +25,7 @@ class Connection {
   private incomingCommand: unknown;
   onConnected: null | (() => unknown);
   private ws: WebSocket;
+  connect = () => {};
 
   onReceiveCall = (method: string, payload: unknown, messageId: string) => {};
   onReceiveCallResult = (messageId: string, payload: unknown) => {};
