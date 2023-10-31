@@ -9,7 +9,7 @@ import { withSession } from 'stores';
 import {
   settingsList,
   sessionSettingsList,
-  configurationList16,
+  defaultVariableConfig16,
 } from 'lib/settings';
 
 const DEFAULT_PAGE_ID = 'getting-started';
@@ -35,7 +35,7 @@ function getDynamicMarkdown() {
 
   let configurationMarkdown16 = 'Key|description\n';
   configurationMarkdown16 += '-|-\n';
-  configurationList16.forEach((item) => {
+  defaultVariableConfig16.forEach((item) => {
     configurationMarkdown16 += `\`${item.key}\`|${item.description}\n`;
   });
 

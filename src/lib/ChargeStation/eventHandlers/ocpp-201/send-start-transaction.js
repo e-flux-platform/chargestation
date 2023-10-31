@@ -7,7 +7,7 @@ export default async function sendStartTransaction({ chargepoint, session }) {
   await sleep(1000);
 
   const evseId = 1;
-  const connectorId = 1;
+  const connectorId = session.connectorId;
 
   chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
@@ -18,15 +18,16 @@ export default async function sendStartTransaction({ chargepoint, session }) {
 
   await sleep(1000);
 
-  const now = new Date().toISOString();
+  const startTime = session.startTime.toISOString();
   const transactionId = uuidv4();
   session.transactionId = transactionId;
+  session.isStartingSession = true;
 
   await chargepoint.writeCall(
     'TransactionEvent',
     {
       eventType: 'Started',
-      timestamp: now,
+      timestamp: startTime,
       triggerReason: 'ChargingStateChanged',
       seqNo: session.seqNo,
       transactionInfo: {
@@ -42,7 +43,7 @@ export default async function sendStartTransaction({ chargepoint, session }) {
               unitOfMeasure: { unit: 'kWh' },
             },
           ],
-          timestamp: now,
+          timestamp: startTime,
         },
       ],
       evse: { id: evseId, connectorId },

@@ -92,6 +92,8 @@ export default class ChargeStation {
         `${toCamelCase(call.request.method)}CallResultReceived`,
         {
           callResultMessageBody: body,
+          callMessageBody: call.request.params,
+          callMessageId: messageId,
           session: call.session,
         }
       );
@@ -138,6 +140,7 @@ export default class ChargeStation {
         writeCallResult: this.writeCallResult.bind(this),
         meterValuesInterval: this.configuration.getMeterValueSampleInterval(),
         getCurrentStatus: () => this.currentStatus[connectorId],
+        ocppVersion: this.options.ocppConfiguration,
       },
       this.emitter
     );
@@ -221,12 +224,9 @@ export default class ChargeStation {
   writeCall(method, callMessageBody, session) {
     const messageId = this.connection.writeCall(method, callMessageBody);
 
-    if (
-      method === 'StatusNotification' &&
-      callMessageBody.status &&
-      callMessageBody.connectorId
-    ) {
-      this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
+    if (method === 'StatusNotification' && callMessageBody.connectorId) {
+      this.currentStatus[callMessageBody.connectorId] =
+        callMessageBody.status || callMessageBody.connectorStatus;
     }
 
     this.callLog[messageId] = {
@@ -260,11 +260,13 @@ class Session {
     this.maxPowerKw = options.maxPowerKw || 22;
     this.carBatteryKwh = options.carBatteryKwh || 64;
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
+    this.ocppVersion = options.ocppVersion;
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
     this.emitter = emitter;
     this.seqNo = 0;
+    this.startTime = new Date();
   }
   now() {
     return new Date();
@@ -304,7 +306,9 @@ class Session {
         errorCode: 'NoError',
         status: 'SuspendedEV',
       });
-    } else if (this.options.getCurrentStatus() === 'Charging') {
+    } else if (
+      ['Charging', 'Occupied'].includes(this.options.getCurrentStatus())
+    ) {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);
@@ -312,8 +316,7 @@ class Session {
 
     this.seqNo += 1;
 
-    // TODO send TransactionEvent if it's OCPP2.0.1
-    if (this.options.version === 'ocpp2.0.1') {
+    if (this.ocppVersion === 'ocpp2.0.1') {
       await this.options.writeCall('TransactionEvent', {
         eventType: 'Updated',
         timestamp: this.now().toISOString(),
@@ -326,7 +329,7 @@ class Session {
           {
             sampledValue: [
               {
-                value: this.kwhElapsed.toFixed(3),
+                value: Number(this.kwhElapsed.toFixed(3)),
                 context: 'Sample.Periodic',
                 measurand: 'Energy.Active.Import.Register',
                 location: 'Outlet',

@@ -1,33 +1,30 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
 
-export default async function handleTransactionEventReceived({
-  chargepoint,
-  emitter,
+export default async function handleTransactionEventCallResultReceived({
   session,
-  callResultMessageBody,
+  emitter,
+  chargepoint,
+  callMessageBody,
 }) {
-  await sleep(1000);
-  session.tickInterval = setInterval(() => {
-    session.tick(5);
-  }, 5000);
-  await sleep(500);
-  session.tick(0);
+  switch (callMessageBody.eventType) {
+    case 'Started':
+      session.isStartingSession = false;
 
-  emitter.emitEvent(EventTypes.Charging, { session });
+      await sleep(1000);
+      session.tickInterval = setInterval(() => {
+        session.tick(5);
+      }, 5000);
+      await sleep(500);
+      session.tick(0);
 
-  console.log('HERE8', session, chargepoint.sessions);
-  if (chargepoint.sessions[session.connectorId]) {
-    return;
+      emitter.emitEvent(EventTypes.Charging);
+      break;
+    case 'Updated':
+      emitter.emitEvent(EventTypes.Charging);
+      break;
+    case 'Ended':
+      delete chargepoint.sessions[session.connectorId];
+      break;
   }
-  console.log('HERE9');
-  chargepoint.sessions[session.connectorId].isStartingSession = false;
-
-  // chargepoint.sessions[session.connectorId].isStartingSession = false;
-  // chargepoint.sessions[session.connectorId].isStoppingSession = true;
-  // clearInterval(chargepoint.tickInterval);
-  // await sleep(1000);
-
-  // delete chargepoint.sessions[session.connectorId];
-  // emitter.emitEvent(EventTypes.SessionCancelled, { session });
 }

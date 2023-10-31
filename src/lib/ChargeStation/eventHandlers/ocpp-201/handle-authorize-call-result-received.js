@@ -11,6 +11,5 @@ export default async function handleAuthorizeCallResultReceived({
     return;
   }
 
-  console.log('HERE1');
   emitter.emitEvent(EventTypes.AuthorizationAccepted, { session });
 }

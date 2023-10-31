@@ -10,7 +10,7 @@ export default async function sendStopTransaction({ chargepoint, session }) {
   const now = new Date().toISOString();
 
   await chargepoint.writeCall(
-    'StopTransaction',
+    'TransactionEvent',
     {
       eventType: 'Ended',
       timestamp: now,
@@ -24,12 +24,12 @@ export default async function sendStopTransaction({ chargepoint, session }) {
         {
           sampledValue: [
             {
-              value: 0, // TODO
+              value: 0.0,
               context: 'Transaction.Begin',
               unitOfMeasure: { unit: 'kWh' },
             },
           ],
-          timestamp: '2023-10-12T07:43:35Z', // TODO
+          timestamp: session.startTime.toISOString(),
         },
         {
           sampledValue: [
