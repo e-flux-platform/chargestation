@@ -1,7 +1,11 @@
 import { sleep } from '../../../../utils/csv';
-import { EventTypes16 } from '../event-types';
 
-export default async function sendStopTransaction({ chargepoint, session }) {
+import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
+
+const sendStopTransaction: ChargeStationEventHandler = async ({
+  chargepoint,
+  session,
+}) => {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
 
   clearInterval(session.tickInterval);
@@ -47,4 +51,6 @@ export default async function sendStopTransaction({ chargepoint, session }) {
     },
     session
   );
-}
+};
+
+export default sendStopTransaction;

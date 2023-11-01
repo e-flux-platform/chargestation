@@ -1,6 +1,10 @@
 import { sleep } from '../../../../utils/csv';
 
-export default async function sendStatusNotification({ chargepoint }) {
+import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
+
+const sendStatusNotification: ChargeStationEventHandler = async ({
+  chargepoint,
+}) => {
   await sleep(1000);
 
   chargepoint.writeCall('StatusNotification', {
@@ -27,4 +31,6 @@ export default async function sendStatusNotification({ chargepoint }) {
     evseId: 2,
     connectorId: 1,
   });
-}
+};
+
+export default sendStatusNotification;

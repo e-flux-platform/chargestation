@@ -1,7 +1,6 @@
 import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
 import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
 import { Map } from '../types/generic';
-import { Url } from 'url';
 
 export enum ChargeStationSetting {
   OCPPBaseUrl = 'ocppBaseUrl',
@@ -672,7 +671,9 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
-        throw new Error(`Variable ${variable.key} not found in configuration`);
+        throw new Error(
+          `Variable ${variable.key} not found in configuration when updating variables`
+        );
       }
 
       const varAttrIndex = this.variables[
@@ -733,8 +734,10 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
       (attr) => attr.type === 'Actual' || !attr.type
     );
 
-    if (!actualValue?.value)
-      throw new Error(`Variable ${key} not found in configuration`);
+    if (actualValue?.value === null || actualValue?.value === undefined)
+      throw new Error(
+        `Variable ${key} not found in configuration when getting actual value`
+      );
 
     return actualValue.value;
   }
@@ -783,7 +786,9 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
-        throw new Error(`Variable ${variable.key} not found in configuration`);
+        throw new Error(
+          `Variable ${variable.key} not found in configuration when updating variables`
+        );
       }
 
       this.variables[variable.key].value = variable.value;

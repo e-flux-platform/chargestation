@@ -10,11 +10,8 @@ import {
   VariableConfiguration,
 } from 'lib/settings';
 import { Map } from '../../types/generic';
-import { MeterValuesRequest as MeterValuesRequest16 } from 'schemas/ocpp/1.6/MeterValues';
 import { StatusNotificationRequest as StatusNotificationRequest16 } from 'schemas/ocpp/1.6/StatusNotification';
 import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schemas/ocpp/2.0/StatusNotificationRequest';
-import { TransactionEventRequest as TransactionEventRequest20 } from 'schemas/ocpp/2.0/TransactionEventRequest';
-import { v4 as uuidv4 } from 'uuid';
 
 interface Settings {
   ocppConfiguration: string;
@@ -46,18 +43,18 @@ type LogType = 'command' | 'message-response' | 'message' | 'error';
 export default class ChargeStation {
   private ocppVersion: OCPPVersion;
   private callLog: Map<CallLogItem>;
-  private sessions: Map<Session>;
+  public sessions: Map<Session>;
   private emitter: ChargeStationEventEmitter;
   private numConnectionAttempts: number;
   private currentStatus: Map<string>;
   private connection?: Connection;
-  private connected = false;
+  public connected = false;
   private onLog = ({}) => {};
   private onError = (error: Error) => {};
 
   constructor(
-    private configuration: VariableConfiguration<Variable>,
-    private settings: Settings
+    public configuration: VariableConfiguration<Variable>,
+    public settings: Settings
   ) {
     this.callLog = {};
     this.sessions = {};
@@ -107,14 +104,10 @@ export default class ChargeStation {
     }
   }
 
-  getOCPPIdentityString() {
-    return this.configuration.getOCPPIdentityString();
-  }
-
   connect() {
     this.setup();
     const ocppBaseUrl = this.settings.ocppBaseUrl;
-    const ocppIdentity = this.getOCPPIdentityString();
+    const ocppIdentity = this.configuration.getOCPPIdentityString();
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
 
     this.connection = this.getConnection(ocppBaseUrl, ocppIdentity);
@@ -210,14 +203,7 @@ export default class ChargeStation {
     }, numSeconds * 1000);
   }
 
-  async startSession(
-    connectorId: number,
-    session: {
-      maxPowerKw: number;
-      carBatteryKwh: number;
-      carBatteryStateOfCharge: number;
-    }
-  ) {
+  async startSession(connectorId: number, session: SessionOptions) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
@@ -366,6 +352,7 @@ interface SessionOptions {
   maxPowerKw: number;
   carBatteryKwh: number;
   carBatteryStateOfCharge: number;
+  uid: string;
 }
 
 export class Session {
@@ -373,11 +360,13 @@ export class Session {
   private carBatteryKwh: number;
   private carBatteryStateOfCharge: number;
   private secondsElapsed: number;
-  private kwhElapsed: number;
   private lastMeterValuesTimestamp?: Date;
-  private transactionId: string;
   private meterValuesInterval: number;
-  private seqNo: number;
+
+  public kwhElapsed: number;
+  public seqNo: number;
+  public transactionId: number;
+  public tickInterval?: ReturnType<typeof setInterval>;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
@@ -385,12 +374,11 @@ export class Session {
   startTime: Date = new Date();
 
   constructor(
-    private connectorId: number,
-    private options: SessionOptions,
+    public connectorId: number,
+    public options: SessionOptions,
     private emitter: ChargeStationEventEmitter,
     private chargeStation: ChargeStation
   ) {
-    this.connectorId = connectorId;
     this.options = options;
     this.meterValuesInterval =
       chargeStation.getMeterValueSampleInterval() || 60;
@@ -402,7 +390,7 @@ export class Session {
     this.lastMeterValuesTimestamp = undefined;
     this.emitter = emitter;
     this.seqNo = 0;
-    this.transactionId = uuidv4().toString();
+    this.transactionId = Math.floor(Math.random() * 100_000);
   }
 
   get connectorStatus(): string {
@@ -416,9 +404,11 @@ export class Session {
   async start() {
     this.emitter.emitEvent(EventTypes.SessionStartInitiated, { session: this });
   }
+
   async stop() {
     this.emitter.emitEvent(EventTypes.SessionStopInitiated, { session: this });
   }
+
   async tick(secondsElapsed: number) {
     this.secondsElapsed += secondsElapsed;
     if (secondsElapsed === 0) {
@@ -441,15 +431,9 @@ export class Session {
       return;
     }
     if (chargeLimitReached) {
-      // TODO: send status notification message
       this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
         session: this,
       });
-      // await this.chargeStation.writeCall<StatusNotificationRequest16>('StatusNotification', {
-      //   connectorId: this.connectorId,
-      //   errorCode: 'NoError',
-      //   status: 'SuspendedEV',
-      // });
     } else if (['Charging', 'Occupied'].includes(this.connectorStatus)) {
       this.kwhElapsed += amountKwhToCharge;
     }
@@ -459,53 +443,6 @@ export class Session {
 
     this.seqNo += 1;
 
-    // TODO: send meter values message
     this.emitter.emitEvent(EventTypes.ChargingTick, { session: this });
-    // if (this.ocppVersion === 'ocpp2.0.1') {
-    //   this.chargeStation.writeCall<TransactionEventRequest20>('TransactionEvent', {
-    //     eventType: 'Updated',
-    //     timestamp: this.now().toISOString(),
-    //     triggerReason: 'MeterValuePeriodic',
-    //     seqNo: this.seqNo,
-    //     transactionInfo: {
-    //       transactionId: this.transactionId?.toString() || '',
-    //     },
-    //     meterValue: [
-    //       {
-    //         sampledValue: [
-    //           {
-    //             value: Number(this.kwhElapsed.toFixed(3)),
-    //             context: 'Sample.Periodic',
-    //             measurand: 'Energy.Active.Import.Register',
-    //             location: 'Outlet',
-    //             unitOfMeasure: { unit: 'kWh' },
-    //           },
-    //         ],
-    //         timestamp: this.now().toISOString(),
-    //       },
-    //     ],
-    //     evse: { id: 1, connectorId: this.connectorId },
-    //   });
-    // } else {
-    //   await this.chargeStation.writeCall<MeterValuesRequest16>('MeterValues', {
-    //     connectorId: this.connectorId,
-    //     transactionId: this.transactionId,
-    //     meterValue: [
-    //       {
-    //         timestamp: this.now().toISOString(),
-    //         sampledValue: [
-    //           {
-    //             value: this.kwhElapsed.toFixed(5),
-    //             context: 'Sample.Periodic',
-    //             measurand: 'Energy.Active.Import.Register',
-    //             location: 'Outlet',
-    //             unit: 'kWh',
-    //           },
-    //         ],
-    //       },
-    //     ],
-    //   },
-    //   this
-    // );
   }
 }

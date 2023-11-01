@@ -1,12 +1,15 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
 
-export default async function handleTransactionEventCallResultReceived({
-  session,
-  emitter,
-  chargepoint,
-  callMessageBody,
-}) {
+import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
+
+import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
+import { TransactionEventResponse } from 'schemas/ocpp/2.0/TransactionEventResponse';
+
+const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
+  TransactionEventRequest,
+  TransactionEventResponse
+> = async ({ session, emitter, chargepoint, callMessageBody }) => {
   switch (callMessageBody.eventType) {
     case 'Started':
       session.isStartingSession = false;
@@ -21,10 +24,11 @@ export default async function handleTransactionEventCallResultReceived({
       emitter.emitEvent(EventTypes.Charging);
       break;
     case 'Updated':
-      emitter.emitEvent(EventTypes.Charging);
       break;
     case 'Ended':
       delete chargepoint.sessions[session.connectorId];
       break;
   }
-}
+};
+
+export default handleTransactionEventCallResultReceived;

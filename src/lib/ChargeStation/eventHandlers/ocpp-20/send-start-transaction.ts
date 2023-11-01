@@ -1,8 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { sleep } from '../../../../utils/csv';
+import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
-export default async function sendStartTransaction({ chargepoint, session }) {
+const sendStartTransaction: ChargeStationEventHandler = async ({
+  chargepoint,
+  session,
+}) => {
   chargepoint.sessions[session.connectorId].isStartingSession = true;
   await sleep(1000);
 
@@ -51,4 +55,6 @@ export default async function sendStartTransaction({ chargepoint, session }) {
     },
     session
   );
-}
+};
+
+export default sendStartTransaction;

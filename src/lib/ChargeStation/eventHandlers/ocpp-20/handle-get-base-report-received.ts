@@ -1,10 +1,13 @@
+import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { sleep } from 'utils/csv';
 
-export default async function handleGetBaseReportReceived({
-  chargepoint,
-  callMessageId,
-  callMessageBody,
-}) {
+import { GetBaseReportRequest } from 'schemas/ocpp/2.0/GetBaseReportRequest';
+import { GetBaseReportResponse } from 'schemas/ocpp/2.0/GetBaseReportResponse';
+
+const handleGetBaseReportReceived: ChargeStationEventHandler<
+  GetBaseReportRequest,
+  GetBaseReportResponse
+> = async ({ chargepoint, callMessageId, callMessageBody }) => {
   chargepoint.writeCallResult(callMessageId, { status: 'Accepted' });
 
   const sleepTime = 1000 * 2; // 2 seconds
@@ -34,4 +37,6 @@ export default async function handleGetBaseReportReceived({
     seqNo: 1,
     reportData: secondHalf,
   });
-}
+};
+
+export default handleGetBaseReportReceived;
