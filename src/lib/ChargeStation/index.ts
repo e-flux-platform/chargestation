@@ -43,14 +43,15 @@ type LogType = 'command' | 'message-response' | 'message' | 'error';
 export default class ChargeStation {
   private ocppVersion: OCPPVersion;
   private callLog: Map<CallLogItem>;
-  public sessions: Map<Session>;
   private emitter: ChargeStationEventEmitter;
   private numConnectionAttempts: number;
-  private currentStatus: Map<string>;
   private connection?: Connection;
-  public connected = false;
   private onLog = ({}) => {};
   private onError = (error: Error) => {};
+
+  public currentStatus: Map<string>;
+  public sessions: Map<Session>;
+  public connected = false;
 
   constructor(
     public configuration: VariableConfiguration<Variable>,
@@ -178,10 +179,6 @@ export default class ChargeStation {
     this.numConnectionAttempts++;
   }
 
-  getConnectorStatus(connectorId: number) {
-    return this.currentStatus[connectorId.toString()];
-  }
-
   disconnect() {
     if (this.connection) {
       this.connection.disconnect();
@@ -219,24 +216,24 @@ export default class ChargeStation {
     await this.sessions[connectorId].start();
   }
 
-  async stopSession(connectorId: string) {
+  async stopSession(connectorId: number) {
     if (!this.sessions[connectorId]) {
       return;
     }
     await this.sessions[connectorId].stop();
   }
 
-  hasRunningSession(connectorId: string) {
+  hasRunningSession(connectorId: number) {
     return !!this.sessions[connectorId];
   }
 
-  isStartingSession(connectorId: string) {
+  isStartingSession(connectorId: number) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
     );
   }
 
-  isStoppingSession(connectorId: string) {
+  isStoppingSession(connectorId: number) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStoppingSession
     );
@@ -321,8 +318,8 @@ export default class ChargeStation {
       const message = callMessageBody as StatusNotificationRequest20 &
         StatusNotificationRequest16;
 
-      this.currentStatus[message.connectorId.toString()] =
-        message.status && message.connectorStatus;
+      this.currentStatus[message.connectorId] =
+        message.status || message.connectorStatus;
     }
 
     this.callLog[messageId] = {
@@ -394,7 +391,7 @@ export class Session {
   }
 
   get connectorStatus(): string {
-    return this.chargeStation.getConnectorStatus(this.connectorId);
+    return this.chargeStation.currentStatus[this.connectorId];
   }
 
   now(): Date {

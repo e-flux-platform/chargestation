@@ -17,7 +17,7 @@ const sendBootNotification: ChargeStationEventHandler = async ({
     chargePointSerialNumber: chargepoint.getSetting(
       ChargeStationSetting.ChargePointSerialNumber
     ),
-    chargeBoxSerialNumber: chargepoint.getOCPPIdentityString(),
+    chargeBoxSerialNumber: chargepoint.configuration.getOCPPIdentityString(),
     firmwareVersion: 'v1-000',
     iccid: chargepoint.getSetting(ChargeStationSetting.ICCID),
     imsi: chargepoint.getSetting(ChargeStationSetting.IMSI),

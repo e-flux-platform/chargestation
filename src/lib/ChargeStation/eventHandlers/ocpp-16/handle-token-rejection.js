@@ -6,14 +6,13 @@ export default async function handleTokenRejection({
   emitter,
   session,
 }) {
-  const chargeSession = chargepoint.sessions[session.connectorId];
-  if (!chargeSession) {
+  if (chargepoint.sessions[session.connectorId]) {
     return;
   }
 
-  chargeSession.isStartingSession = false;
-  chargeSession.isStoppingSession = true;
-  clearInterval(chargeSession.tickInterval);
+  chargepoint.sessions[session.connectorId].isStartingSession = false;
+  chargepoint.sessions[session.connectorId].isStoppingSession = true;
+  clearInterval(chargepoint.tickInterval);
   await sleep(1000);
 
   delete chargepoint.sessions[session.connectorId];

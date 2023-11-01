@@ -7,13 +7,13 @@ export default async function handleRemoteStartTransaction({
 
   let response;
 
-  if (chargepoint.hasRunningSession(connectorId.toString())) {
+  if (chargepoint.hasRunningSession(Number(connectorId))) {
     response = {
       status: 'Rejected',
     };
   }
   setTimeout(() => {
-    chargepoint.startSession(connectorId.toString(), {
+    chargepoint.startSession(Number(connectorId), {
       uid: idTag,
     });
   }, 100);

@@ -19,7 +19,7 @@ import handleTransactionEventCallResultReceived from '../eventHandlers/ocpp-20/h
 import sendTransationEventUpdated from '../eventHandlers/ocpp-20/send-transaction-event-updated';
 import sendChargingLimitReached from '../eventHandlers/ocpp-20/send-charging-limit-reached';
 
-// This is the default configuration for OCPP 2.0.1
+// This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
 export default {
   [e.StationConnected]: [sendBootNotification],

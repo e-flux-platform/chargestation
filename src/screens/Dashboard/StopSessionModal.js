@@ -32,8 +32,7 @@ export default class StopSessionModal extends React.Component {
   render() {
     const { connectorId } = this.state;
     const { availableConnectors } = this.props;
-    console.log('availableConnectors', availableConnectors);
-    console.log('connectorId', connectorId);
+
     const connectorOptions = ['1', '2'].map((key) => {
       return {
         key,

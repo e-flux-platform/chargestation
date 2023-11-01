@@ -623,7 +623,7 @@ export interface VariableConfiguration<Variable> {
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
   private variables: Map<Variable201> = {};
 
-  constructor(variables: Variable201[], query?: URLSearchParams) {
+  constructor(variables: Variable201[], query: URLSearchParams) {
     this.variables = variables.reduce((acc: Map<Variable201>, item) => {
       const key = getConfigurationKey201(item);
       const value = query && query.get(key);
