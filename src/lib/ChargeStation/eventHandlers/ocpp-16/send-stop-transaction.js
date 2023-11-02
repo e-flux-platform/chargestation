@@ -14,7 +14,7 @@ export default async function sendStopTransaction({ chargepoint, session }) {
       meterStop: Math.round(session.kwhElapsed * 1000),
       timestamp: session.now().toISOString(),
       disconnectReason: 'EVDisconnected',
-      transactionId: session.transactionId,
+      transactionId: Number(session.transactionId),
       transactionData: [
         {
           sampledValue: [

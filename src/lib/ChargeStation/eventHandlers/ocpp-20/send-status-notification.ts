@@ -7,7 +7,7 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
 }) => {
   await sleep(1000);
 
-  chargepoint.writeCall('StatusNotification', {
+  await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
     connectorStatus: 'Available',
     evseId: 0,
@@ -16,7 +16,7 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
 
   await sleep(1000);
 
-  chargepoint.writeCall('StatusNotification', {
+  await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
     connectorStatus: 'Available',
     evseId: 1,
@@ -25,7 +25,16 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
 
   await sleep(1000);
 
-  chargepoint.writeCall('StatusNotification', {
+  await chargepoint.writeCall('StatusNotification', {
+    timestamp: new Date().toISOString(),
+    connectorStatus: 'Available',
+    evseId: 1,
+    connectorId: 2,
+  });
+
+  await sleep(1000);
+
+  await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
     connectorStatus: 'Available',
     evseId: 2,

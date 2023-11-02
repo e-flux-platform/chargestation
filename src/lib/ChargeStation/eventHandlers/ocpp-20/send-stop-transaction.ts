@@ -51,6 +51,15 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
     },
     session
   );
+
+  sleep(1000);
+
+  await chargepoint.writeCall('StatusNotification', {
+    timestamp: new Date().toISOString(),
+    connectorStatus: 'Available',
+    evseId: 1,
+    connectorId: session.connectorId,
+  });
 };
 
 export default sendStopTransaction;

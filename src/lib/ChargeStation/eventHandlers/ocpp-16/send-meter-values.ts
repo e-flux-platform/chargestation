@@ -9,7 +9,7 @@ const sendMeterValues: ChargeStationEventHandler = async ({
 
   await chargepoint.writeCall<MeterValuesRequest>('MeterValues', {
     connectorId: session.connectorId,
-    transactionId: session.transactionId,
+    transactionId: Number(session.transactionId),
     meterValue: [
       {
         timestamp: now.toISOString(),

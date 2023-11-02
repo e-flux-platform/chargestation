@@ -9,9 +9,26 @@ import { TransactionEventResponse } from 'schemas/ocpp/2.0/TransactionEventRespo
 const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
   TransactionEventRequest,
   TransactionEventResponse
-> = async ({ session, emitter, chargepoint, callMessageBody }) => {
+> = async ({
+  session,
+  emitter,
+  chargepoint,
+  callMessageBody,
+  callResultMessageBody,
+}) => {
   switch (callMessageBody.eventType) {
     case 'Started':
+      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
+        alert('Session start failed');
+        await chargepoint.writeCall('StatusNotification', {
+          timestamp: new Date().toISOString(),
+          connectorStatus: 'Available',
+          evseId: callMessageBody.evse?.id,
+          connectorId: callMessageBody.evse?.connectorId,
+        });
+        return;
+      }
+
       session.isStartingSession = false;
 
       await sleep(1000);

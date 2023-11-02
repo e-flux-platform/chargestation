@@ -362,7 +362,7 @@ export class Session {
 
   public kwhElapsed: number;
   public seqNo: number;
-  public transactionId: number;
+  public transactionId: string;
   public tickInterval?: ReturnType<typeof setInterval>;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
@@ -387,7 +387,9 @@ export class Session {
     this.lastMeterValuesTimestamp = undefined;
     this.emitter = emitter;
     this.seqNo = 0;
-    this.transactionId = Math.floor(Math.random() * 100_000);
+    // ocpp 1.6 requires transationId to be a number
+    // ocpp 2.0.1 requires transactionId to be a string
+    this.transactionId = Math.floor(Math.random() * 100_000).toString();
   }
 
   get connectorStatus(): string {
