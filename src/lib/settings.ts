@@ -45,7 +45,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.OCPPConfiguration,
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
-    defaultValue: 'ocpp2.0.1',
+    defaultValue: 'ocpp1.6',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,
@@ -611,6 +611,7 @@ interface VariableKeyValueMap
 export interface VariableConfiguration<Variable> {
   getOCPPIdentityString(): string;
   getMeterValueSampleInterval(): number;
+  getHeartbeatInterval(): number;
   variablesToKeyValueMap(): VariableKeyValueMap;
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap): void;
   setVariable(
@@ -647,6 +648,13 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
     }
 
     return ocppIdentity;
+  }
+
+  getHeartbeatInterval(): number {
+    const defaultInterval = 60;
+    const value = this.getVariableActualValue('HeartbeatInterval');
+
+    return (value ? Number(value) : defaultInterval) * 1000;
   }
 
   getMeterValueSampleInterval() {
@@ -766,6 +774,12 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
 
   getOCPPIdentityString(): string {
     return this.variables['Identity']?.value as string;
+  }
+
+  getHeartbeatInterval(): number {
+    const defaultInterval = 60;
+    const value = this.variables['HeartbeatInterval']?.value;
+    return (value ? Number(value) : defaultInterval) * 1000;
   }
 
   getMeterValueSampleInterval(): number {
