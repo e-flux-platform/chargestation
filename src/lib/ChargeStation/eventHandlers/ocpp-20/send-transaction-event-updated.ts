@@ -14,7 +14,7 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
     triggerReason: 'MeterValuePeriodic',
     seqNo: session.seqNo,
     transactionInfo: {
-      transactionId: session.transactionId?.toString() || '',
+      transactionId: session.transactionId,
     },
     meterValue: [
       {
