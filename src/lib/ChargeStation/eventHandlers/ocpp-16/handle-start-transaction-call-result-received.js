@@ -12,12 +12,12 @@ export default async function handleStartTransactionCallResultReceived({
     });
     return;
   }
-	if (callResultMessageBody.idTagInfo.status === 'ConcurrentTx') {
-		emitter.emitEvent(EventTypes16.AuthorizationFailedDuringStartTransaction, {
-			session,
-		});
-		return;
-	}
+  if (callResultMessageBody.idTagInfo.status === 'ConcurrentTx') {
+    emitter.emitEvent(EventTypes16.AuthorizationFailedDuringStartTransaction, {
+      session,
+    });
+    return;
+  }
 
   session.transactionId = callResultMessageBody.transactionId;
   chargepoint.sessions[session.connectorId].isStartingSession = false;

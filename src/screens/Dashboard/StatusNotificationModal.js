@@ -6,7 +6,7 @@ import { HelpTip } from 'components';
 
 function selectDefaultConnector(availableConnectors) {
   return ['1', '2'].filter((connectorId) => {
-    return !availableConnectors.includes(connectorId);
+    return !availableConnectors.includes(Number(connectorId));
   });
 }
 
@@ -51,10 +51,13 @@ const newStatusOption = (status, description) => {
 
 const StatusOptions = [];
 
-const filteredStatusOptions = (currentStatus) => StatusOptions.filter(option => option.canTransitionFrom.has(currentStatus));
+const filteredStatusOptions = (currentStatus) =>
+  StatusOptions.filter((option) => option.canTransitionFrom.has(currentStatus));
 
-newStatusOption(Status.Available, 'Connector is available for a new user')
-  .allowAll();
+newStatusOption(
+  Status.Available,
+  'Connector is available for a new user'
+).allowAll();
 
 newStatusOption(Status.Preparing, 'Connector is preparing to supply energy')
   .allowedFrom(Status.Available)
@@ -71,7 +74,10 @@ newStatusOption(Status.Charging, 'EV is charging')
   .allowedFrom(Status.Unavailable)
   .allowedFrom(Status.Faulted);
 
-newStatusOption(Status.SuspendedEV, 'The EV is not allowing a charge to be received')
+newStatusOption(
+  Status.SuspendedEV,
+  'The EV is not allowing a charge to be received'
+)
   .allowedFrom('Available')
   .allowedFrom('Preparing')
   .allowedFrom('Charging')
@@ -81,7 +87,7 @@ newStatusOption(Status.SuspendedEV, 'The EV is not allowing a charge to be recei
 
 newStatusOption(
   Status.SuspendedEVSE,
-  'The Charge Point or Connector is not allowed to deliver a charge',
+  'The Charge Point or Connector is not allowed to deliver a charge'
 )
   .allowedFrom(Status.Available)
   .allowedFrom(Status.Preparing)
@@ -92,7 +98,7 @@ newStatusOption(
 
 newStatusOption(
   Status.Finishing,
-  'Charging has stopped, but the Connector is still occupied',
+  'Charging has stopped, but the Connector is still occupied'
 )
   .allowedFrom(Status.Charging)
   .allowedFrom(Status.SuspendedEV)
@@ -109,9 +115,8 @@ newStatusOption(Status.Unavailable, 'Connector is not available for a new user')
 
 newStatusOption(
   Status.Faulted,
-  'Charge Point or Connector encountered an error and is not available to deliver a charge',
-)
-  .allowAll();
+  'Charge Point or Connector encountered an error and is not available to deliver a charge'
+).allowAll();
 
 @modal
 export default class StatusNotificationModal extends React.Component {
@@ -143,17 +148,16 @@ export default class StatusNotificationModal extends React.Component {
   render() {
     const { connectorId, status } = this.state;
     const { availableConnectors } = this.props;
-    console.log('availableConnectors', availableConnectors);
-    console.log('connectorId', connectorId);
+
     const connectorOptions = ['1', '2'].map((key) => {
       return {
         key,
         text: `Connector ${key}`,
         value: key,
-        disabled: availableConnectors.includes(key),
+        disabled: availableConnectors.includes(Number(key)),
       };
     });
-    const connectorStatus = this.props.currentStatus[connectorId];
+    const connectorStatus = this.props.currentStatus[Number(connectorId)];
     const statusOptions = filteredStatusOptions(connectorStatus);
 
     return (
@@ -170,7 +174,7 @@ export default class StatusNotificationModal extends React.Component {
                 this.setState({ connectorId: value });
               }}
             />
-            <Divider hidden/>
+            <Divider hidden />
             <Form.Dropdown
               label={`Status (currently ${connectorStatus})`}
               options={statusOptions}
@@ -185,11 +189,15 @@ export default class StatusNotificationModal extends React.Component {
                 });
               }}
             />
-            <Divider hidden/>
+            <Divider hidden />
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Button primary form="edit-status-notification" content="Send Update"/>
+          <Button
+            primary
+            form="edit-status-notification"
+            content="Send Update"
+          />
         </Modal.Actions>
       </>
     );

@@ -16,13 +16,13 @@ export default async function handleRemoteStopTransaction({
       connectorId = cId.toString();
     }
   });
-  if (!connectorId || !chargepoint.hasRunningSession(connectorId)) {
+  if (!connectorId || !chargepoint.hasRunningSession(Number(connectorId))) {
     response = {
       status: 'Rejected',
     };
   }
   setTimeout(() => {
-    chargepoint.stopSession(connectorId);
+    chargepoint.stopSession(Number(connectorId));
   }, 100);
   response = {
     status: 'Accepted',

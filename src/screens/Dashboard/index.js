@@ -10,6 +10,7 @@ import {
   getDefaultSession,
   ocppVersion,
   settingsList,
+  getDocumentQuery,
 } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -34,7 +35,7 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(ocppVersion()),
+    configuration: getConfiguration(ocppVersion(), getDocumentQuery()),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],
@@ -98,8 +99,7 @@ export default class Home extends React.Component {
       return <Loader />;
     }
     const chargeStationIsCharging =
-      chargeStation.hasRunningSession('1') ||
-      chargeStation.hasRunningSession('2');
+      chargeStation.hasRunningSession(1) || chargeStation.hasRunningSession(2);
     return (
       <div className="dashboard">
         <CommandDetailsModal
@@ -122,13 +122,13 @@ export default class Home extends React.Component {
         <div className="visualization">
           <div
             className={`car-1 ${
-              chargeStation.hasRunningSession('1') ? 'animated' : ''
+              chargeStation.hasRunningSession(1) ? 'animated' : ''
             } ${session1OnceStarted ? '' : 'initial'}`}>
             <img src={car1Svg} />
           </div>
           <div
             className={`car-2 ${
-              chargeStation.hasRunningSession('2') ? 'animated' : ''
+              chargeStation.hasRunningSession(2) ? 'animated' : ''
             } ${session2OnceStarted ? '' : 'initial'}`}>
             <img src={car2Svg} />
           </div>
@@ -151,7 +151,7 @@ export default class Home extends React.Component {
               session={session}
               onSave={({ connectorId, session }) => {
                 this.setState({ session });
-                chargeStation.startSession(connectorId, session);
+                chargeStation.startSession(Number(connectorId), session);
                 this.nextTick();
               }}
               trigger={
@@ -159,8 +159,8 @@ export default class Home extends React.Component {
                   inverted
                   primary={chargeStationIsCharging ? false : true}
                   loading={
-                    chargeStation.isStartingSession('1') ||
-                    chargeStation.isStartingSession('2')
+                    chargeStation.isStartingSession(1) ||
+                    chargeStation.isStartingSession(2)
                   }
                   icon="play"
                   content="Start Charging"
@@ -191,7 +191,7 @@ export default class Home extends React.Component {
               availableConnectors={chargeStation.availableConnectors()}
               session={session}
               onSave={async ({ connectorId }) => {
-                await chargeStation.stopSession(connectorId);
+                await chargeStation.stopSession(Number(connectorId));
                 this.nextTick();
               }}
               trigger={
@@ -200,8 +200,8 @@ export default class Home extends React.Component {
                   primary={chargeStationIsCharging ? true : false}
                   disabled={!chargeStationIsCharging}
                   loading={
-                    chargeStation.isStoppingSession('1') ||
-                    chargeStation.isStoppingSession('2')
+                    chargeStation.isStoppingSession(1) ||
+                    chargeStation.isStoppingSession(2)
                   }
                   icon="stop"
                   content="End Charging"

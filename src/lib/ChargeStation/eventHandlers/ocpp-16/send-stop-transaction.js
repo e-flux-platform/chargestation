@@ -1,5 +1,4 @@
 import { sleep } from '../../../../utils/csv';
-import { EventTypes16 } from '../event-types';
 
 export default async function sendStopTransaction({ chargepoint, session }) {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;

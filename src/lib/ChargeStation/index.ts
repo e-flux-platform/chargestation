@@ -10,10 +10,11 @@ import {
   VariableConfiguration,
 } from 'lib/settings';
 import { Map } from '../../types/generic';
-import { MeterValuesRequest as MeterValuesRequest16 } from 'schemas/ocpp/1.6/MeterValues';
+import { StatusNotificationRequest as StatusNotificationRequest16 } from 'schemas/ocpp/1.6/StatusNotification';
+import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schemas/ocpp/2.0/StatusNotificationRequest';
 
-interface Options {
-  ocppConfiguration: OCPPVersion;
+interface Settings {
+  ocppConfiguration: string;
   ocppBaseUrl: string;
   chargePointVendor: string;
   chargePointModel: string;
@@ -40,24 +41,26 @@ interface CallLogItem {
 type LogType = 'command' | 'message-response' | 'message' | 'error';
 
 export default class ChargeStation {
+  private ocppVersion: OCPPVersion;
   private callLog: Map<CallLogItem>;
-  private sessions: Map<Session>;
   private emitter: ChargeStationEventEmitter;
   private numConnectionAttempts: number;
-  private currentStatus: Map<string>;
   private connection?: Connection;
-  private connected = false;
   private onLog = ({}) => {};
   private onError = (error: Error) => {};
 
+  public currentStatus: Map<string>;
+  public sessions: Map<Session>;
+  public connected = false;
+
   constructor(
     public configuration: VariableConfiguration<Variable>,
-    private options: Options
+    public settings: Settings
   ) {
-    this.configuration = configuration;
     this.callLog = {};
     this.sessions = {};
-    this.emitter = createEventEmitter(this, options?.ocppConfiguration);
+    this.ocppVersion = this.settings.ocppConfiguration as OCPPVersion;
+    this.emitter = createEventEmitter(this, this.ocppVersion);
     this.numConnectionAttempts = 0;
     this.currentStatus = {
       1: 'Available',
@@ -66,7 +69,7 @@ export default class ChargeStation {
   }
 
   getSetting(value: ChargeStationSetting) {
-    return this.options[value];
+    return this.settings[value];
   }
 
   changeConfiguration(configuration: VariableConfiguration<Variable>) {
@@ -83,10 +86,7 @@ export default class ChargeStation {
 
   setup() {
     try {
-      this.emitter = createEventEmitter(
-        this,
-        this.options['ocppConfiguration'] as unknown as OCPPVersion
-      );
+      this.emitter = createEventEmitter(this, this.ocppVersion);
     } catch (error: unknown) {
       if (error instanceof Error) {
         alert(`${error.message}. Try to refresh the page.`);
@@ -95,7 +95,7 @@ export default class ChargeStation {
   }
 
   getConnection(ocppBaseUrl: string, ocppIdentity: string): Connection {
-    switch (this.options?.ocppConfiguration) {
+    switch (this.ocppVersion) {
       case OCPPVersion.ocpp16:
         return new Connection(ocppBaseUrl, ocppIdentity, OCPPVersion.ocpp16);
       case OCPPVersion.ocpp201:
@@ -107,7 +107,7 @@ export default class ChargeStation {
 
   connect() {
     this.setup();
-    const ocppBaseUrl = this.options.ocppBaseUrl || this.options.ocppBaseUrl;
+    const ocppBaseUrl = this.settings.ocppBaseUrl;
     const ocppIdentity = this.configuration.getOCPPIdentityString();
     this.log('message', `> Connecting to ${ocppBaseUrl}/${ocppIdentity}`);
 
@@ -161,6 +161,8 @@ export default class ChargeStation {
         `${toCamelCase(call.request.method)}CallResultReceived`,
         {
           callResultMessageBody: body,
+          callMessageBody: call.request.params,
+          callMessageId: messageId,
           session: call.session,
         }
       );
@@ -175,10 +177,6 @@ export default class ChargeStation {
     };
     this.connection.connect();
     this.numConnectionAttempts++;
-  }
-
-  getConnectorStatus(connectorId: string) {
-    return this.currentStatus[connectorId];
   }
 
   disconnect() {
@@ -201,14 +199,8 @@ export default class ChargeStation {
       this.numConnectionAttempts++;
     }, numSeconds * 1000);
   }
-  async startSession(
-    connectorId: string,
-    session: {
-      maxPowerKw: number;
-      carBatteryKwh: number;
-      carBatteryStateOfCharge: number;
-    }
-  ) {
+
+  async startSession(connectorId: number, session: SessionOptions) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
@@ -224,24 +216,24 @@ export default class ChargeStation {
     await this.sessions[connectorId].start();
   }
 
-  async stopSession(connectorId: string) {
+  async stopSession(connectorId: number) {
     if (!this.sessions[connectorId]) {
       return;
     }
     await this.sessions[connectorId].stop();
   }
 
-  hasRunningSession(connectorId: string) {
+  hasRunningSession(connectorId: number) {
     return !!this.sessions[connectorId];
   }
 
-  isStartingSession(connectorId: string) {
+  isStartingSession(connectorId: number) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
     );
   }
 
-  isStoppingSession(connectorId: string) {
+  isStoppingSession(connectorId: number) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStoppingSession
     );
@@ -322,16 +314,12 @@ export default class ChargeStation {
 
     const messageId = this.connection.writeCall(method, callMessageBody);
 
-    // TODO: This must be refactored
-    if (
-      method === 'StatusNotification' &&
-      // @ts-ignore
-      callMessageBody.status &&
-      // @ts-ignore
-      callMessageBody.connectorId
-    ) {
-      // @ts-ignore
-      this.currentStatus[callMessageBody.connectorId] = callMessageBody.status;
+    if (method === 'StatusNotification') {
+      const message = callMessageBody as StatusNotificationRequest20 &
+        StatusNotificationRequest16;
+
+      this.currentStatus[message.connectorId] =
+        message.status || message.connectorStatus;
     }
 
     this.callLog[messageId] = {
@@ -361,6 +349,7 @@ interface SessionOptions {
   maxPowerKw: number;
   carBatteryKwh: number;
   carBatteryStateOfCharge: number;
+  uid: string;
 }
 
 export class Session {
@@ -368,18 +357,22 @@ export class Session {
   private carBatteryKwh: number;
   private carBatteryStateOfCharge: number;
   private secondsElapsed: number;
-  private kwhElapsed: number;
   private lastMeterValuesTimestamp?: Date;
-  private transactionId?: number;
   private meterValuesInterval: number;
+
+  public kwhElapsed: number;
+  public seqNo: number;
+  public transactionId: number;
+  public tickInterval?: ReturnType<typeof setInterval>;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
   isStoppingSession = false;
+  startTime: Date = new Date();
 
   constructor(
-    private connectorId: string,
-    private options: SessionOptions,
+    public connectorId: number,
+    public options: SessionOptions,
     private emitter: ChargeStationEventEmitter,
     private chargeStation: ChargeStation
   ) {
@@ -391,10 +384,14 @@ export class Session {
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
+    this.lastMeterValuesTimestamp = undefined;
+    this.emitter = emitter;
+    this.seqNo = 0;
+    this.transactionId = Math.floor(Math.random() * 100_000);
   }
 
   get connectorStatus(): string {
-    return this.chargeStation.getConnectorStatus(this.connectorId);
+    return this.chargeStation.currentStatus[this.connectorId];
   }
 
   now(): Date {
@@ -404,9 +401,11 @@ export class Session {
   async start() {
     this.emitter.emitEvent(EventTypes.SessionStartInitiated, { session: this });
   }
+
   async stop() {
     this.emitter.emitEvent(EventTypes.SessionStopInitiated, { session: this });
   }
+
   async tick(secondsElapsed: number) {
     this.secondsElapsed += secondsElapsed;
     if (secondsElapsed === 0) {
@@ -429,42 +428,18 @@ export class Session {
       return;
     }
     if (chargeLimitReached) {
-      this.chargeStation.writeCall(
-        'StatusNotification',
-        {
-          connectorId: this.connectorId,
-          errorCode: 'NoError',
-          status: 'SuspendedEV',
-        },
-        this
-      );
-    } else if (this.connectorStatus === 'Charging') {
+      this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
+        session: this,
+      });
+    } else if (['Charging', 'Occupied'].includes(this.connectorStatus)) {
       this.kwhElapsed += amountKwhToCharge;
     }
     await sleep(100);
+
     this.lastMeterValuesTimestamp = this.now();
 
-    this.chargeStation.writeCall<MeterValuesRequest16>(
-      'MeterValues',
-      {
-        connectorId: parseInt(this.connectorId),
-        transactionId: this.transactionId,
-        meterValue: [
-          {
-            timestamp: this.now().toISOString(),
-            sampledValue: [
-              {
-                value: this.kwhElapsed.toFixed(5),
-                context: 'Sample.Periodic',
-                measurand: 'Energy.Active.Import.Register',
-                location: 'Outlet',
-                unit: 'kWh',
-              },
-            ],
-          },
-        ],
-      },
-      this
-    );
+    this.seqNo += 1;
+
+    this.emitter.emitEvent(EventTypes.ChargingTick, { session: this });
   }
 }

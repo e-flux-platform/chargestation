@@ -24,6 +24,8 @@ import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-16/h
 import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-16/handle-heartbeat-call-result-received';
 import handleStartTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-start-transaction-call-result-received';
 import handleStopTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-stop-transaction-call-result-received';
+import sendChargingLimitReached from '../eventHandlers/ocpp-16/send-charging-limit-reached';
+import sendMeterValues from '../eventHandlers/ocpp-16/send-meter-values';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -40,9 +42,9 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
-  [e16.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
-  [e16.AuthorizationFailed]: [handleTokenRejection],
-  [e16.AuthorizationAccepted]: [sendStartTransaction],
+  [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
+  [e.AuthorizationFailed]: [handleTokenRejection],
+  [e.AuthorizationAccepted]: [sendStartTransaction],
   [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
   [e16.StartTransactionCallResultReceived]: [
     handleStartTransactionCallResultReceived,
@@ -65,4 +67,6 @@ export default {
   [e16.RemoteStopTransactionReceived]: [handleRemoteStopTransaction],
   [e16.GetConfigurationReceived]: [handleGetConfiguration],
   [e16.ChangeConfigurationReceived]: [handleChangeConfiguration],
+  [e.ChargingTick]: [sendMeterValues],
+  [e.ChargingLimitReached]: [sendChargingLimitReached],
 };
