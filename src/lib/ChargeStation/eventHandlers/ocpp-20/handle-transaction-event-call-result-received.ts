@@ -31,6 +31,22 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
 
       session.isStartingSession = false;
 
+      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
+        alert('Session start failed');
+        await chargepoint.writeCall('StatusNotification', {
+          timestamp: new Date().toISOString(),
+          connectorStatus: 'Available',
+          evseId: callMessageBody.evse?.id,
+          connectorId: callMessageBody.evse?.connectorId,
+        });
+
+        await session.stop();
+
+        delete chargepoint.sessions[session.connectorId];
+
+        return;
+      }
+
       await sleep(1000);
       session.tickInterval = setInterval(() => {
         session.tick(5);
