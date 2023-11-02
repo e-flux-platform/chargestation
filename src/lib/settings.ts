@@ -45,7 +45,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.OCPPConfiguration,
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
-    defaultValue: 'ocpp2.0.1',
+    defaultValue: 'ocpp1.6',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,
