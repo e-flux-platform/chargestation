@@ -99,7 +99,6 @@ object `window.__env_conf`.
 
 ### Deployment
 
-1. Make sure to run:
-`gcloud auth configure-docker europe-west3-docker.pkg.dev`
-2. Run `bash buildandpush.sh` 
-3. Update the image tag in `chargestation-deployment.yml` in e-flux mono repo.
+1. In case you're using gcloud, be sure to run:
+`gcloud auth configure-docker <region>` (region example `europe-west3-docker.pkg.dev`)
+2. Run `bash buildandpush.sh <resource to push to>`

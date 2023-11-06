@@ -1,7 +1,7 @@
 #!/bin/bash
 git checkout master && git pull
 
-resourceName="europe-west3-docker.pkg.dev/eflux-production/docker/charge-station-simulator"
+resource=$1
 latestCommit=$(git rev-parse HEAD)
 
 if [ -z "$latestCommit" ]
@@ -12,5 +12,5 @@ fi
 
 docker build -t $latestCommit .
 
-docker tag $latestCommit $resourceName:$latestCommit
-docker push $resourceName:$latestCommit
+docker tag $latestCommit $resource:$latestCommit
+docker push $resource:$latestCommit
