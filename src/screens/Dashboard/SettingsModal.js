@@ -2,6 +2,7 @@ import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { HelpTip } from 'components';
+import {ChargeStationSetting} from "lib/settings";
 
 @modal
 export default class SettingsModal extends React.Component {
@@ -34,6 +35,10 @@ export default class SettingsModal extends React.Component {
     });
   };
 
+  static getDerivedStateFromProps({configuration}, prevState) {
+    return {...prevState, config: configuration.variablesToKeyValueMap()}
+  }
+
   onSubmit = () => {
     this.props.onSave(this.state);
     this.props.close();
@@ -48,6 +53,36 @@ export default class SettingsModal extends React.Component {
           <Form onSubmit={this.onSubmit} id="edit-settings">
             <Header as="h3" content="Settings" />
             {settingsList?.map((item) => {
+              if (item.key === ChargeStationSetting.OCPPConfiguration) {
+                return (
+                    <div key={item.key} style={{ marginBottom: '8px' }}>
+                      <Form.Select
+                          label={
+                            <strong
+                                style={{
+                                  marginBottom: '4px',
+                                  display: 'inline-block',
+                                }}>
+                              {item.name}
+                              {item.description && (
+                                  <HelpTip text={item.description} />
+                              )}
+                            </strong>
+                          }
+                          options={item.options.map(i => ({text: i, value: i}))}
+                          name={item.key}
+                          value={settings[item.key]}
+                          onChange={(e, { name, value }) => {
+
+                            if(this.state.settings.ocppConfiguration != value) {
+                              this.props.onProtocolChange(value);
+                              this.setSettingsField(e, {name, value})
+                            }
+                          }}
+                      />
+                    </div>
+                )
+              }
               return (
                 <div key={item.key} style={{ marginBottom: '8px' }}>
                   <Form.Input
