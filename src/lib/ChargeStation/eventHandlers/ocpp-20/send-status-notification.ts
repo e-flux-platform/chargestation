@@ -14,7 +14,7 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
     connectorId: 0,
   });
 
-  await sleep(1000);
+  await sleep(2000);
 
   await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
@@ -23,7 +23,7 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
     connectorId: 1,
   });
 
-  await sleep(1000);
+  await sleep(2000);
 
   await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
@@ -32,7 +32,7 @@ const sendStatusNotification: ChargeStationEventHandler = async ({
     connectorId: 2,
   });
 
-  await sleep(1000);
+  await sleep(2000);
 
   await chargepoint.writeCall('StatusNotification', {
     timestamp: new Date().toISOString(),
