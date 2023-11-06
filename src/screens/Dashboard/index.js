@@ -237,6 +237,8 @@ export default class Home extends React.Component {
                     },
                     () => {
                       chargeStation.settings = savedSettings;
+                      chargeStation.ocppVersion =
+                        chargeStation.settings.ocppConfiguration;
                       chargeStation.disconnect();
                       setTimeout(() => {
                         chargeStation.connect();
