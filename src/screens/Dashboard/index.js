@@ -43,7 +43,7 @@ export default class Home extends React.Component {
     session2OnceStarted: false,
   };
 
-  componentDidMount() {
+  async componentDidMount() {
     // check session storage
     const storedState = JSON.parse(sessionStorage.getItem("chargeStationsSettings"));
 
@@ -55,7 +55,7 @@ export default class Home extends React.Component {
         q.set(entry.key, entry.value)
       }
       const configuration = getConfiguration(version, q);
-      this.setState({settings, configuration});
+      await new Promise(r => this.setState({settings, configuration}, r));
     }
 
     const { configuration, settings } = this.state;
