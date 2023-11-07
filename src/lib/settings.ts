@@ -22,6 +22,8 @@ export enum SessionSetting {
 export interface SettingsListSetting<T> {
   key: T;
   name: string;
+  type?: undefined | 'dropdown';
+  options?: undefined | string[];
   description: string;
   defaultValue: string | number;
 }
@@ -34,18 +36,18 @@ export type OCPPVersion = typeof OCPPVersion[keyof typeof OCPPVersion];
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
+    key: ChargeStationSetting.OCPPConfiguration,
+    type: 'dropdown',
+    options: [OCPPVersion.ocpp16, OCPPVersion.ocpp201],
+    name: 'OCPP Configuration',
+    description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
+    defaultValue: OCPPVersion.ocpp16,
+  },
+  {
     key: ChargeStationSetting.OCPPBaseUrl,
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
     defaultValue: 'ws://localhost:2600/1.6/e-flux',
-  },
-  // TODO: Make dropdown
-  // Eventually a configuration should be selected automatically based on the Chargepoint model
-  {
-    key: ChargeStationSetting.OCPPConfiguration,
-    name: 'OCPP Configuration',
-    description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
-    defaultValue: 'ocpp1.6',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,

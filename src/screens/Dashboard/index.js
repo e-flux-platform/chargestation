@@ -95,6 +95,7 @@ export default class Home extends React.Component {
       session1OnceStarted,
       session2OnceStarted,
     } = this.state;
+
     if (!chargeStation) {
       return <Loader />;
     }
@@ -215,6 +216,12 @@ export default class Home extends React.Component {
                 settings={settings}
                 configuration={configuration}
                 settingsList={settingsList}
+                onProtocolChange={(ocppConfiguration) => {
+                  const newConfiguration = getConfiguration(ocppConfiguration);
+                  this.setState({
+                    configuration: newConfiguration,
+                  });
+                }}
                 onSave={({ config, settings: savedSettings }) => {
                   if (
                     settings.ocppConfiguration !==
