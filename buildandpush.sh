@@ -13,4 +13,6 @@ fi
 docker build -t $latestCommit .
 
 docker tag $latestCommit $resource:$latestCommit
+docker tag $latestCommit $resource:latest
+
 docker push $resource:$latestCommit
