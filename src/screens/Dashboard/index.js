@@ -29,6 +29,9 @@ import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
+
+const SESSION_STORAGE_KEY = 'chargeStationSettingsCache'
+
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
@@ -45,16 +48,14 @@ export default class Home extends React.Component {
 
   async componentDidMount() {
     // check session storage
-    const storedState = JSON.parse(sessionStorage.getItem("chargeStationsSettings"));
+    const storedState = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_KEY));
 
     if (storedState) {
       const {settings, config} = storedState;
       const version = settings.ocppConfiguration;
-      const q = new URLSearchParams();
-      for (const entry of Object.values(config)) {
-        q.set(entry.key, entry.value)
-      }
-      const configuration = getConfiguration(version, q);
+      const configuration = getConfiguration(version);
+      configuration.updateVariablesFromKeyValueMap(config);
+
       await new Promise(r => this.setState({settings, configuration}, r));
     }
 
@@ -248,11 +249,13 @@ export default class Home extends React.Component {
                     this.setState({
                       configuration: newConfiguration,
                     });
+                    newConfiguration.updateVariablesFromKeyValueMap(config);
                     chargeStation.changeConfiguration(newConfiguration);
                   } else {
                     configuration.updateVariablesFromKeyValueMap(config);
+                    chargeStation.changeConfiguration(configuration);
                   }
-                  sessionStorage.setItem("chargeStationsSettings", JSON.stringify({settings: savedSettings, config: config}))
+                  sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({settings: savedSettings, config: config}))
                   this.setState(
                     {
                       settings: savedSettings,
