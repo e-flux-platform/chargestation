@@ -10,7 +10,8 @@ then
   exit 1
 fi
 
-docker build -t $latestCommit .
+docker build -t $resource:$latestCommit .
 
-docker tag $latestCommit $resource:$latestCommit
+docker tag $resource:$latestCommit $resource:latest
 docker push $resource:$latestCommit
+docker push $resource:latest
