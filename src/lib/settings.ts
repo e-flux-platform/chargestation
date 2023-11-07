@@ -621,6 +621,7 @@ export interface VariableConfiguration<Variable> {
     variable: SetVariableDataType | ChangeConfigurationRequest
   ): void;
   getVariablesArray(): Variable[];
+  getVersion(): OCPPVersion;
 }
 
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
@@ -641,6 +642,10 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 
       return acc;
     }, {});
+  }
+
+  getVersion(): OCPPVersion {
+    return OCPPVersion.ocpp201;
   }
 
   getOCPPIdentityString(): string {
@@ -772,6 +777,10 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
 
       return acc;
     }, {});
+  }
+
+  getVersion(): OCPPVersion {
+    return OCPPVersion.ocpp16;
   }
 
   getOCPPIdentityString(): string {

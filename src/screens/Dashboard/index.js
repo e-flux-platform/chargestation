@@ -44,6 +44,20 @@ export default class Home extends React.Component {
   };
 
   componentDidMount() {
+    // check session storage
+    const storedState = JSON.parse(sessionStorage.getItem("chargeStationsSettings"));
+
+    if (storedState) {
+      const {settings, config} = storedState;
+      const version = settings.ocppConfiguration;
+      const q = new URLSearchParams();
+      for (const entry of Object.values(config)) {
+        q.set(entry.key, entry.value)
+      }
+      const configuration = getConfiguration(version, q);
+      this.setState({settings, configuration});
+    }
+
     const { configuration, settings } = this.state;
     const chargeStation = new ChargeStation(configuration, settings);
     chargeStation.onLog = this.onLog;
@@ -238,6 +252,7 @@ export default class Home extends React.Component {
                   } else {
                     configuration.updateVariablesFromKeyValueMap(config);
                   }
+                  sessionStorage.setItem("chargeStationsSettings", JSON.stringify({settings: savedSettings, config: config}))
                   this.setState(
                     {
                       settings: savedSettings,

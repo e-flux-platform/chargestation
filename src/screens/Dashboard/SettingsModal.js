@@ -35,8 +35,11 @@ export default class SettingsModal extends React.Component {
     });
   };
 
-  static getDerivedStateFromProps({configuration}, prevState) {
-    return {...prevState, config: configuration.variablesToKeyValueMap()}
+  static getDerivedStateFromProps({configuration, settings}, prevState) {
+    if (configuration.getVersion() != prevState.currentVersion) {
+      return {...prevState, config: configuration.variablesToKeyValueMap(), currentVersion: configuration.getVersion()}
+    }
+    return prevState
   }
 
   onSubmit = () => {
