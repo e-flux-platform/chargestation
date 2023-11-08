@@ -7,7 +7,6 @@ export default async function handleStartCharging({ emitter, session }) {
   let timeSince = clock.now();
 
   session.tickInterval = clock.setInterval(() => {
-    console.log("SESSION TICK BEFORE", timeSince, clock.secondsSince(timeSince))
     session.tick(clock.secondsSince(timeSince));
     timeSince = clock.now();
   }, 5000)
