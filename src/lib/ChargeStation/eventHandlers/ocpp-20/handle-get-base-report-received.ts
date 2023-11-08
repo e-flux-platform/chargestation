@@ -4,6 +4,8 @@ import { sleep } from 'utils/csv';
 import { GetBaseReportRequest } from 'schemas/ocpp/2.0/GetBaseReportRequest';
 import { GetBaseReportResponse } from 'schemas/ocpp/2.0/GetBaseReportResponse';
 
+import clock from '../../clock';
+
 const handleGetBaseReportReceived: ChargeStationEventHandler<
   GetBaseReportRequest,
   GetBaseReportResponse
@@ -22,7 +24,7 @@ const handleGetBaseReportReceived: ChargeStationEventHandler<
 
   await chargepoint.writeCall('NotifyReport', {
     requestId,
-    generatedAt: new Date().toISOString(),
+    generatedAt: clock.now().toISOString(),
     tbc: true,
     seqNo: 0,
     reportData: firstHalf,
@@ -32,7 +34,7 @@ const handleGetBaseReportReceived: ChargeStationEventHandler<
 
   await chargepoint.writeCall('NotifyReport', {
     requestId,
-    generatedAt: new Date().toISOString(),
+    generatedAt: clock.now().toISOString(),
     tbc: false,
     seqNo: 1,
     reportData: secondHalf,

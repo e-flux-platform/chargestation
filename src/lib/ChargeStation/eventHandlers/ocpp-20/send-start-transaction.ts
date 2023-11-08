@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { sleep } from '../../../../utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
+import clock from '../../clock';
+
 const sendStartTransaction: ChargeStationEventHandler = async ({
   chargepoint,
   session,
@@ -14,7 +16,7 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
   const connectorId = session.connectorId;
 
   chargepoint.writeCall('StatusNotification', {
-    timestamp: new Date().toISOString(),
+    timestamp: clock.now().toISOString(),
     connectorStatus: 'Occupied',
     evseId,
     connectorId,

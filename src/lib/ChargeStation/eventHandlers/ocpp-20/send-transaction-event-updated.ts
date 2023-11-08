@@ -6,7 +6,7 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
   chargepoint,
   session,
 }) => {
-  const now = new Date();
+  const now = clock.now();
 
   chargepoint.writeCall<TransactionEventRequest>('TransactionEvent', {
     eventType: 'Updated',
