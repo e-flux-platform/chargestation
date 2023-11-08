@@ -411,7 +411,6 @@ export class Session {
   }
 
   async tick(secondsElapsed: number) {
-    console.log("SESSION TICK", secondsElapsed);
     this.secondsElapsed += secondsElapsed;
     if (secondsElapsed === 0) {
       return;

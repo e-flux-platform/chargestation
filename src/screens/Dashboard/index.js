@@ -45,6 +45,7 @@ export default class Home extends React.Component {
         logEntries: [],
         session1OnceStarted: false,
         session2OnceStarted: false,
+        speed: 1,
     };
 
     async componentDidMount() {
@@ -81,6 +82,11 @@ export default class Home extends React.Component {
 
     componentWillUnmount() {
         clearInterval(this.tickInterval);
+    }
+
+    setSpeed(speed) {
+        clock.setSpeed(speed);
+        this.setState({speed})
     }
 
     nextTick() {
@@ -159,6 +165,11 @@ export default class Home extends React.Component {
                             chargeStationIsCharging ? 'charging' : ''
                         }`}>
                         <img src={chargeStationStatusSvg}/>
+                    </div>
+                    <div className="time-control">
+                        <Button  primary={this.state.speed == 1} icon="play" onClick={() => this.setSpeed(1)}/>
+                        <Button  primary={this.state.speed == 5} icon="forward" onClick={() => this.setSpeed(5)}/>
+                        <Button  primary={this.state.speed == 10} icon="bolt" onClick={() => this.setSpeed(10)}/>
                     </div>
                 </div>
                 <div className="terminal">
@@ -278,11 +289,7 @@ export default class Home extends React.Component {
                             />
                         </div>
                     </div>
-                    <div className="actions">
-                        <Button inverted primary={clock.getSpeed() == 1} icon="play" onClick={() => clock.setSpeed(1)}/>
-                        <Button inverted primary={clock.getSpeed() == 5} icon="forward" onClick={() => clock.setSpeed(5)}/>
-                        <Button inverted primary={clock.getSpeed() == 10} icon="bolt" onClick={() => clock.setSpeed(10)}/>
-                    </div>
+
                     <div className="console">
                         {logEntries.map((logEntry) => {
                             if (logEntry.command) {
