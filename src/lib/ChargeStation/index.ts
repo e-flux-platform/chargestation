@@ -416,18 +416,19 @@ export class Session {
       return;
     }
     const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
+
     const carNeededKwh =
       this.carBatteryKwh -
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
+
     console.info(
       `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
     );
 
     if (
       this.lastMeterValuesTimestamp &&
-      this.lastMeterValuesTimestamp.valueOf() >
-        this.now().valueOf() - this.meterValuesInterval * 1000
+      clock.secondsSince(this.lastMeterValuesTimestamp) < this.meterValuesInterval
     ) {
       return;
     }

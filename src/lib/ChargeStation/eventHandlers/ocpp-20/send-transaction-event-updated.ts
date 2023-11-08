@@ -2,6 +2,8 @@ import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
 import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
 
+import clock from '../../clock';
+
 const sendTransationEventUpdated: ChargeStationEventHandler = ({
   chargepoint,
   session,
