@@ -422,10 +422,6 @@ export class Session {
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
 
-    console.info(
-      `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
-    );
-
     if (
       this.lastMeterValuesTimestamp &&
       clock.secondsSince(this.lastMeterValuesTimestamp) < this.meterValuesInterval
