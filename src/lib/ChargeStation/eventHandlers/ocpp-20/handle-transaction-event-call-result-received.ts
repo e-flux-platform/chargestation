@@ -58,11 +58,12 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
       await sleep(500);
       session.tick(0);
 
-      emitter.emitEvent(EventTypes.Charging);
+      emitter.emitEvent(EventTypes.Charging, {session});
       break;
     case 'Updated':
       break;
     case 'Ended':
+      emitter.emitEvent(EventTypes.Stopped, {session});
       delete chargepoint.sessions[session.connectorId];
       break;
   }

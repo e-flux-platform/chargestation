@@ -66,13 +66,19 @@ export default class Home extends React.Component {
         chargeStation.onLog = this.onLog;
         chargeStation.onError = this.onError;
         chargeStation.onSessionStart = (connectorId) => {
-            if (connectorId === '1') {
-                this.setState({session1OnceStarted: true});
+
+            if (connectorId == '1') {
+                this.setState({session1OnceStarted: true, session1Ongoing: true, session1Finishing: false});
             } else {
-                this.setState({session2OnceStarted: true});
+                this.setState({session2OnceStarted: true, session2Ongoing: true, session2Finishing: false});
             }
         };
-        chargeStation.onSessionStop = () => {
+        chargeStation.onSessionStop = (connectorId) => {
+            if (connectorId == '1') {
+                this.setState({session1OnceStarted: true, session1Ongoing: false, session1Finishing: true});
+            } else {
+                this.setState({session2OnceStarted: true, session2Ongoing: false, session2Finishing: true});
+            }
             this.nextTick();
         };
         chargeStation.connect();
@@ -103,6 +109,17 @@ export default class Home extends React.Component {
         this.setState({error});
         this.nextTick();
     };
+
+    getCarAnimationClass = (connectorNo) => {
+        if (this.state[`session${connectorNo}Ongoing`]) {
+            return 'animated'
+        }
+        if (this.state[`session${connectorNo}Finishing`]) {
+            return ''
+        }
+
+        return 'initial'
+    }
 
     render() {
         const {
@@ -144,15 +161,11 @@ export default class Home extends React.Component {
                 </div>
                 <div className="visualization">
                     <div
-                        className={`car-1 ${
-                            chargeStation.hasRunningSession(1) ? 'animated' : ''
-                        } ${session1OnceStarted ? '' : 'initial'}`}>
+                        className={`car-1 ${this.getCarAnimationClass(1)}`}>
                         <img src={car1Svg}/>
                     </div>
                     <div
-                        className={`car-2 ${
-                            chargeStation.hasRunningSession(2) ? 'animated' : ''
-                        } ${session2OnceStarted ? '' : 'initial'}`}>
+                        className={`car-2 ${this.getCarAnimationClass(2)}`}>
                         <img src={car2Svg}/>
                     </div>
                     <div className="car-1-connector"></div>
