@@ -6,6 +6,8 @@ import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
 import { TransactionEventResponse } from 'schemas/ocpp/2.0/TransactionEventResponse';
 
+import clock from '../../clock';
+
 const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
   TransactionEventRequest,
   TransactionEventResponse
@@ -21,7 +23,7 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
       if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
         alert('Session start failed');
         await chargepoint.writeCall('StatusNotification', {
-          timestamp: new Date().toISOString(),
+          timestamp: clock.now().toISOString(),
           connectorStatus: 'Available',
           evseId: callMessageBody.evse?.id,
           connectorId: callMessageBody.evse?.connectorId,
@@ -34,7 +36,7 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
       if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
         alert('Session start failed');
         await chargepoint.writeCall('StatusNotification', {
-          timestamp: new Date().toISOString(),
+          timestamp: clock.now().toISOString(),
           connectorStatus: 'Available',
           evseId: callMessageBody.evse?.id,
           connectorId: callMessageBody.evse?.connectorId,
@@ -48,17 +50,20 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
       }
 
       await sleep(1000);
-      session.tickInterval = setInterval(() => {
-        session.tick(5);
+      let timeSince = clock.now();
+      session.tickInterval = clock.setInterval(() => {
+        session.tick(clock.secondsSince(timeSince));
+        timeSince = clock.now();
       }, 5000);
       await sleep(500);
       session.tick(0);
 
-      emitter.emitEvent(EventTypes.Charging);
+      emitter.emitEvent(EventTypes.Charging, {session});
       break;
     case 'Updated':
       break;
     case 'Ended':
+      emitter.emitEvent(EventTypes.Stopped, {session});
       delete chargepoint.sessions[session.connectorId];
       break;
   }

@@ -12,7 +12,7 @@ export default async function handleTokenRejection({
 
   chargepoint.sessions[session.connectorId].isStartingSession = false;
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
-  clearInterval(chargepoint.tickInterval);
+
   await sleep(1000);
 
   delete chargepoint.sessions[session.connectorId];

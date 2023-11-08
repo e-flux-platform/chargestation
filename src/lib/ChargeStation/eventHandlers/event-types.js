@@ -8,6 +8,7 @@ export const EventTypes = {
   SessionStartInitiated: 'sessionInitiated',
   SessionStopInitiated: 'sessionStopInitiated',
   Charging: 'charging',
+  Stopped: 'stopped',
   SessionCancelled: 'sessionCancelled',
   AuthorizationFailed: 'authorizationFailed',
   AuthorizationAccepted: 'authorizationAccepted',

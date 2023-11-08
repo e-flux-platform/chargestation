@@ -13,6 +13,8 @@ import { Map } from '../../types/generic';
 import { StatusNotificationRequest as StatusNotificationRequest16 } from 'schemas/ocpp/1.6/StatusNotification';
 import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schemas/ocpp/2.0/StatusNotificationRequest';
 
+import clock, {Interval} from './clock';
+
 interface Settings {
   ocppConfiguration: string;
   ocppBaseUrl: string;
@@ -136,7 +138,7 @@ export default class ChargeStation {
     ) => {
       this.callLog[messageId] = {
         destination: 'charge-point',
-        requestReceivedAt: new Date(),
+        requestReceivedAt: clock.now(),
         request: { method, params: body },
       };
 
@@ -172,7 +174,7 @@ export default class ChargeStation {
         requestSentAt: call.requestSentAt,
         request: call.request,
         response: body,
-        responseReceivedAt: new Date(),
+        responseReceivedAt: clock.now(),
       });
     };
     this.connection.connect();
@@ -272,7 +274,7 @@ export default class ChargeStation {
       requestReceivedAt: call.requestReceivedAt,
       request: call.request,
       response: { code, description, details },
-      responseSentAt: new Date(),
+      responseSentAt: clock.now(),
     });
 
     this.connection.writeCallError(callMessageId, code, description, details);
@@ -297,7 +299,7 @@ export default class ChargeStation {
       requestReceivedAt: call.requestReceivedAt,
       request: call.request,
       response: messageBody,
-      responseSentAt: new Date(),
+      responseSentAt: clock.now(),
     });
 
     this.connection.writeCallResult(callMessageId, messageBody);
@@ -324,7 +326,7 @@ export default class ChargeStation {
 
     this.callLog[messageId] = {
       destination: 'central-server',
-      requestSentAt: new Date(),
+      requestSentAt: clock.now(),
       request: { method, params: callMessageBody },
       // Keep a reference to the session so that we can use it in the call result handler
       // (it's not pretty...)
@@ -363,12 +365,12 @@ export class Session {
   public kwhElapsed: number;
   public seqNo: number;
   public transactionId: string;
-  public tickInterval?: ReturnType<typeof setInterval>;
+  public tickInterval?: Interval
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
   isStoppingSession = false;
-  startTime: Date = new Date();
+  startTime: Date = clock.now();
 
   constructor(
     public connectorId: number,
@@ -397,7 +399,7 @@ export class Session {
   }
 
   now(): Date {
-    return new Date();
+    return clock.now();
   }
 
   async start() {
@@ -414,18 +416,19 @@ export class Session {
       return;
     }
     const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
+
     const carNeededKwh =
       this.carBatteryKwh -
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
     const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
+
     console.info(
       `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
     );
 
     if (
       this.lastMeterValuesTimestamp &&
-      this.lastMeterValuesTimestamp.valueOf() >
-        this.now().valueOf() - this.meterValuesInterval * 1000
+      clock.secondsSince(this.lastMeterValuesTimestamp) < this.meterValuesInterval
     ) {
       return;
     }

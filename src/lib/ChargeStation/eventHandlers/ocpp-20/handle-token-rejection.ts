@@ -14,7 +14,7 @@ const handleTokenRejection: ChargeStationEventHandler = async ({
 
   chargeSession.isStartingSession = false;
   chargeSession.isStoppingSession = true;
-  clearInterval(chargeSession.tickInterval);
+  chargeSession.tickInterval?.stop();
   await sleep(1000);
 
   delete chargepoint.sessions[chargeSession.connectorId];
