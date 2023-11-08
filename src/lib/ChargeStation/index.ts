@@ -119,7 +119,7 @@ export default class ChargeStation {
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error: Event) => {
-      if (!this.connected) return;
+      if (!this.connected) {return;}
 
       this.connected = false;
 
@@ -186,6 +186,13 @@ export default class ChargeStation {
     }
   }
 
+  reboot() {
+    this.disconnect();
+    setTimeout(() => {
+      this.connect();
+    }, 1000);
+  }
+
   reconnect() {
     if (this.numConnectionAttempts > 100) {
       this.log('error', 'Too many connection attempts, giving up');
@@ -194,7 +201,7 @@ export default class ChargeStation {
     const numSeconds = this.numConnectionAttempts < 5 ? 5 : 30;
     this.log('message', `> Reconnecting in ${numSeconds} seconds`);
     setTimeout(() => {
-      if (!this.connection) throw new Error('Connection is undefined');
+      if (!this.connection) {throw new Error('Connection is undefined');}
       this.connection.connect();
       this.numConnectionAttempts++;
     }, numSeconds * 1000);

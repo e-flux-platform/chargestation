@@ -26,6 +26,8 @@ import handleStartTransactionCallResultReceived from '../eventHandlers/ocpp-16/h
 import handleStopTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-stop-transaction-call-result-received';
 import sendChargingLimitReached from '../eventHandlers/ocpp-16/send-charging-limit-reached';
 import sendMeterValues from '../eventHandlers/ocpp-16/send-meter-values';
+import handleReset from '../eventHandlers/ocpp-16/handle-reset';
+import handleSetChargingProfile from '../eventHandlers/ocpp-16/handle-set-charging-profile';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -69,4 +71,6 @@ export default {
   [e16.ChangeConfigurationReceived]: [handleChangeConfiguration],
   [e.ChargingTick]: [sendMeterValues],
   [e.ChargingLimitReached]: [sendChargingLimitReached],
+  [e.ResetReceived]: [handleReset],
+  [e.SetChargingProfileReceived]: [handleSetChargingProfile],
 };

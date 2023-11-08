@@ -8,7 +8,7 @@ module.exports = {
   settings: {
     jest: { version: 26 },
   },
-  parser: '@typescript-eslint/eslint-parser',
+  parser: '@typescript-eslint/parser',
   parserOptions: {
     sourceType: 'module',
     ecmaFeatures: {

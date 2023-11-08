@@ -14,6 +14,8 @@ export const EventTypes = {
   AuthorizeCallResultReceived: 'authorizeCallResultReceived',
   ChargingLimitReached: 'charingLimitReached',
   ChargingTick: 'chargingTick',
+  ResetReceived: 'resetReceived',
+  SetChargingProfileReceived: 'setChargingProfileReceived',
 };
 
 // OCPP 1.6 specific events

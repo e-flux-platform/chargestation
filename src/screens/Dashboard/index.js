@@ -30,7 +30,7 @@ import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
 
-const SESSION_STORAGE_KEY = 'chargeStationSettingsCache'
+const SESSION_STORAGE_KEY = 'chargeStationSettingsCache';
 
 @screen
 export default class Home extends React.Component {
@@ -255,7 +255,7 @@ export default class Home extends React.Component {
                     configuration.updateVariablesFromKeyValueMap(config);
                     chargeStation.changeConfiguration(configuration);
                   }
-                  sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({settings: savedSettings, config: config}))
+                  sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({settings: savedSettings, config: config}));
                   this.setState(
                     {
                       settings: savedSettings,
