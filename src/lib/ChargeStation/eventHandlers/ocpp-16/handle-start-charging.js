@@ -1,11 +1,17 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
+import clock from '../../clock';
 
 export default async function handleStartCharging({ emitter, session }) {
   await sleep(1000);
-  session.tickInterval = setInterval(() => {
-    session.tick(5);
-  }, 5000);
+  let timeSince = clock.now();
+
+  session.tickInterval = clock.setInterval(() => {
+    console.log("SESSION TICK BEFORE", timeSince, clock.secondsSince(timeSince))
+    session.tick(clock.secondsSince(timeSince));
+    timeSince = clock.now();
+  }, 5000)
+
   await sleep(500);
   session.tick(0);
 
