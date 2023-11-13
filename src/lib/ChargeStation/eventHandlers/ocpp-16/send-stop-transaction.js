@@ -3,7 +3,7 @@ import { sleep } from '../../../../utils/csv';
 export default async function sendStopTransaction({ chargepoint, session }) {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
 
-  session.tickInterval.stop();
+  chargepoint.sessions[session.connectorId].tickInterval?.stop();
   await sleep(1000);
 
   await chargepoint.writeCall(

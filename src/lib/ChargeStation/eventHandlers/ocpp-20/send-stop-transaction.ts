@@ -9,7 +9,6 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
   session,
 }) => {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
-
   chargepoint.sessions[session.connectorId].tickInterval?.stop();
   
   await sleep(1000);
@@ -55,7 +54,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
     session
   );
 
-  sleep(1000);
+  await sleep(1000);
 
   await chargepoint.writeCall('StatusNotification', {
     timestamp: clock.now().toISOString(),
