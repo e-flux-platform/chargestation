@@ -103,30 +103,7 @@ class Connection {
   writeCall(method: string, params: object) {
     const messageId = this.generateMessageId();
     const formattedMessage: Call = [2, messageId, method, params];
-
-    this.callQueue.enqueue(() => {
-      const promise = new Promise<void>((resolve, reject) => {
-        const timeoutId = setTimeout(() => {
-          this.inflight = undefined;
-          reject(new Error(`Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`))
-        }, this.inflightTimeoutMs);
-
-        this.inflight = {
-          messageId,
-          resolve: () => {
-            this.inflight = undefined;
-            clearTimeout(timeoutId);
-            resolve();
-          },
-        };
-      });
-
-      // Send the CALL payload
-      this.ws.send(JSON.stringify(formattedMessage));
-
-      return promise;
-    });
-
+    this.enqueueCall(formattedMessage);
     return messageId;
   }
 
@@ -149,6 +126,33 @@ class Connection {
       details,
     ];
     this.ws.send(JSON.stringify(formattedMessage));
+  }
+
+  private enqueueCall(call: Call) {
+    const messageId = call[1];
+
+    this.callQueue.enqueue(() => {
+      const promise = new Promise<void>((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          this.inflight = undefined;
+          reject(new Error(`Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`))
+        }, this.inflightTimeoutMs);
+
+        this.inflight = {
+          messageId,
+          resolve: () => {
+            this.inflight = undefined;
+            clearTimeout(timeoutId);
+            resolve();
+          },
+        };
+      });
+
+      // Send the CALL payload
+      this.ws.send(JSON.stringify(call));
+
+      return promise;
+    });
   }
 }
 
