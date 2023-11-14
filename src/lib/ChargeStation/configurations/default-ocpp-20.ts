@@ -20,6 +20,8 @@ import sendTransationEventUpdated from '../eventHandlers/ocpp-20/send-transactio
 import sendChargingLimitReached from '../eventHandlers/ocpp-20/send-charging-limit-reached';
 import handleTransactionStartedUI from "lib/ChargeStation/eventHandlers/ocpp-16/handle-transaction-started-ui";
 import handleTransactionStoppedUI from "lib/ChargeStation/eventHandlers/ocpp-16/handle-transaction-stopped-ui";
+import handleReset from "lib/ChargeStation/eventHandlers/ocpp-20/handle-reset";
+import handleSetChargingProfile from "lib/ChargeStation/eventHandlers/ocpp-20/handle-set-charging-profile";
 
 // This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -46,4 +48,6 @@ export default {
   [e.Stopped]: [handleTransactionStoppedUI],
   [e.ChargingTick]: [sendTransationEventUpdated],
   [e.ChargingLimitReached]: [sendChargingLimitReached],
+  [e.ResetReceived]: [handleReset],
+  [e.SetChargingProfileReceived]: [handleSetChargingProfile],
 };

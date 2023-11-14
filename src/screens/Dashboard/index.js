@@ -31,7 +31,7 @@ import {formatDateTimeRelative} from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
 
-const SESSION_STORAGE_KEY = 'chargeStationSettingsCache'
+const SESSION_STORAGE_KEY = 'chargeStationSettingsCache';
 
 @screen
 export default class Home extends React.Component {
