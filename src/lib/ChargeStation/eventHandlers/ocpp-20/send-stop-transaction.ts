@@ -2,16 +2,18 @@ import { sleep } from '../../../../utils/csv';
 
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
+import clock from '../../clock';
+
 const sendStopTransaction: ChargeStationEventHandler = async ({
   chargepoint,
   session,
 }) => {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
-
-  clearInterval(session.tickInterval);
+  chargepoint.sessions[session.connectorId].tickInterval?.stop();
+  
   await sleep(1000);
 
-  const now = new Date().toISOString();
+  const now = clock.now().toISOString();
 
   await chargepoint.writeCall(
     'TransactionEvent',
@@ -52,10 +54,10 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
     session
   );
 
-  sleep(1000);
+  await sleep(1000);
 
   await chargepoint.writeCall('StatusNotification', {
-    timestamp: new Date().toISOString(),
+    timestamp: clock.now().toISOString(),
     connectorStatus: 'Available',
     evseId: 1,
     connectorId: session.connectorId,

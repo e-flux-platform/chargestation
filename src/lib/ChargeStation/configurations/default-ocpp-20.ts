@@ -18,6 +18,8 @@ import sendStartTransaction from '../eventHandlers/ocpp-20/send-start-transactio
 import handleTransactionEventCallResultReceived from '../eventHandlers/ocpp-20/handle-transaction-event-call-result-received';
 import sendTransationEventUpdated from '../eventHandlers/ocpp-20/send-transaction-event-updated';
 import sendChargingLimitReached from '../eventHandlers/ocpp-20/send-charging-limit-reached';
+import handleTransactionStartedUI from "lib/ChargeStation/eventHandlers/ocpp-16/handle-transaction-started-ui";
+import handleTransactionStoppedUI from "lib/ChargeStation/eventHandlers/ocpp-16/handle-transaction-stopped-ui";
 import handleReset from "lib/ChargeStation/eventHandlers/ocpp-20/handle-reset";
 import handleSetChargingProfile from "lib/ChargeStation/eventHandlers/ocpp-20/handle-set-charging-profile";
 
@@ -42,6 +44,8 @@ export default {
   [e201.TransactionEventCallResultReceived]: [
     handleTransactionEventCallResultReceived,
   ],
+  [e.Charging]: [handleTransactionStartedUI],
+  [e.Stopped]: [handleTransactionStoppedUI],
   [e.ChargingTick]: [sendTransationEventUpdated],
   [e.ChargingLimitReached]: [sendChargingLimitReached],
   [e.ResetReceived]: [handleReset],

@@ -3,7 +3,7 @@ import { sleep } from '../../../../utils/csv';
 export default async function sendStopTransaction({ chargepoint, session }) {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
 
-  clearInterval(session.tickInterval);
+  chargepoint.sessions[session.connectorId].tickInterval?.stop();
   await sleep(1000);
 
   await chargepoint.writeCall(
@@ -27,7 +27,7 @@ export default async function sendStopTransaction({ chargepoint, session }) {
               unit: 'kWh',
             },
           ],
-          timestamp: new Date().toISOString(),
+          timestamp: session.now().toISOString(),
         },
       ],
     },
