@@ -19,7 +19,7 @@ import handleRemoteStartTransaction from '../eventHandlers/ocpp-16/handle-remote
 import handleRemoteStopTransaction from '../eventHandlers/ocpp-16/handle-remote-stop-transaction';
 import handleGetConfiguration from '../eventHandlers/ocpp-16/handle-get-configuration';
 import handleChangeConfiguration from '../eventHandlers/ocpp-16/handle-change-configuration';
-import handleAuthorizeCallResultReceived from '../eventHandlers/ocpp-16/handle-authorize-call-result-received';
+import handleDataTransferCallResultReceived from '../eventHandlers/ocpp-16/handle-data-transfer-call-result-received';
 import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-16/handle-boot-notification-call-result-received';
 import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-16/handle-heartbeat-call-result-received';
 import handleStartTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-start-transaction-call-result-received';
@@ -44,7 +44,7 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
-  [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
+  [e.AuthorizeCallResultReceived]: [handleDataTransferCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],
   [e.AuthorizationAccepted]: [sendStartTransaction],
   [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],

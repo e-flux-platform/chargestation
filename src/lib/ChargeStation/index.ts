@@ -4,6 +4,7 @@ import { sleep } from 'utils/csv';
 import { ChargeStationEventEmitter, createEventEmitter } from './eventHandlers';
 import { EventTypes } from './eventHandlers/event-types';
 import {
+  AuthorizationType,
   ChargeStationSetting,
   OCPPVersion,
   Variable,
@@ -13,7 +14,7 @@ import { Map } from '../../types/generic';
 import { StatusNotificationRequest as StatusNotificationRequest16 } from 'schemas/ocpp/1.6/StatusNotification';
 import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schemas/ocpp/2.0/StatusNotificationRequest';
 
-import clock, {Interval} from './clock';
+import clock, { Interval } from './clock';
 
 interface Settings {
   ocppConfiguration: string;
@@ -121,7 +122,9 @@ export default class ChargeStation {
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error: Event) => {
-      if (!this.connected) {return;}
+      if (!this.connected) {
+        return;
+      }
 
       this.connected = false;
 
@@ -203,21 +206,30 @@ export default class ChargeStation {
     const numSeconds = this.numConnectionAttempts < 5 ? 5 : 30;
     this.log('message', `> Reconnecting in ${numSeconds} seconds`);
     setTimeout(() => {
-      if (!this.connection) {throw new Error('Connection is undefined');}
+      if (!this.connection) {
+        throw new Error('Connection is undefined');
+      }
       this.connection.connect();
       this.numConnectionAttempts++;
     }, numSeconds * 1000);
   }
 
-  async startSession(connectorId: number, session: SessionOptions) {
+  async startSession(
+    connectorId: number,
+    session: SessionOptions,
+    authorizationType: AuthorizationType
+  ) {
     if (!this.connected) {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
+
+    console.log(authorizationType);
 
     this.sessions[connectorId] = new Session(
       connectorId,
       {
         ...session,
+        authorizationType,
       },
       this.emitter,
       this
@@ -359,6 +371,7 @@ interface SessionOptions {
   carBatteryKwh: number;
   carBatteryStateOfCharge: number;
   uid: string;
+  authorizationType: AuthorizationType;
 }
 
 export class Session {
@@ -372,7 +385,7 @@ export class Session {
   public kwhElapsed: number;
   public seqNo: number;
   public transactionId: string;
-  public tickInterval?: Interval
+  public tickInterval?: Interval;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
@@ -435,7 +448,8 @@ export class Session {
 
     if (
       this.lastMeterValuesTimestamp &&
-      clock.secondsSince(this.lastMeterValuesTimestamp) < this.meterValuesInterval
+      clock.secondsSince(this.lastMeterValuesTimestamp) <
+        this.meterValuesInterval
     ) {
       return;
     }

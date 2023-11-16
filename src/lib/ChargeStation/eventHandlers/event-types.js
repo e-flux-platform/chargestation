@@ -41,3 +41,7 @@ export const EventTypes201 = {
   SetVariablesReceived: 'setVariablesReceived',
   TransactionEventCallResultReceived: 'transactionEventCallResultReceived',
 };
+
+export const EventTypesAlpitronic16 = {
+  DataTransferCallResultReceived: 'dataTransferCallResultReceived',
+};

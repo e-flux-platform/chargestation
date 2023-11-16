@@ -28,6 +28,13 @@ export interface SettingsListSetting<T> {
   defaultValue: string | number;
 }
 
+export const AuthorizationType = {
+  RFID: 'rfid',
+  CreditCard: 'creditCard',
+} as const;
+export type AuthorizationType =
+  typeof AuthorizationType[keyof typeof AuthorizationType];
+
 export const OCPPVersion = {
   ocpp16: 'ocpp1.6',
   ocpp201: 'ocpp2.0.1',
