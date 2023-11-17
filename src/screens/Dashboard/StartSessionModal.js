@@ -17,7 +17,6 @@ export default class StartSessionModal extends React.Component {
         ...this.state.session,
         [name]: value,
       },
-      connectorId: this.state.connectorId,
     });
   };
   onSubmit = () => {

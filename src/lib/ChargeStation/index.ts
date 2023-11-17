@@ -223,8 +223,6 @@ export default class ChargeStation {
       throw new Error('Not connected to OCPP server, cannot start session');
     }
 
-    console.log(authorizationType);
-
     this.sessions[connectorId] = new Session(
       connectorId,
       {

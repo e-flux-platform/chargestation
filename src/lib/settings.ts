@@ -66,7 +66,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.ChargePointModel,
     name: 'Boot / Model',
     description: 'The chargePointModel sent during BootNotification',
-    defaultValue: 'Chargepoint.one v1',
+    defaultValue: 'default',
   },
   {
     key: ChargeStationSetting.ChargePointSerialNumber,
