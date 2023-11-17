@@ -19,7 +19,6 @@ import handleRemoteStartTransaction from '../eventHandlers/ocpp-16/handle-remote
 import handleRemoteStopTransaction from '../eventHandlers/ocpp-16/handle-remote-stop-transaction';
 import handleGetConfiguration from '../eventHandlers/ocpp-16/handle-get-configuration';
 import handleChangeConfiguration from '../eventHandlers/ocpp-16/handle-change-configuration';
-import handleDataTransferCallResultReceived from '../eventHandlers/ocpp-16/handle-data-transfer-call-result-received';
 import handleBootNotificationCallResultReceived from '../eventHandlers/ocpp-16/handle-boot-notification-call-result-received';
 import handleHeartbeatCallResultReceived from '../eventHandlers/ocpp-16/handle-heartbeat-call-result-received';
 import handleStartTransactionCallResultReceived from '../eventHandlers/ocpp-16/handle-start-transaction-call-result-received';
@@ -28,6 +27,7 @@ import sendChargingLimitReached from '../eventHandlers/ocpp-16/send-charging-lim
 import sendMeterValues from '../eventHandlers/ocpp-16/send-meter-values';
 import handleReset from '../eventHandlers/ocpp-16/handle-reset';
 import handleSetChargingProfile from '../eventHandlers/ocpp-16/handle-set-charging-profile';
+import handleAuthorizeCallResultReceived from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-authorize-call-result-received';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -44,7 +44,7 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
-  [e.AuthorizeCallResultReceived]: [handleDataTransferCallResultReceived],
+  [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],
   [e.AuthorizationAccepted]: [sendStartTransaction],
   [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
