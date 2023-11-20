@@ -17,6 +17,7 @@ export const EventTypes = {
   ChargingTick: 'chargingTick',
   ResetReceived: 'resetReceived',
   SetChargingProfileReceived: 'setChargingProfileReceived',
+  DataTransferCallResultReceived: 'dataTransferCallResultReceived',
 };
 
 // OCPP 1.6 specific events
@@ -40,8 +41,4 @@ export const EventTypes201 = {
   GetBaseReportReceived: 'getBaseReportReceived',
   SetVariablesReceived: 'setVariablesReceived',
   TransactionEventCallResultReceived: 'transactionEventCallResultReceived',
-};
-
-export const EventTypesAlpitronic16 = {
-  DataTransferCallResultReceived: 'dataTransferCallResultReceived',
 };

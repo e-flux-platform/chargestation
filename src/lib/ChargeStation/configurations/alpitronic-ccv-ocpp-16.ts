@@ -1,7 +1,6 @@
 import {
   EventTypes16 as e16,
   EventTypes as e,
-  EventTypesAlpitronic16,
 } from '../eventHandlers/event-types';
 import sendBootNotification from '../eventHandlers/ocpp-16/send-boot-notification';
 import sendHeartbeat from '../eventHandlers/ocpp-16/send-heartbeat';
@@ -48,9 +47,7 @@ export default {
     sendStatusNotificationPreparing,
     sendDataTransferAuthorize,
   ],
-  [EventTypesAlpitronic16.DataTransferCallResultReceived]: [
-    handleDataTransferCallResultReceived,
-  ],
+  [e.DataTransferCallResultReceived]: [handleDataTransferCallResultReceived],
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e.AuthorizationFailed]: [handleTokenRejection],
   [e.AuthorizationAccepted]: [sendStartTransaction],
