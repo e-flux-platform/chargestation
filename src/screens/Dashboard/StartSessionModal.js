@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import { sessionSettingsList } from 'lib/settings';
+import { AuthorizationType, sessionSettingsList } from 'lib/settings';
 import { HelpTip } from 'components';
 
 @modal
@@ -9,6 +9,7 @@ export default class StartSessionModal extends React.Component {
   state = {
     session: this.props.session,
     connectorId: this.props.availableConnectors[0],
+    authorizationType: AuthorizationType.RFID,
   };
   setField = (e, { name, value }) => {
     this.setState({
@@ -16,7 +17,6 @@ export default class StartSessionModal extends React.Component {
         ...this.state.session,
         [name]: value,
       },
-      connectorId: this.state.connectorId,
     });
   };
   onSubmit = () => {
@@ -24,7 +24,7 @@ export default class StartSessionModal extends React.Component {
     this.props.close();
   };
   render() {
-    const { session, connectorId } = this.state;
+    const { session, connectorId, authorizationType } = this.state;
     const { availableConnectors } = this.props;
     const connectorOptions = ['1', '2'].map((key) => {
       return {
@@ -34,6 +34,16 @@ export default class StartSessionModal extends React.Component {
         disabled: !availableConnectors.includes(key),
       };
     });
+    const authorizationTypeOptions = Object.entries(AuthorizationType).map(
+      ([key, value]) => {
+        return {
+          key,
+          text: key,
+          value: value,
+        };
+      }
+    );
+
     return (
       <>
         <Modal.Header>Start Session</Modal.Header>
@@ -50,6 +60,15 @@ export default class StartSessionModal extends React.Component {
               value={connectorId}
               onChange={(e, { value }) => {
                 this.setState({ connectorId: value });
+              }}
+            />
+            <Form.Dropdown
+              label="Authorization type"
+              selection
+              options={authorizationTypeOptions}
+              value={authorizationType}
+              onChange={(e, { value }) => {
+                this.setState({ authorizationType: value });
               }}
             />
             {connectorId && (

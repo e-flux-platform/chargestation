@@ -33,7 +33,10 @@ export function createEventEmitter(
 ) {
   const emitter = new ChargeStationEventEmitter(chargeStation);
 
-  const handlerConfig = getOCPPConfiguration(ocppVersion);
+  const handlerConfig = getOCPPConfiguration(
+    ocppVersion,
+    chargeStation.settings.chargePointModel
+  );
   if (!handlerConfig) {
     throw new Error(`No configuration found for ${ocppVersion}`);
   }

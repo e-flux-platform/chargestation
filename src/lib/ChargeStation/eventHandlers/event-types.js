@@ -17,6 +17,7 @@ export const EventTypes = {
   ChargingTick: 'chargingTick',
   ResetReceived: 'resetReceived',
   SetChargingProfileReceived: 'setChargingProfileReceived',
+  DataTransferCallResultReceived: 'dataTransferCallResultReceived',
 };
 
 // OCPP 1.6 specific events
