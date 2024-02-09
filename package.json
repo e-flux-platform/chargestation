@@ -97,7 +97,7 @@
     "@types/react": "^18.2.30",
     "@types/react-dom": "^18.2.14",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
-    "@typescript-eslint/parser": "^6.8.0",
+    "@typescript-eslint/parser": "^6.19.0",
     "babel-jest": "^27.5.1",
     "eslint": "^7.22.0",
     "eslint-plugin-bedrock": "^1.0.9",
