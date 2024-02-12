@@ -1,4 +1,4 @@
-FROM --platform=linux/amd64 node:16.13.0-alpine
+FROM --platform=linux/amd64 node:16.20.2-alpine
 
 # Set work directory
 WORKDIR /service
