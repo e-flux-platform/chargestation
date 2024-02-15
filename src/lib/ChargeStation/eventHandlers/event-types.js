@@ -40,5 +40,6 @@ export const EventTypes16 = {
 export const EventTypes201 = {
   GetBaseReportReceived: 'getBaseReportReceived',
   SetVariablesReceived: 'setVariablesReceived',
+  GetVariablesReceived: 'getVariablesReceived',
   TransactionEventCallResultReceived: 'transactionEventCallResultReceived',
 };

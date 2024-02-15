@@ -629,6 +629,7 @@ export interface VariableConfiguration<Variable> {
   ): void;
   getVariablesArray(): Variable[];
   getVersion(): OCPPVersion;
+  getVariableValue(key: string): string | number | null;
 }
 
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
@@ -750,22 +751,26 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 
   getVariableActualValue(key: string): string {
     const intervalConfig = this.variables[key];
-    if (!intervalConfig) return '';
+    if (!intervalConfig) {return '';}
 
     const actualValue = intervalConfig.variableAttribute.find(
       (attr) => attr.type === 'Actual' || !attr.type
     );
 
     if (actualValue?.value === null || actualValue?.value === undefined)
-      throw new Error(
+      {throw new Error(
         `Variable ${key} not found in configuration when getting actual value`
-      );
+      );}
 
     return actualValue.value;
   }
 
   getVariablesArray(): Variable201[] {
     return Object.values(this.variables);
+  }
+
+  getVariableValue(key: string): string | number | null {
+    return this.getVariableActualValue(key);
   }
 }
 
@@ -804,7 +809,7 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
     const defaultInterval = 60;
 
     const intervalConfig = this.variables['MeterValueSampleInterval']?.value;
-    if (!intervalConfig) return defaultInterval;
+    if (!intervalConfig) {return defaultInterval;}
 
     return typeof intervalConfig === 'number'
       ? intervalConfig
