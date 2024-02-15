@@ -22,6 +22,7 @@ import handleTransactionStartedUI from "lib/ChargeStation/eventHandlers/ocpp-16/
 import handleTransactionStoppedUI from "lib/ChargeStation/eventHandlers/ocpp-16/handle-transaction-stopped-ui";
 import handleReset from "lib/ChargeStation/eventHandlers/ocpp-20/handle-reset";
 import handleSetChargingProfile from "lib/ChargeStation/eventHandlers/ocpp-20/handle-set-charging-profile";
+import handleGetVariables from "lib/ChargeStation/eventHandlers/ocpp-20/handle-get-variables";
 
 // This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -35,6 +36,7 @@ export default {
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
   [e201.GetBaseReportReceived]: [handleGetBaseReportReceived],
   [e201.SetVariablesReceived]: [handleSetVariables],
+  [e201.GetVariablesReceived]: [handleGetVariables],
   [e.SessionStartInitiated]: [sendAuthorize],
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
