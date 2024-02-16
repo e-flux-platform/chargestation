@@ -1,4 +1,4 @@
-FROM node:16.20.2-alpine
+FROM node:18-alpine3.18
 
 # Note layers should be ordered from less to more likely to change.
 

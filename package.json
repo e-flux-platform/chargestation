@@ -44,7 +44,7 @@
     "cssnano": "^5.0.0",
     "draft-js": "^0.11.7",
     "express-to-koa": "^2.0.0",
-    "favicons": "^7.1.2",
+    "favicons": "^6.2.1",
     "favicons-webpack-plugin": "^5.0.2",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.10",
@@ -108,7 +108,7 @@
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "volta": {
-    "node": "16.13.0",
+    "node": "18.17.0",
     "yarn": "1.22.17"
   },
   "prettier": "@bedrockio/prettier-config"

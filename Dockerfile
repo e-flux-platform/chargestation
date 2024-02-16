@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 node:16.20.2-alpine
+# alpine3.18 is used because of the issue with 'sharp' https://github.com/nodejs/docker-node/issues/2009#issuecomment-1855547128
+FROM --platform=linux/amd64 node:18-alpine3.18
 
 # Set work directory
 WORKDIR /service
