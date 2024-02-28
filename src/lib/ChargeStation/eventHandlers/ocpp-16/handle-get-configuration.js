@@ -9,7 +9,7 @@ export default async function handleGetConfiguration({
         return {
           key: variable.key,
           value: variable.value,
-          readOnly: false,
+          readonly: false,
         };
       }),
     unknownKey: [],
