@@ -8,7 +8,7 @@ export default async function handleGetConfiguration({
       .map((variable) => {
         return {
           key: variable.key,
-          value: variable.value,
+          value: `${variable.value}`,
           readonly: false,
         };
       }),
