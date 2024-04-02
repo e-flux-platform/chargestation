@@ -24,10 +24,10 @@ Todo:
 - [ ] Support for authorization
 - [ ] Terminate session on disconnect
 - [ ] Simulate being offline (and buffering commands)
-- [ ] Time travel
-- [ ] OCPP 2.1 Support
+- [x] Time travel
+- [x] OCPP 2.1 Support
 - [ ] Animation for plugging in cable
-- [ ] Animation for cars
+- [x] Animation for cars
 - [ ] Animation for connectivity on the station
 - [ ] Tweak UI for big screens
 - [ ] Tweak responsiveness for mobile
@@ -99,6 +99,9 @@ object `window.__env_conf`.
 
 ### Deployment
 
-1. In case you're using gcloud, be sure to run:
-`gcloud auth configure-docker <region>` (region example `europe-west3-docker.pkg.dev`)
-2. Run `bash buildandpush.sh <resource to push to>`
+deployment to staging happens automatically when pushing to `master`.
+
+to deploy to production:
+- Grab the hash of the image that you want to deploy from https://quay.io/repository/road/chargestation?tab=tags
+- Update the hash in e-flux/deployment/environments/production/services/chargestation/chargestation-deployment.yml and merge to master (using a PR of course)
+
