@@ -99,7 +99,9 @@ object `window.__env_conf`.
 
 ### Deployment
 
-deployment to staging happens automatically when pushing to `master`.
+Deployment to staging happens automatically when pushing to `master`.
+
+To deploy to production:
 
 to deploy to production:
 - Grab the hash of the image that you want to deploy from https://quay.io/repository/road/chargestation?tab=tags
