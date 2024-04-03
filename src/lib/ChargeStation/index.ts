@@ -350,6 +350,10 @@ export default class ChargeStation {
       session,
     };
   }
+
+  sendStatusNotification(connectorId: number, status: string) {
+    this.writeCall('StatusNotification', { connectorId, status, errorCode: 'NoError', });
+  }
 }
 
 /*
