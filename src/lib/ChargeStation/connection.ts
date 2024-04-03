@@ -135,7 +135,7 @@ class Connection {
       const promise = new Promise<void>((resolve, reject) => {
         const timeoutId = setTimeout(() => {
           this.inflight = undefined;
-          reject(new Error(`Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`))
+          reject(new Error(`Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`));
         }, this.inflightTimeoutMs);
 
         this.inflight = {

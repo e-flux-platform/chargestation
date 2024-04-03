@@ -1,8 +1,6 @@
 import React from 'react';
-import { Modal, Button, Form, Header, Divider } from 'semantic';
+import { Modal, Button, Form, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import { sessionSettingsList } from 'lib/settings';
-import { HelpTip } from 'components';
 
 function selectDefaultConnector(availableConnectors) {
   return ['1', '2'].filter((connectorId) => {
