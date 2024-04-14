@@ -44,7 +44,7 @@
     "cssnano": "^5.0.0",
     "draft-js": "^0.11.7",
     "express-to-koa": "^2.0.0",
-    "favicons": "^6.2.1",
+    "favicons": "^7.0.0",
     "favicons-webpack-plugin": "^5.0.2",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.10",
