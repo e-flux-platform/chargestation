@@ -9,11 +9,10 @@ export default async function sendStopTransaction({ chargepoint, session }) {
   await chargepoint.writeCall(
     'StopTransaction',
     {
-      connectorId: session.connectorId,
       idTag: session.options.uid,
       meterStop: Math.round(session.kwhElapsed * 1000),
       timestamp: session.now().toISOString(),
-      disconnectReason: 'EVDisconnected',
+      reason: 'EVDisconnected',
       transactionId: Number(session.transactionId),
       transactionData: [
         {
