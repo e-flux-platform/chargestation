@@ -243,14 +243,13 @@ export default class Home extends React.Component {
               currentStatus={chargeStation.currentStatus}
               session={session}
               onSave={async ({ connectorId, status }) => {
-                await chargeStation.sendStatusNotification(connectorId, status);
+                await chargeStation.sendStatusNotification(parseInt(connectorId), status);
                 this.nextTick();
               }}
               trigger={
                 <Button
                   inverted
                   primary={!!chargeStationIsCharging}
-                  disabled={!chargeStationIsCharging}
                   icon="signal"
                   content="Status"
                 />
