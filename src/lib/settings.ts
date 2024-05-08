@@ -1,6 +1,7 @@
 import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
 import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
 import { Map } from '../types/generic';
+import { Settings } from 'lib/ChargeStation';
 
 export enum ChargeStationSetting {
   OCPPBaseUrl = 'ocppBaseUrl',
@@ -122,6 +123,7 @@ export interface Variable16 {
   key: string;
   description?: string;
   value: string | number;
+  predicate?: (settings: Settings) => boolean,
 }
 
 export const defaultVariableConfig16: Variable16[] = [
@@ -166,6 +168,12 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'Meta data about max current on connector 2',
     value: 32,
   },
+  {
+    key: 'PaymentCardIdTagPrefix',
+    description: 'IdTag prefix used when authorizing payment card sessions',
+    value: 'SICHARGETEST',
+    predicate: (settings: Settings) => settings.chargePointModel === 'sicharge',
+  }
 ];
 
 export interface Variable201 {
@@ -194,6 +202,7 @@ export interface Variable201 {
     valuesList?: string;
     supportsMonitoring: boolean;
   };
+  predicate?: (settings: Settings) => boolean,
 }
 
 export const defaultVariableConfig201: Variable201[] = [
@@ -581,13 +590,14 @@ export type Variable = Variable16 | Variable201;
 
 export function getConfiguration(
   ocppVersion: OCPPVersion,
-  query: URLSearchParams
+  settings: Settings,
+  query?: URLSearchParams,
 ): VariableConfiguration<Variable> {
   switch (ocppVersion) {
     case OCPPVersion.ocpp16:
-      return new VariableConfiguration16(defaultVariableConfig16, query);
+      return new VariableConfiguration16(defaultVariableConfig16, settings, query);
     case OCPPVersion.ocpp201:
-      return new VariableConfiguration201(defaultVariableConfig201, query);
+      return new VariableConfiguration201(defaultVariableConfig201, settings, query);
     default:
       throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
   }
@@ -635,21 +645,25 @@ export interface VariableConfiguration<Variable> {
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
   private variables: Map<Variable201> = {};
 
-  constructor(variables: Variable201[], query: URLSearchParams) {
-    this.variables = variables.reduce((acc: Map<Variable201>, item) => {
-      const key = getConfigurationKey201(item);
-      const value = query && query.get(key);
-      if (value) {
-        acc[key] = {
-          ...item,
-          variableAttribute: [{ ...item.variableAttribute[0], value }],
-        };
-      } else {
-        acc[key] = item;
-      }
+  constructor(variables: Variable201[], settings: Settings, query?: URLSearchParams) {
+    this.variables = variables
+      .filter(item => {
+        return item.predicate ? item.predicate(settings) : true;
+      })
+      .reduce((acc: Map<Variable201>, item) => {
+        const key = getConfigurationKey201(item);
+        const value = query && query.get(key);
+        if (value) {
+          acc[key] = {
+            ...item,
+            variableAttribute: [{...item.variableAttribute[0], value}],
+          };
+        } else {
+          acc[key] = item;
+        }
 
-      return acc;
-    }, {});
+        return acc;
+      }, {});
   }
 
   getVersion(): OCPPVersion {
@@ -751,16 +765,19 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 
   getVariableActualValue(key: string): string {
     const intervalConfig = this.variables[key];
-    if (!intervalConfig) {return '';}
+    if (!intervalConfig) {
+      return '';
+    }
 
     const actualValue = intervalConfig.variableAttribute.find(
       (attr) => attr.type === 'Actual' || !attr.type
     );
 
-    if (actualValue?.value === null || actualValue?.value === undefined)
-      {throw new Error(
+    if (actualValue?.value === null || actualValue?.value === undefined) {
+      throw new Error(
         `Variable ${key} not found in configuration when getting actual value`
-      );}
+      );
+    }
 
     return actualValue.value;
   }
@@ -777,18 +794,22 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 class VariableConfiguration16 implements VariableConfiguration<Variable16> {
   private variables: Map<Variable16> = {};
 
-  constructor(variables: Variable16[], query: URLSearchParams) {
-    this.variables = variables.reduce((acc: VariableKeyValueMap, item) => {
-      const value = query && query.get(item.key);
+  constructor(variables: Variable16[], settings: Settings, query?: URLSearchParams) {
+    this.variables = variables
+      .filter((item) => {
+        return item.predicate ? item.predicate(settings) : true;
+      })
+      .reduce((acc: VariableKeyValueMap, item) => {
+        const value = query && query.get(item.key);
 
-      if (value) {
-        acc[item.key] = { ...item, value };
-      } else {
-        acc[item.key] = item;
-      }
+        if (value) {
+          acc[item.key] = { ...item, value };
+        } else {
+          acc[item.key] = item;
+        }
 
-      return acc;
-    }, {});
+        return acc;
+      }, {});
   }
 
   getVersion(): OCPPVersion {
@@ -809,7 +830,9 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
     const defaultInterval = 60;
 
     const intervalConfig = this.variables['MeterValueSampleInterval']?.value;
-    if (!intervalConfig) {return defaultInterval;}
+    if (!intervalConfig) {
+      return defaultInterval;
+    }
 
     return typeof intervalConfig === 'number'
       ? intervalConfig
