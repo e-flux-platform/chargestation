@@ -7,11 +7,10 @@ const handleDataTransfer: ChargeStationEventHandler<DataTransferRequest> = ({
   callMessageBody,
 }) => {
   const { vendorId } = callMessageBody;
-  if (vendorId !== 'AdhocPayment') {
-    chargepoint.writeCallResult(callMessageId, {
-      status: 'UnknownVendorId',
-    });
-  }
+  const status = vendorId === 'AdhocPayment' ? 'Accepted' : 'UnknownVendorId';
+  chargepoint.writeCallResult(callMessageId, {
+    status,
+  });
 };
 
 export default handleDataTransfer;
