@@ -13,6 +13,7 @@ import sendStatusNotificationPreparing from '../eventHandlers/ocpp-16/send-statu
 import handleStartCharging from '../eventHandlers/ocpp-16/handle-start-charging';
 import handleTransactionStartedUI from '../eventHandlers/ocpp-16/handle-transaction-started-ui';
 import sendStatusNotificationAvailable from '../eventHandlers/ocpp-16/send-status-notification-available';
+import sendStatusNotificationFinishing from '../eventHandlers/ocpp-16/send-status-notification-finishing';
 import handleTransactionStoppedUI from '../eventHandlers/ocpp-16/handle-transaction-stopped-ui';
 import sendStatusNotificationCharging from '../eventHandlers/ocpp-16/send-status-notification-charging';
 import handleRemoteStartTransaction from '../eventHandlers/ocpp-16/handle-remote-start-transaction';
@@ -61,6 +62,7 @@ export default {
     handleStopTransactionCallResultReceived,
   ],
   [e16.StopTransactionAccepted]: [
+    sendStatusNotificationFinishing,
     sendStatusNotificationAvailable,
     handleTransactionStoppedUI,
   ],
@@ -74,5 +76,5 @@ export default {
   [e.ChargingLimitReached]: [sendChargingLimitReached],
   [e.ResetReceived]: [handleReset],
   [e.SetChargingProfileReceived]: [handleSetChargingProfile],
-  [e.DataTransferReceived]: [handleDataTransfer]
+  [e.DataTransferReceived]: [handleDataTransfer],
 };
