@@ -171,7 +171,7 @@ export const defaultVariableConfig16: Variable16[] = [
   {
     key: 'PaymentCardIdTagPrefix',
     description: 'IdTag prefix used when authorizing payment card sessions',
-    value: 'SICHARGETEST',
+    value: 'EMVS',
     predicate: (settings: Settings) => settings.chargePointModel === 'sicharge',
   }
 ];
