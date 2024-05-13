@@ -4,6 +4,7 @@ import {
 } from '../eventHandlers/event-types';
 import sendStatusNotificationPreparing from '../eventHandlers/ocpp-16/send-status-notification-preparing';
 import sendStatusNotificationAvailable from '../eventHandlers/ocpp-16/send-status-notification-available';
+import sendStatusNotificationFinishing from '../eventHandlers/ocpp-16/send-status-notification-finishing';
 import handleTransactionStoppedUI from '../eventHandlers/ocpp-16/handle-transaction-stopped-ui';
 import sendDataTransferAuthorize from 'lib/ChargeStation/eventHandlers/ocpp-16/ccv-alpitronic/send-data-transfer-authorize';
 import sendDataTransferReceipt from 'lib/ChargeStation/eventHandlers/ocpp-16/ccv-alpitronic/send-data-transfer-receipt';
@@ -19,6 +20,7 @@ export default {
   [e.DataTransferCallResultReceived]: [handleDataTransferCallResultReceived],
   [e.AuthorizeCallResultReceived]: [],
   [e16.StopTransactionAccepted]: [
+    sendStatusNotificationFinishing,
     sendStatusNotificationAvailable,
     handleTransactionStoppedUI,
     sendDataTransferReceipt,
