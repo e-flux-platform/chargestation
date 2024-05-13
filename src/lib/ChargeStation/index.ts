@@ -6,6 +6,7 @@ import { EventTypes } from './eventHandlers/event-types';
 import {
   AuthorizationType,
   ChargeStationSetting,
+  getConfiguration,
   OCPPVersion,
   Variable,
   VariableConfiguration,
@@ -16,7 +17,7 @@ import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schema
 
 import clock, { Interval } from './clock';
 
-interface Settings {
+export interface Settings {
   ocppConfiguration: string;
   ocppBaseUrl: string;
   chargePointVendor: string;
@@ -353,6 +354,48 @@ export default class ChargeStation {
 
   sendStatusNotification(connectorId: number, status: string) {
     this.writeCall('StatusNotification', { connectorId, status, errorCode: 'NoError', });
+  }
+
+  save() {
+    ChargeStationStorage.save(this);
+  }
+
+  static load(): ChargeStation | undefined {
+    return ChargeStationStorage.load();
+  }
+}
+
+export class ChargeStationStorage {
+  private static storageKey = 'chargeStationSettingsCache';
+
+  static save(chargeStation: ChargeStation) {
+    sessionStorage.setItem(
+      ChargeStationStorage.storageKey,
+      JSON.stringify({
+        settings: chargeStation.settings,
+        config: chargeStation.configuration.variablesToKeyValueMap(),
+      })
+    );
+  }
+
+  static load(): ChargeStation | undefined {
+    // check session storage
+    const data = sessionStorage.getItem(ChargeStationStorage.storageKey);
+    if (!data) {
+      return undefined;
+    }
+
+    const storedState = JSON.parse(data);
+    if (!storedState) {
+      return undefined;
+    }
+
+    const { settings, config } = storedState;
+    const version = settings.ocppConfiguration;
+    const configuration = getConfiguration(version, settings);
+    configuration.updateVariablesFromKeyValueMap(config);
+
+    return new ChargeStation(configuration, settings);
   }
 }
 

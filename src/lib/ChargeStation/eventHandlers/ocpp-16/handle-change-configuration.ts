@@ -12,6 +12,7 @@ const handleChangeConfigurationHandler: ChargeStationEventHandler<ChangeConfigur
     };
 
     chargepoint.writeCallResult(callMessageId, response);
+    chargepoint.save();
   };
 
 export default handleChangeConfigurationHandler;

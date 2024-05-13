@@ -31,15 +31,13 @@ import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
 
-const SESSION_STORAGE_KEY = 'chargeStationSettingsCache';
-
 @screen
 export default class Home extends React.Component {
   static title = 'Chargestation.one';
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(ocppVersion(), getDocumentQuery()),
+    configuration: getConfiguration(ocppVersion(), getSettings(), getDocumentQuery()),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],
@@ -50,19 +48,18 @@ export default class Home extends React.Component {
 
   async componentDidMount() {
     // check session storage
-    const storedState = JSON.parse(sessionStorage.getItem(SESSION_STORAGE_KEY));
 
-    if (storedState) {
-      const { settings, config } = storedState;
-      const version = settings.ocppConfiguration;
-      const configuration = getConfiguration(version);
-      configuration.updateVariablesFromKeyValueMap(config);
-
-      await new Promise((r) => this.setState({ settings, configuration }, r));
+    let chargeStation = ChargeStation.load();
+    if (chargeStation) {
+      await new Promise((r) => this.setState({
+        settings: chargeStation.settings,
+        configuration: chargeStation.configuration,
+      }, r));
+    } else {
+      const { configuration, settings } = this.state;
+      chargeStation = new ChargeStation(configuration, settings);
     }
 
-    const { configuration, settings } = this.state;
-    const chargeStation = new ChargeStation(configuration, settings);
     chargeStation.onLog = this.onLog;
     chargeStation.onError = this.onError;
     chargeStation.onSessionStart = (connectorId) => {
@@ -285,7 +282,7 @@ export default class Home extends React.Component {
                 configuration={configuration}
                 settingsList={settingsList}
                 onProtocolChange={(ocppConfiguration) => {
-                  const newConfiguration = getConfiguration(ocppConfiguration);
+                  const newConfiguration = getConfiguration(ocppConfiguration, settings);
                   this.setState({
                     configuration: newConfiguration,
                   });
@@ -296,7 +293,8 @@ export default class Home extends React.Component {
                     savedSettings.ocppConfiguration
                   ) {
                     const newConfiguration = getConfiguration(
-                      savedSettings.ocppConfiguration
+                      savedSettings.ocppConfiguration,
+                      savedSettings,
                     );
 
                     this.setState({
@@ -308,13 +306,7 @@ export default class Home extends React.Component {
                     configuration.updateVariablesFromKeyValueMap(config);
                     chargeStation.changeConfiguration(configuration);
                   }
-                  sessionStorage.setItem(
-                    SESSION_STORAGE_KEY,
-                    JSON.stringify({
-                      settings: savedSettings,
-                      config: config,
-                    })
-                  );
+                  chargeStation.save();
                   this.setState(
                     {
                       settings: savedSettings,
@@ -323,6 +315,7 @@ export default class Home extends React.Component {
                       chargeStation.settings = savedSettings;
                       chargeStation.ocppVersion =
                         chargeStation.settings.ocppConfiguration;
+                      chargeStation.save();
                       chargeStation.disconnect();
                       setTimeout(() => {
                         chargeStation.connect();
