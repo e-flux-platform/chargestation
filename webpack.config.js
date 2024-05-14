@@ -7,7 +7,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { template: compileTemplate } = require('lodash');
 
@@ -126,42 +125,6 @@ module.exports = {
     }),
     ...getTemplatePlugins(),
     ...getOptionalPlugins(),
-
-    // Favicons plugin occasionally makes webpack build fail due with error:
-    // glib: SVG has no elements
-    //
-    // This error is intermittent and tracked here:
-    // https://github.com/jantimon/favicons-webpack-plugin/issues/200
-    new FaviconsWebpackPlugin({
-      logo: './src/assets/favicon.svg',
-
-      // Set devMode to "webapp" to test PWA stuff on dev.
-      mode: 'webapp',
-      devMode: 'light',
-
-      // https://github.com/itgalaxy/favicons#usage
-      favicons: {
-        appName: '', // Your application's name.
-        dir: 'auto', // Primary text direction for name, short_name, and description
-        lang: 'en-US', // Primary language for name and short_name
-        background: '#fff', // Background colour for flattened icons.
-        theme_color: '#fff', // Theme color user for example in Android's task switcher.
-        appleStatusBarStyle: 'black-translucent', // Style for Apple status bar: "black-translucent", "default", "black". Not actually black!.
-        display: 'fullscreen', // Preferred display mode: "fullscreen", "standalone", "minimal-ui" or "browser".
-        orientation: 'portrait', // Default orientation: "any", "natural", "portrait" or "landscape".
-        loadManifestWithCredentials: true, // Browsers don't send cookies when fetching a manifest, enable this to fix that.
-        icons: {
-          android: true,
-          appleIcon: true,
-          appleStartup: true,
-          coast: false,
-          favicons: true,
-          firefox: true,
-          windows: true,
-          yandex: false,
-        },
-      },
-    }),
     new CopyWebpackPlugin({
       patterns: [
         {
