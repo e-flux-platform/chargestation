@@ -12,7 +12,6 @@ import { userHasAccess } from 'utils/permissions';
 import ConnectionError from 'components/ConnectionError';
 
 import logo from 'assets/logo.svg';
-import favicon from 'assets/favicon.svg';
 
 @withSession
 export default class DashboardLayout extends React.Component {
@@ -111,11 +110,6 @@ export default class DashboardLayout extends React.Component {
         <Sidebar.Content>
           <Sidebar.Mobile>
             <Layout horizontal spread center>
-              <Layout.Group>
-                <NavLink to="/">
-                  <img src={favicon} height="15" />
-                </NavLink>
-              </Layout.Group>
               <Layout.Group>
                 <Sidebar.Trigger>
                   <Icon name="bars" fitted />
