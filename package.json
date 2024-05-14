@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
-    "node": ">=10"
+    "node": ">=20"
   },
   "scripts": {
     "build": "NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=4096\" webpack",
@@ -88,7 +88,7 @@
     "yargs": "^15.3.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.13.10",
+    "@babel/eslint-parser": "^7.24.5",
     "@bedrockio/prettier-config": "^1.0.1",
     "@testing-library/dom": "^7.30.3",
     "@testing-library/react": "^11.2.5",
@@ -108,7 +108,7 @@
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "volta": {
-    "node": "18.17.0",
+    "node": "20.9.0",
     "yarn": "1.22.17"
   },
   "prettier": "@bedrockio/prettier-config"
