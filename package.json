@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "engines": {
-    "node": ">=10"
+    "node": ">=20"
   },
   "scripts": {
     "build": "NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=4096\" webpack",
@@ -44,7 +44,7 @@
     "cssnano": "^5.0.0",
     "draft-js": "^0.11.7",
     "express-to-koa": "^2.0.0",
-    "favicons": "^6.2.1",
+    "favicons": "^7.1.2",
     "favicons-webpack-plugin": "^5.0.2",
     "github-markdown-css": "^4.0.0",
     "google-map-react": "^2.1.10",
@@ -83,12 +83,12 @@
     "uuid": "^9.0.1",
     "webpack": "^5.89.0",
     "webpack-cli": "^4.8.0",
-    "webpack-dev-middleware": "^5.2.1",
+    "webpack-dev-middleware": "^5.3.4",
     "webpack-hot-middleware": "^2.25.1",
     "yargs": "^15.3.1"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "^7.13.10",
+    "@babel/eslint-parser": "^7.24.5",
     "@bedrockio/prettier-config": "^1.0.1",
     "@testing-library/dom": "^7.30.3",
     "@testing-library/react": "^11.2.5",
@@ -108,7 +108,7 @@
     "webpack-bundle-analyzer": "^4.5.0"
   },
   "volta": {
-    "node": "18.17.0",
+    "node": "20.9.0",
     "yarn": "1.22.17"
   },
   "prettier": "@bedrockio/prettier-config"
