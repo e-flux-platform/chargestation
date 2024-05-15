@@ -126,6 +126,8 @@ export interface Variable16 {
   predicate?: (settings: Settings) => boolean,
 }
 
+const isSicharge = (settings: Settings) => settings.chargePointModel === 'sicharge';
+
 export const defaultVariableConfig16: Variable16[] = [
   {
     key: 'Identity',
@@ -169,10 +171,22 @@ export const defaultVariableConfig16: Variable16[] = [
     value: 32,
   },
   {
+    key: 'PaymentCurrency',
+    description: 'Currency that payments should be made in',
+    value: 'EUR',
+    predicate: isSicharge,
+  },
+  {
+    key: 'PaymentTXMaxAmount',
+    description: 'Payment reservation amount',
+    value: 50,
+    predicate: isSicharge,
+  },
+  {
     key: 'PaymentCardIdTagPrefix',
     description: 'IdTag prefix used when authorizing payment card sessions',
     value: 'EMVS',
-    predicate: (settings: Settings) => settings.chargePointModel === 'sicharge',
+    predicate: isSicharge,
   }
 ];
 
