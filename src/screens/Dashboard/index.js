@@ -288,24 +288,16 @@ export default class Home extends React.Component {
                   });
                 }}
                 onSave={({ config, settings: savedSettings }) => {
-                  if (
-                    settings.ocppConfiguration !==
-                    savedSettings.ocppConfiguration
-                  ) {
-                    const newConfiguration = getConfiguration(
-                      savedSettings.ocppConfiguration,
-                      savedSettings,
-                    );
+                  const newConfiguration = getConfiguration(
+                    savedSettings.ocppConfiguration,
+                    savedSettings,
+                  );
 
-                    this.setState({
-                      configuration: newConfiguration,
-                    });
-                    newConfiguration.updateVariablesFromKeyValueMap(config);
-                    chargeStation.changeConfiguration(newConfiguration);
-                  } else {
-                    configuration.updateVariablesFromKeyValueMap(config);
-                    chargeStation.changeConfiguration(configuration);
-                  }
+                  this.setState({
+                    configuration: newConfiguration,
+                  });
+                  newConfiguration.updateVariablesFromKeyValueMap(config);
+                  chargeStation.changeConfiguration(newConfiguration);
                   chargeStation.save();
                   this.setState(
                     {
