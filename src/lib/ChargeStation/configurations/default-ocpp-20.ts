@@ -24,6 +24,8 @@ import handleReset from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-reset';
 import handleSetChargingProfile from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-set-charging-profile';
 import handleGetVariables from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-get-variables';
 import handleDataTransfer from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-data-transfer';
+import handleRequestStartTransaction from "lib/ChargeStation/eventHandlers/ocpp-20/handle-request-start-transaction";
+import handleRequestStopTransaction from "lib/ChargeStation/eventHandlers/ocpp-20/handle-request-stop-transaction";
 
 // This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -44,9 +46,9 @@ export default {
   [e.AuthorizationFailed]: [handleTokenRejection],
   [e.SessionCancelled]: [sendStatusNotification],
   [e.AuthorizationAccepted]: [sendStartTransaction],
-  [e201.TransactionEventCallResultReceived]: [
-    handleTransactionEventCallResultReceived,
-  ],
+  [e201.TransactionEventCallResultReceived]: [handleTransactionEventCallResultReceived],
+  [e201.RequestStartTransactionReceived]: [handleRequestStartTransaction],
+  [e201.RequestStopTransactionReceived]: [handleRequestStopTransaction],
   [e.Charging]: [handleTransactionStartedUI],
   [e.Stopped]: [handleTransactionStoppedUI],
   [e.ChargingTick]: [sendTransationEventUpdated],

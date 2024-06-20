@@ -417,6 +417,7 @@ interface SessionOptions {
   carBatteryStateOfCharge: number;
   uid: string;
   authorizationType: AuthorizationType;
+  remoteStartId?: number;
 }
 
 export class Session {
@@ -431,6 +432,7 @@ export class Session {
   public seqNo: number;
   public transactionId: string;
   public tickInterval?: Interval;
+  public remoteStartId?: number;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
@@ -449,6 +451,7 @@ export class Session {
     this.maxPowerKw = options.maxPowerKw || 22;
     this.carBatteryKwh = options.carBatteryKwh || 64;
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
+    this.remoteStartId = options.remoteStartId;
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
