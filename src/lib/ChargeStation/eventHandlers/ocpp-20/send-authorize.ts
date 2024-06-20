@@ -10,9 +10,9 @@ const sendAuthorize: ChargeStationEventHandler<
   await sleep(1000);
 
   chargepoint.writeCall(
-      'Authorize',
-      {idToken: {idToken: session.options.uid, type: 'ISO14443'}},
-      session
+    'Authorize',
+    { idToken: { idToken: session.options.uid, type: 'ISO14443' } },
+    session
   );
 };
 
