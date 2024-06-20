@@ -55,7 +55,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.OCPPBaseUrl,
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
-    defaultValue: 'ws://localhost:2600/1.6/e-flux',
+    defaultValue: 'ws://localhost:2600/e-flux',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,
