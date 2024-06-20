@@ -43,4 +43,6 @@ export const EventTypes201 = {
   SetVariablesReceived: 'setVariablesReceived',
   GetVariablesReceived: 'getVariablesReceived',
   TransactionEventCallResultReceived: 'transactionEventCallResultReceived',
+  RequestStartTransactionReceived: 'requestStartTransactionReceived',
+  RequestStopTransactionReceived: 'requestStopTransactionReceived',
 };

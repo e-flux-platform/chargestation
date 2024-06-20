@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { sleep } from '../../../../utils/csv';
+import { sleep } from 'utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
 import clock from '../../clock';
@@ -29,7 +29,7 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
   session.transactionId = transactionId;
   session.isStartingSession = true;
 
-  await chargepoint.writeCall(
+  chargepoint.writeCall(
     'TransactionEvent',
     {
       eventType: 'Started',
@@ -54,6 +54,7 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
       ],
       evse: { id: evseId, connectorId },
       idToken: { idToken: session.options.uid, type: 'ISO14443' },
+      remoteStartId: session.options.remoteStartId,
     },
     session
   );
