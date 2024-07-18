@@ -191,7 +191,7 @@ export const defaultVariableConfig16: Variable16[] = [
   },
   {
     key: 'CreditIdToken',
-    description: 'IdTag prefix used when authorizing payment card sessions',
+    description: 'IdTag used when authorizing payment card sessions',
     value: 'PleaseSetToken',
     predicate: isAdsTec,
   },
