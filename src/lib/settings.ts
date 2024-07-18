@@ -127,6 +127,7 @@ export interface Variable16 {
 }
 
 const isSicharge = (settings: Settings) => settings.chargePointModel === 'sicharge';
+const isAdsTec = (settings: Settings) => settings.chargePointModel === 'ads-tec';
 
 export const defaultVariableConfig16: Variable16[] = [
   {
@@ -187,7 +188,19 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'IdTag prefix used when authorizing payment card sessions',
     value: 'EMVS',
     predicate: isSicharge,
-  }
+  },
+  {
+    key: 'CreditIdToken',
+    description: 'IdTag prefix used when authorizing payment card sessions',
+    value: 'PleaseSetToken',
+    predicate: isAdsTec,
+  },
+  {
+    key: 'KwhPrice',
+    description: 'kWh price to be applied to payment card sessions',
+    value: 1,
+    predicate: isAdsTec,
+  },
 ];
 
 export interface Variable201 {
