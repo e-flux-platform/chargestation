@@ -42,7 +42,7 @@ interface CallLogItem {
   session?: Session;
 }
 
-type LogType = 'command' | 'message-response' | 'message' | 'error';
+type LogType = 'command' | 'message-response' | 'message' | 'error' | 'connected';
 
 export default class ChargeStation {
   private ocppVersion: OCPPVersion;
@@ -119,7 +119,7 @@ export default class ChargeStation {
 
     this.connection.onConnected = () => {
       this.connected = true;
-      this.log('message-response', '< Connected!');
+      this.log('connnected', '< Connected!');
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error: Event) => {
