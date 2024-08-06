@@ -5,6 +5,8 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface ChangeConfigurationResponse {
-  status: 'Accepted' | 'Rejected' | 'RebootRequired' | 'NotSupported';
+export type InstallCertificateStatusEnumType = 'Accepted' | 'Failed' | 'Rejected';
+
+export interface InstallCertificateResponse {
+  status: InstallCertificateStatusEnumType;
 }

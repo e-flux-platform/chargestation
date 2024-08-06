@@ -6,5 +6,5 @@
  */
 
 export interface SetChargingProfileResponse {
-  status: "Accepted" | "Rejected" | "NotSupported";
+  status: 'Accepted' | 'Rejected' | 'NotSupported';
 }

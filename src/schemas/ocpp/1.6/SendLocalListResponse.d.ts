@@ -6,5 +6,5 @@
  */
 
 export interface SendLocalListResponse {
-  status: "Accepted" | "Failed" | "NotSupported" | "VersionMismatch";
+  status: 'Accepted' | 'Failed' | 'NotSupported' | 'VersionMismatch';
 }

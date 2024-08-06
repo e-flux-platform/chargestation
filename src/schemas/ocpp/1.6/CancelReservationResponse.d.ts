@@ -6,5 +6,5 @@
  */
 
 export interface CancelReservationResponse {
-  status: "Accepted" | "Rejected";
+  status: 'Accepted' | 'Rejected';
 }

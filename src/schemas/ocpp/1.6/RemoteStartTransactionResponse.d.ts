@@ -6,5 +6,5 @@
  */
 
 export interface RemoteStartTransactionResponse {
-  status: "Accepted" | "Rejected";
+  status: 'Accepted' | 'Rejected';
 }

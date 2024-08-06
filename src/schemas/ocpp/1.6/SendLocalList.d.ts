@@ -12,8 +12,8 @@ export interface SendLocalListRequest {
     idTagInfo?: {
       expiryDate?: string;
       parentIdTag?: string;
-      status: "Accepted" | "Blocked" | "Expired" | "Invalid" | "ConcurrentTx";
+      status: 'Accepted' | 'Blocked' | 'Expired' | 'Invalid' | 'ConcurrentTx';
     };
   }[];
-  updateType: "Differential" | "Full";
+  updateType: 'Differential' | 'Full';
 }

@@ -5,6 +5,8 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface ChangeConfigurationResponse {
-  status: 'Accepted' | 'Rejected' | 'RebootRequired' | 'NotSupported';
+export interface SecurityEventNotificationRequest {
+  type: string;
+  timestamp: string;
+  techInfo?: string;
 }

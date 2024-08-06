@@ -6,13 +6,13 @@
  */
 
 export interface GetCompositeScheduleResponse {
-  status: "Accepted" | "Rejected";
+  status: 'Accepted' | 'Rejected';
   connectorId?: number;
   scheduleStart?: string;
   chargingSchedule?: {
     duration?: number;
     startSchedule?: string;
-    chargingRateUnit: "A" | "W";
+    chargingRateUnit: 'A' | 'W';
     chargingSchedulePeriod: {
       startPeriod: number;
       limit: number;

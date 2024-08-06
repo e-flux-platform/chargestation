@@ -6,5 +6,5 @@
  */
 
 export interface ClearChargingProfileResponse {
-  status: "Accepted" | "Unknown";
+  status: 'Accepted' | 'Unknown';
 }

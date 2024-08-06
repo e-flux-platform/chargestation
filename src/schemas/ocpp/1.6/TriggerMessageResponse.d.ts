@@ -6,5 +6,5 @@
  */
 
 export interface TriggerMessageResponse {
-  status: "Accepted" | "Rejected" | "NotImplemented";
+  status: 'Accepted' | 'Rejected' | 'NotImplemented';
 }

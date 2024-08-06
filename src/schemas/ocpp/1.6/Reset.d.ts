@@ -6,5 +6,5 @@
  */
 
 export interface ResetRequest {
-  type: "Hard" | "Soft";
+  type: 'Hard' | 'Soft';
 }

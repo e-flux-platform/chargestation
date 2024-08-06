@@ -6,5 +6,5 @@
  */
 
 export interface ClearCacheResponse {
-  status: "Accepted" | "Rejected";
+  status: 'Accepted' | 'Rejected';
 }
