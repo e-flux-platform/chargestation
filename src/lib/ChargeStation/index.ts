@@ -433,6 +433,7 @@ export class Session {
   public transactionId: string;
   public tickInterval?: Interval;
   public remoteStartId?: number;
+  public suspended?: boolean;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
@@ -457,6 +458,7 @@ export class Session {
     this.lastMeterValuesTimestamp = undefined;
     this.emitter = emitter;
     this.seqNo = 0;
+    this.suspended = false;
     // ocpp 1.6 requires transationId to be a number
     // ocpp 2.0.1 requires transactionId to be a string
     this.transactionId = Math.floor(Math.random() * 100_000).toString();
@@ -502,6 +504,7 @@ export class Session {
       return;
     }
     if (chargeLimitReached) {
+      this.suspended = true;
       this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
         session: this,
       });
