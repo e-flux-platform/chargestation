@@ -6,5 +6,5 @@
  */
 
 export interface FirmwareStatusNotificationRequest {
-  status: "Downloaded" | "DownloadFailed" | "Downloading" | "Idle" | "InstallationFailed" | "Installing" | "Installed";
+  status: 'Downloaded' | 'DownloadFailed' | 'Downloading' | 'Idle' | 'InstallationFailed' | 'Installing' | 'Installed';
 }

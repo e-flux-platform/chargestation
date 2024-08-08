@@ -7,8 +7,8 @@
 
 export interface AuthorizeResponse {
   idTagInfo: {
+    status: 'Accepted' | 'Blocked' | 'Expired' | 'Invalid' | 'ConcurrentTx';
     expiryDate?: string;
     parentIdTag?: string;
-    status: "Accepted" | "Blocked" | "Expired" | "Invalid" | "ConcurrentTx";
   };
 }

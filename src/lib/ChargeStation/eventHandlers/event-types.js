@@ -19,6 +19,7 @@ export const EventTypes = {
   SetChargingProfileReceived: 'setChargingProfileReceived',
   DataTransferReceived: 'dataTransferReceived',
   DataTransferCallResultReceived: 'dataTransferCallResultReceived',
+  GetInstalledCertificatedIdsReceived: 'getInstalledCertificateIdsReceived',
 };
 
 // OCPP 1.6 specific events

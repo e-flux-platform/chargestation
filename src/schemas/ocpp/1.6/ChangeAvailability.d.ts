@@ -7,5 +7,5 @@
 
 export interface ChangeAvailabilityRequest {
   connectorId: number;
-  type: "Inoperative" | "Operative";
+  type: 'Inoperative' | 'Operative';
 }

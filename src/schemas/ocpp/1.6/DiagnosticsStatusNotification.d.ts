@@ -6,5 +6,5 @@
  */
 
 export interface DiagnosticsStatusNotificationRequest {
-  status: "Idle" | "Uploaded" | "UploadFailed" | "Uploading";
+  status: 'Idle' | 'Uploaded' | 'UploadFailed' | 'Uploading';
 }

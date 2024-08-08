@@ -30,6 +30,7 @@ import handleReset from '../eventHandlers/ocpp-16/handle-reset';
 import handleSetChargingProfile from '../eventHandlers/ocpp-16/handle-set-charging-profile';
 import handleAuthorizeCallResultReceived from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-authorize-call-result-received';
 import handleDataTransfer from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-data-transfer';
+import handleGetInstalledCertificateIds from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-get-installed-certificate-ids';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -77,4 +78,5 @@ export default {
   [e.ResetReceived]: [handleReset],
   [e.SetChargingProfileReceived]: [handleSetChargingProfile],
   [e.DataTransferReceived]: [handleDataTransfer],
+  [e.GetInstalledCertificatedIdsReceived]: [handleGetInstalledCertificateIds],
 };

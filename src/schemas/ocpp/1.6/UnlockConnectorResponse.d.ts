@@ -6,5 +6,5 @@
  */
 
 export interface UnlockConnectorResponse {
-  status: "Unlocked" | "UnlockFailed" | "NotSupported";
+  status: 'Unlocked' | 'UnlockFailed' | 'NotSupported';
 }

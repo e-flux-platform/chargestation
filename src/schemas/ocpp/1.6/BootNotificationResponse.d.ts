@@ -6,7 +6,7 @@
  */
 
 export interface BootNotificationResponse {
-  status: "Accepted" | "Pending" | "Rejected";
+  status: 'Accepted' | 'Pending' | 'Rejected';
   currentTime: string;
   interval: number;
 }

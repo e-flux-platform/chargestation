@@ -7,11 +7,11 @@
 
 export interface TriggerMessageRequest {
   requestedMessage:
-    | "BootNotification"
-    | "DiagnosticsStatusNotification"
-    | "FirmwareStatusNotification"
-    | "Heartbeat"
-    | "MeterValues"
-    | "StatusNotification";
+    | 'BootNotification'
+    | 'DiagnosticsStatusNotification'
+    | 'FirmwareStatusNotification'
+    | 'Heartbeat'
+    | 'MeterValues'
+    | 'StatusNotification';
   connectorId?: number;
 }

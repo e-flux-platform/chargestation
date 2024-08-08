@@ -6,5 +6,5 @@
  */
 
 export interface ReserveNowResponse {
-  status: "Accepted" | "Faulted" | "Occupied" | "Rejected" | "Unavailable";
+  status: 'Accepted' | 'Faulted' | 'Occupied' | 'Rejected' | 'Unavailable';
 }

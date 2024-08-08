@@ -8,5 +8,5 @@
 export interface GetCompositeScheduleRequest {
   connectorId: number;
   duration: number;
-  chargingRateUnit?: "A" | "W";
+  chargingRateUnit?: 'A' | 'W';
 }

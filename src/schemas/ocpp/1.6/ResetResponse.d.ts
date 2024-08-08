@@ -6,5 +6,5 @@
  */
 
 export interface ResetResponse {
-  status: "Accepted" | "Rejected";
+  status: 'Accepted' | 'Rejected';
 }
