@@ -17,6 +17,7 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
     seqNo: session.seqNo,
     transactionInfo: {
       transactionId: session.transactionId,
+      chargingState: session.suspended ? 'SuspendedEV' : 'Charging'
     },
     meterValue: [
       {

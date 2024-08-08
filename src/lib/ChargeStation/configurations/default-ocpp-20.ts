@@ -55,7 +55,7 @@ export default {
   [e.Charging]: [handleTransactionStartedUI],
   [e.Stopped]: [handleTransactionStoppedUI],
   [e.ChargingTick]: [sendTransationEventUpdated],
-  [e.ChargingLimitReached]: [sendChargingLimitReached],
+  [e.ChargingLimitReached]: [sendChargingLimitReached, sendTransationEventUpdated],
   [e.ResetReceived]: [handleReset],
   [e.SetChargingProfileReceived]: [handleSetChargingProfile],
   [e.DataTransferReceived]: [handleDataTransfer],
