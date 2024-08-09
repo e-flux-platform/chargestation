@@ -226,6 +226,7 @@ export interface Variable201 {
     persistent?: boolean;
     constant?: boolean;
     type?: 'Actual' | 'Target' | 'MinSet' | 'MaxSet' | 'Default' | 'Error';
+    mutability?: 'ReadOnly' | 'WriteOnly' | 'ReadWrite'
   }[];
   variableCharacteristics?: {
     dataType: string;
@@ -610,10 +611,11 @@ export const defaultVariableConfig201: Variable201[] = [
         value: '0',
         persistent: true,
         constant: false,
+        mutability: 'ReadOnly'
       },
     ],
     variableCharacteristics: {
-      dataType: 'string',
+      dataType: 'integer',
       supportsMonitoring: false,
     },
   },
