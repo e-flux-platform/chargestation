@@ -172,6 +172,11 @@ export const defaultVariableConfig16: Variable16[] = [
     value: 32,
   },
   {
+    key: 'SecurityProfile',
+    description: 'Current security profile',
+    value: 0,
+  },
+  {
     key: 'PaymentCurrency',
     description: 'Currency that payments should be made in',
     value: 'EUR',
@@ -221,6 +226,7 @@ export interface Variable201 {
     persistent?: boolean;
     constant?: boolean;
     type?: 'Actual' | 'Target' | 'MinSet' | 'MaxSet' | 'Default' | 'Error';
+    mutability?: 'ReadOnly' | 'WriteOnly' | 'ReadWrite'
   }[];
   variableCharacteristics?: {
     dataType: string;
@@ -590,6 +596,26 @@ export const defaultVariableConfig201: Variable201[] = [
     ],
     variableCharacteristics: {
       dataType: 'string',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'SecurityCtrlr',
+    },
+    variable: {
+      name: 'SecurityProfile',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+        mutability: 'ReadOnly'
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'integer',
       supportsMonitoring: false,
     },
   },
