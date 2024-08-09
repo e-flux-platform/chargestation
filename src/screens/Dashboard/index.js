@@ -3,6 +3,7 @@ import screen from 'helpers/screen';
 import { Button, Loader } from 'semantic';
 import { Link } from 'react-router-dom';
 import clock from 'lib/ChargeStation/clock';
+import Papa from 'papaparse';
 
 import ChargeStation from 'lib/ChargeStation';
 import {
@@ -30,6 +31,9 @@ import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
+import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
+
+const executeCommandEnabled = getDocumentQuery().has('executeCommand');
 
 @screen
 export default class Home extends React.Component {
@@ -276,6 +280,25 @@ export default class Home extends React.Component {
             />
             <div className="right-actions">
               <Button to="/docs" as={Link} inverted icon="book" />
+              ({executeCommandEnabled && (
+                <ExecuteCommandModal
+                  trigger={<Button inverted icon="upload"/>}
+                  onSave={({ commands }) => {
+                    // Expected to match Road dashboard charging station CSV export format
+                    const parsed = Papa.parse(commands, { delimiter: ';' });
+                    const rows = parsed.data.filter(row => row.length === 10 && row[7] === 'centralsystem');
+                    if (rows.length > 0) {
+                      const id = setInterval(() => {
+                        const row = rows.pop();
+                        chargeStation.writeCall(row[3], JSON.parse(row[4]))
+                        if (rows.length === 0) {
+                          clearInterval(id);
+                        }
+                      }, 1000)
+                    }
+                  }}
+                />
+              )}
               <SettingsModal
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}
