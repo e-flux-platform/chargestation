@@ -10,14 +10,14 @@ const envMiddleware = require('./middleware/env');
 const assetsMiddleware = require('./middleware/assets');
 const historyMiddleware = require('./middleware/history');
 const templateMiddleware = require('./middleware/template');
-const healthCheckMiddleware = require('./middleware/healthCheck');
+const statusMiddleware = require('./middleware/status');
 
 const SERVER_PORT = config.get('SERVER_PORT');
 const SERVER_HOST = config.get('SERVER_HOST');
 
 const app = new Koa();
 
-app.use(healthCheckMiddleware);
+app.use(statusMiddleware);
 
 if (config.has('HTTP_BASIC_AUTH_PATH')) {
   app.use(
