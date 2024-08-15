@@ -58,6 +58,7 @@
     "less-loader": "^8.0.0",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^1.4.0",
+    "papaparse": "^5.4.1",
     "postcss": "^8.4.31",
     "postcss-loader": "^5.1.0",
     "prop-types": "^15.7.2",
