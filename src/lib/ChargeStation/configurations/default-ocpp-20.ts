@@ -27,6 +27,8 @@ import handleDataTransfer from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-d
 import handleRequestStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-request-start-transaction';
 import handleRequestStopTransaction from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-request-stop-transaction';
 import handleGetInstalledCertificateIds from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-get-installed-certificate-ids';
+import handleUpdateFirmwareReceived from '../eventHandlers/ocpp-20/handle-update-firmware-received';
+import handleTriggerMessageReceived from '../eventHandlers/ocpp-20/handle-trigger-message-received';
 
 // This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -55,9 +57,14 @@ export default {
   [e.Charging]: [handleTransactionStartedUI],
   [e.Stopped]: [handleTransactionStoppedUI],
   [e.ChargingTick]: [sendTransationEventUpdated],
-  [e.ChargingLimitReached]: [sendChargingLimitReached, sendTransationEventUpdated],
+  [e.ChargingLimitReached]: [
+    sendChargingLimitReached,
+    sendTransationEventUpdated,
+  ],
   [e.ResetReceived]: [handleReset],
   [e.SetChargingProfileReceived]: [handleSetChargingProfile],
   [e.DataTransferReceived]: [handleDataTransfer],
   [e.GetInstalledCertificatedIdsReceived]: [handleGetInstalledCertificateIds],
+  [e.UpdateFirmwareReceived]: [handleUpdateFirmwareReceived],
+  [e.TriggerMessageReceived]: [handleTriggerMessageReceived],
 };

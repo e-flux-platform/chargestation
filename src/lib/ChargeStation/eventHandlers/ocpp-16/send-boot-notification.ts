@@ -2,9 +2,13 @@ import { sleep } from '../../../../utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { ChargeStationSetting } from 'lib/settings';
 
-const sendBootNotification: ChargeStationEventHandler = async ({
-  chargepoint,
-}) => {
+import { BootNotificationRequest } from 'schemas/ocpp/1.6/BootNotification';
+import { BootNotificationResponse } from 'schemas/ocpp/1.6/BootNotificationResponse';
+
+const sendBootNotification: ChargeStationEventHandler<
+  BootNotificationRequest,
+  BootNotificationResponse
+> = async ({ chargepoint }) => {
   await sleep(2000);
 
   chargepoint.writeCall('BootNotification', {
@@ -18,7 +22,7 @@ const sendBootNotification: ChargeStationEventHandler = async ({
       ChargeStationSetting.ChargePointSerialNumber
     ),
     chargeBoxSerialNumber: chargepoint.configuration.getOCPPIdentityString(),
-    firmwareVersion: 'v1-000',
+    firmwareVersion: chargepoint.firmwareVersion,
     iccid: chargepoint.getSetting(ChargeStationSetting.ICCID),
     imsi: chargepoint.getSetting(ChargeStationSetting.IMSI),
   });

@@ -42,7 +42,12 @@ interface CallLogItem {
   session?: Session;
 }
 
-type LogType = 'command' | 'message-response' | 'message' | 'error' | 'connected';
+type LogType =
+  | 'command'
+  | 'message-response'
+  | 'message'
+  | 'error'
+  | 'connected';
 
 export default class ChargeStation {
   private ocppVersion: OCPPVersion;
@@ -56,6 +61,7 @@ export default class ChargeStation {
   public currentStatus: Map<string>;
   public sessions: Map<Session>;
   public connected = false;
+  public firmwareVersion: string;
 
   constructor(
     public configuration: VariableConfiguration<Variable>,
@@ -63,6 +69,7 @@ export default class ChargeStation {
   ) {
     this.callLog = {};
     this.sessions = {};
+    this.firmwareVersion = 'v1-000';
     this.ocppVersion = this.settings.ocppConfiguration as OCPPVersion;
     this.emitter = createEventEmitter(this, this.ocppVersion);
     this.numConnectionAttempts = 0;
@@ -353,7 +360,11 @@ export default class ChargeStation {
   }
 
   sendStatusNotification(connectorId: number, status: string) {
-    this.writeCall('StatusNotification', { connectorId, status, errorCode: 'NoError', });
+    this.writeCall('StatusNotification', {
+      connectorId,
+      status,
+      errorCode: 'NoError',
+    });
   }
 
   save() {
