@@ -32,13 +32,13 @@ const handleUpdateFirmwareReceived: ChargeStationEventHandler<
 
   await sleep(sleepTime);
 
-  await chargepoint.writeCall('FirmwareStatusNotification', {
-    status: 'Installed',
-  });
-
   chargepoint.firmwareVersion = `${
     chargepoint.firmwareVersion
   }+${new Date().getTime()}`;
+
+  await chargepoint.writeCall('FirmwareStatusNotification', {
+    status: 'Installed',
+  });
 };
 
 export default handleUpdateFirmwareReceived;
