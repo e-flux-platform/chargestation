@@ -20,6 +20,8 @@ export const EventTypes = {
   DataTransferReceived: 'dataTransferReceived',
   DataTransferCallResultReceived: 'dataTransferCallResultReceived',
   GetInstalledCertificatedIdsReceived: 'getInstalledCertificateIdsReceived',
+  UpdateFirmwareReceived: 'updateFirmwareReceived',
+  TriggerMessageReceived: 'triggerMessageReceived',
 };
 
 // OCPP 1.6 specific events

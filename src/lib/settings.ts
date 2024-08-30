@@ -34,13 +34,13 @@ export const AuthorizationType = {
   CreditCard: 'creditCard',
 } as const;
 export type AuthorizationType =
-  typeof AuthorizationType[keyof typeof AuthorizationType];
+  (typeof AuthorizationType)[keyof typeof AuthorizationType];
 
 export const OCPPVersion = {
   ocpp16: 'ocpp1.6',
   ocpp201: 'ocpp2.0.1',
 } as const;
-export type OCPPVersion = typeof OCPPVersion[keyof typeof OCPPVersion];
+export type OCPPVersion = (typeof OCPPVersion)[keyof typeof OCPPVersion];
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -123,11 +123,13 @@ export interface Variable16 {
   key: string;
   description?: string;
   value: string | number;
-  predicate?: (settings: Settings) => boolean,
+  predicate?: (settings: Settings) => boolean;
 }
 
-const isSicharge = (settings: Settings) => settings.chargePointModel === 'sicharge';
-const isAdsTec = (settings: Settings) => settings.chargePointModel === 'ads-tec';
+const isSicharge = (settings: Settings) =>
+  settings.chargePointModel === 'sicharge';
+const isAdsTec = (settings: Settings) =>
+  settings.chargePointModel === 'ads-tec';
 
 export const defaultVariableConfig16: Variable16[] = [
   {
@@ -201,6 +203,11 @@ export const defaultVariableConfig16: Variable16[] = [
     value: 1,
     predicate: isAdsTec,
   },
+  {
+    key: 'SupportedFileTransferProtocols',
+    description: 'Supported file transfer protocols',
+    value: 'HTTP,FTP,HTTPS,FTPS',
+  },
 ];
 
 export interface Variable201 {
@@ -229,7 +236,7 @@ export interface Variable201 {
     valuesList?: string;
     supportsMonitoring: boolean;
   };
-  predicate?: (settings: Settings) => boolean,
+  predicate?: (settings: Settings) => boolean;
 }
 
 export const defaultVariableConfig201: Variable201[] = [
@@ -593,6 +600,25 @@ export const defaultVariableConfig201: Variable201[] = [
       supportsMonitoring: false,
     },
   },
+  {
+    component: {
+      name: 'OCPPCommCtrlr',
+    },
+    variable: {
+      name: 'FileTransferProtocols',
+    },
+    variableAttribute: [
+      {
+        value: 'HTTP,FTP,HTTPS,FTPS',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'MemberList',
+      supportsMonitoring: false,
+    },
+  },
 ];
 
 export function getDocumentQuery() {
@@ -618,13 +644,21 @@ export type Variable = Variable16 | Variable201;
 export function getConfiguration(
   ocppVersion: OCPPVersion,
   settings: Settings,
-  query?: URLSearchParams,
+  query?: URLSearchParams
 ): VariableConfiguration<Variable> {
   switch (ocppVersion) {
     case OCPPVersion.ocpp16:
-      return new VariableConfiguration16(defaultVariableConfig16, settings, query);
+      return new VariableConfiguration16(
+        defaultVariableConfig16,
+        settings,
+        query
+      );
     case OCPPVersion.ocpp201:
-      return new VariableConfiguration201(defaultVariableConfig201, settings, query);
+      return new VariableConfiguration201(
+        defaultVariableConfig201,
+        settings,
+        query
+      );
     default:
       throw new Error(`Unsupported OCPP version: ${ocppVersion}`);
   }
@@ -672,9 +706,13 @@ export interface VariableConfiguration<Variable> {
 class VariableConfiguration201 implements VariableConfiguration<Variable201> {
   private variables: Map<Variable201> = {};
 
-  constructor(variables: Variable201[], settings: Settings, query?: URLSearchParams) {
+  constructor(
+    variables: Variable201[],
+    settings: Settings,
+    query?: URLSearchParams
+  ) {
     this.variables = variables
-      .filter(item => {
+      .filter((item) => {
         return item.predicate ? item.predicate(settings) : true;
       })
       .reduce((acc: Map<Variable201>, item) => {
@@ -683,7 +721,7 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
         if (value) {
           acc[key] = {
             ...item,
-            variableAttribute: [{...item.variableAttribute[0], value}],
+            variableAttribute: [{ ...item.variableAttribute[0], value }],
           };
         } else {
           acc[key] = item;
@@ -821,7 +859,11 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
 class VariableConfiguration16 implements VariableConfiguration<Variable16> {
   private variables: Map<Variable16> = {};
 
-  constructor(variables: Variable16[], settings: Settings, query?: URLSearchParams) {
+  constructor(
+    variables: Variable16[],
+    settings: Settings,
+    query?: URLSearchParams
+  ) {
     this.variables = variables
       .filter((item) => {
         return item.predicate ? item.predicate(settings) : true;

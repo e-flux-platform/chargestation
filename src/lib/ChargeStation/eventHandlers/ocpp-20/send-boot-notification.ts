@@ -17,7 +17,7 @@ const sendBootNotification: ChargeStationEventHandler<
       serialNumber: chargepoint.settings.chargePointSerialNumber,
       model: chargepoint.settings.chargePointModel,
       vendorName: chargepoint.settings.chargePointVendor,
-      firmwareVersion: 'v1-000',
+      firmwareVersion: chargepoint.firmwareVersion,
     },
   });
 };
