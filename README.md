@@ -96,9 +96,3 @@ All configuration is done using environment variables. The default values in
 All config vars are available in the `serve/dev.js` and `serve/static.js`
 server-side code. In the browser-side all variables are available as a global
 object `window.__env_conf`.
-
-### Deployment
-
-1. In case you're using gcloud, be sure to run:
-`gcloud auth configure-docker <region>` (region example `europe-west3-docker.pkg.dev`)
-2. Run `bash buildandpush.sh <resource to push to>`
