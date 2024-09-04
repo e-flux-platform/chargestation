@@ -1,4 +1,5 @@
 import { sleep } from '../../../../utils/csv';
+import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 
 export default async function sendStopTransaction({ chargepoint, session }) {
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
@@ -32,7 +33,7 @@ export default async function sendStopTransaction({ chargepoint, session }) {
 					timestamp: session.now().toISOString(),
 					sampledValue: [
 						{
-							value: 100,
+							value: simulateStateOfChargeFromKwh(session.kwhElapsed).toFixed(2),
 							context: 'Transaction.End',
 							unitOfMeasure: { unit: 'Percent' },
 							measurand: 'SoC',
