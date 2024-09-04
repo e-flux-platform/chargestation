@@ -487,10 +487,13 @@ export class Session {
     }
     const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
 
+		this.carBatteryStateOfCharge += amountKwhToCharge / this.carBatteryKwh * 100;
+
     const carNeededKwh =
       this.carBatteryKwh -
       this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
-    const chargeLimitReached = this.kwhElapsed >= carNeededKwh;
+
+		const chargeLimitReached = carNeededKwh <= 0;
 
     console.info(
       `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
