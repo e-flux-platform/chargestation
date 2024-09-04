@@ -491,7 +491,7 @@ export class Session {
     }
     const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
 
-		this.carBatteryStateOfCharge += amountKwhToCharge / this.carBatteryKwh * 100;
+		this.carBatteryStateOfCharge = amountKwhToCharge / this.carBatteryKwh * 100;
 
     const carNeededKwh =
       this.carBatteryKwh -
