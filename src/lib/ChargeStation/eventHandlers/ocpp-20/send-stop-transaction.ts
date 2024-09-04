@@ -3,7 +3,6 @@ import { sleep } from '../../../../utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 
 import clock from '../../clock';
-import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 
 const sendStopTransaction: ChargeStationEventHandler = async ({
   chargepoint,
@@ -52,7 +51,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
 					timestamp: now,
 					sampledValue: [
 						{
-							value: Number(simulateStateOfChargeFromKwh(session.kwhElapsed).toFixed(2)),
+							value: session.stateOfCharge,
 							context: 'Transaction.End',
 							unitOfMeasure: { unit: 'Percent' },
 							measurand: 'SoC',

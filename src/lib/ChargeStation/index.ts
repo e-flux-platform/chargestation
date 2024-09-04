@@ -468,6 +468,10 @@ export class Session {
     return this.chargeStation.currentStatus[this.connectorId];
   }
 
+	get stateOfCharge(): number {
+		return this.carBatteryStateOfCharge ;
+	}
+
   now(): Date {
     return clock.now();
   }

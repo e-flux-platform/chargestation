@@ -56,7 +56,7 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
 					timestamp: startTime,
 					sampledValue: [
 						{
-							value: 0,
+							value: session.stateOfCharge,
 							context: 'Transaction.Begin',
 							unitOfMeasure: { unit: 'Percent' },
 							measurand: 'SoC',

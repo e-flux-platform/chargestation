@@ -1,5 +1,4 @@
 import {sleep} from '../../../../utils/csv';
-import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 import {ChargeStationEventHandler} from "lib/ChargeStation/eventHandlers";
 import {StopTransactionRequest} from "schemas/ocpp/1.6/StopTransaction";
 
@@ -38,7 +37,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
 					timestamp: session.now().toISOString(),
 					sampledValue: [
 						{
-							value: simulateStateOfChargeFromKwh(session.kwhElapsed).toFixed(2),
+							value: session.stateOfCharge.toString(),
 							context: 'Transaction.End',
 							location: 'Outlet',
 							unit: 'Percent',
