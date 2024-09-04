@@ -3,7 +3,7 @@ import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
 
 import clock from '../../clock';
-import {simulateKwhToStateOfCharge} from "lib/ChargeStation/utils";
+import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 
 const sendTransationEventUpdated: ChargeStationEventHandler = ({
   chargepoint,
@@ -37,7 +37,7 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
 				timestamp: now.toISOString(),
 				sampledValue: [
 					{
-						value: Number(simulateKwhToStateOfCharge(session.kwhElapsed).toFixed(2)),
+						value: Number(simulateStateOfChargeFromKwh(session.kwhElapsed).toFixed(2)),
 						context: 'Sample.Periodic',
 						measurand: 'SoC',
 						location: 'Outlet',

@@ -1,7 +1,7 @@
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { MeterValuesRequest } from 'schemas/ocpp/1.6/MeterValues';
 import clock from 'lib/ChargeStation/clock';
-import {simulateKwhToStateOfCharge} from "lib/ChargeStation/utils";
+import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 
 
 const sendMeterValues: ChargeStationEventHandler = async ({
@@ -30,7 +30,7 @@ const sendMeterValues: ChargeStationEventHandler = async ({
 				timestamp: now.toISOString(),
 				sampledValue: [
 					{
-						value: simulateKwhToStateOfCharge(session.kwhElapsed).toFixed(2),
+						value: simulateStateOfChargeFromKwh(session.kwhElapsed).toFixed(2),
 						context: 'Sample.Periodic',
 						measurand: 'SoC',
 						location: 'Outlet',

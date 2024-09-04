@@ -40,9 +40,9 @@ export function toCamelCase(value: string) {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
 
-export function simulateKwhToStateOfCharge(value: number): number {
-	if (value < 0 || typeof value !== 'number') {
+export function simulateStateOfChargeFromKwh(kwh: number): number {
+	if (kwh < 0 || typeof kwh !== 'number') {
 		return 0;
 	}
-	return 100 * (1 - Math.exp(-value / 25));
+	return 100 * (1 - Math.exp(-kwh / 25));
 }
