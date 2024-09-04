@@ -1,7 +1,5 @@
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
-
 import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
-
 import clock from '../../clock';
 
 const sendTransationEventUpdated: ChargeStationEventHandler = ({
@@ -21,7 +19,8 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
     },
     meterValue: [
       {
-        sampledValue: [
+				timestamp: now.toISOString(),
+				sampledValue: [
           {
             value: Number(session.kwhElapsed.toFixed(3)),
             context: 'Sample.Periodic',
@@ -30,8 +29,19 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
             unitOfMeasure: { unit: 'kWh' },
           },
         ],
-        timestamp: now.toISOString(),
       },
+			{
+				timestamp: now.toISOString(),
+				sampledValue: [
+					{
+						value: session.stateOfCharge,
+						context: 'Sample.Periodic',
+						measurand: 'SoC',
+						location: 'Outlet',
+						unitOfMeasure: { unit: 'Percent' }
+					}
+				]
+			}
     ],
     evse: { id: 1, connectorId: session.connectorId },
   });

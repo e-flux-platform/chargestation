@@ -42,15 +42,27 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
       },
       meterValue: [
         {
-          sampledValue: [
+					timestamp: startTime,
+					sampledValue: [
             {
               value: Math.round(session.kwhElapsed * 1000),
               context: 'Transaction.Begin',
               unitOfMeasure: { unit: 'kWh' },
             },
+
           ],
-          timestamp: startTime,
         },
+				{
+					timestamp: startTime,
+					sampledValue: [
+						{
+							value: session.stateOfCharge,
+							context: 'Transaction.Begin',
+							unitOfMeasure: { unit: 'Percent' },
+							measurand: 'SoC',
+						}
+					]
+				}
       ],
       evse: { id: evseId, connectorId },
       idToken: { idToken: session.options.uid, type: 'ISO14443' },
