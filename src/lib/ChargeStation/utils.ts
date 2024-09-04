@@ -39,3 +39,10 @@ export function summarizeCommandParams({
 export function toCamelCase(value: string) {
   return value.charAt(0).toLowerCase() + value.slice(1);
 }
+
+export function simulateKwhToStateOfCharge(value: number): number {
+	if (value < 0 || typeof value !== 'number') {
+		return 0;
+	}
+	return 100 * (1 - Math.exp(-value / 25));
+}

@@ -15,7 +15,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
 
   const now = clock.now().toISOString();
 
-  await chargepoint.writeCall(
+	chargepoint.writeCall(
     'TransactionEvent',
     {
       eventType: 'Ended',
@@ -28,25 +28,36 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
       },
       meterValue: [
         {
-          sampledValue: [
+					timestamp: session.startTime.toISOString(),
+					sampledValue: [
             {
               value: 0.0,
               context: 'Transaction.Begin',
               unitOfMeasure: { unit: 'kWh' },
             },
           ],
-          timestamp: session.startTime.toISOString(),
         },
         {
-          sampledValue: [
+					timestamp: now,
+					sampledValue: [
             {
               value: session.kwhElapsed,
               context: 'Transaction.End',
               unitOfMeasure: { unit: 'kWh' },
             },
           ],
-          timestamp: now,
         },
+				{
+					timestamp: now,
+					sampledValue: [
+						{
+							value: 100,
+							context: 'Transaction.End',
+							unitOfMeasure: { unit: 'Percent' },
+							measurand: 'SoC',
+						}
+					],
+				}
       ],
       evse: { id: 1, connectorId: session.connectorId },
       idToken: { idToken: session.options.uid, type: 'ISO14443' },
@@ -56,7 +67,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
 
   await sleep(1000);
 
-  await chargepoint.writeCall('StatusNotification', {
+	chargepoint.writeCall('StatusNotification', {
     timestamp: clock.now().toISOString(),
     connectorStatus: 'Available',
     evseId: 1,

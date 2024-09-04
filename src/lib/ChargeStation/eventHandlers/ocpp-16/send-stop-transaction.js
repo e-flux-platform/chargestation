@@ -16,7 +16,8 @@ export default async function sendStopTransaction({ chargepoint, session }) {
       transactionId: Number(session.transactionId),
       transactionData: [
         {
-          sampledValue: [
+					timestamp: session.now().toISOString(),
+					sampledValue: [
             {
               value: session.kwhElapsed.toString(),
               context: 'Sample.Periodic',
@@ -26,8 +27,18 @@ export default async function sendStopTransaction({ chargepoint, session }) {
               unit: 'kWh',
             },
           ],
-          timestamp: session.now().toISOString(),
         },
+				{
+					timestamp: session.now().toISOString(),
+					sampledValue: [
+						{
+							value: 100,
+							context: 'Transaction.End',
+							unitOfMeasure: { unit: 'Percent' },
+							measurand: 'SoC',
+						}
+					]
+				}
       ],
     },
     session
