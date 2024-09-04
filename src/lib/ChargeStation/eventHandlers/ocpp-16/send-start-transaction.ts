@@ -1,9 +1,14 @@
 import { sleep } from '../../../../utils/csv';
+import {ChargeStationEventHandler} from "lib/ChargeStation/eventHandlers";
+import {StartTransactionRequest} from "schemas/ocpp/1.6/StartTransaction";
 
-export default async function sendStartTransaction({ chargepoint, session }) {
+const sendStartTransaction: ChargeStationEventHandler = async ({
+	chargepoint,
+	session,
+}) => {
   chargepoint.sessions[session.connectorId].isStartingSession = true;
   await sleep(1000);
-  await chargepoint.writeCall(
+	chargepoint.writeCall<StartTransactionRequest>(
     'StartTransaction',
     {
       connectorId: session.connectorId,
@@ -15,3 +20,5 @@ export default async function sendStartTransaction({ chargepoint, session }) {
     session
   );
 }
+
+export default sendStartTransaction;

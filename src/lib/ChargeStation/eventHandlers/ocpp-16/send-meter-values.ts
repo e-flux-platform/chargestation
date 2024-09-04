@@ -3,7 +3,6 @@ import { MeterValuesRequest } from 'schemas/ocpp/1.6/MeterValues';
 import clock from 'lib/ChargeStation/clock';
 import {simulateStateOfChargeFromKwh} from "lib/ChargeStation/utils";
 
-
 const sendMeterValues: ChargeStationEventHandler = async ({
   chargepoint,
   session,
