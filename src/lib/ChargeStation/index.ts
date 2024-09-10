@@ -517,13 +517,6 @@ export class Session {
 				`Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
 			);
 
-			if (
-				this.lastMeterValuesTimestamp &&
-				clock.secondsSince(this.lastMeterValuesTimestamp) <
-					this.meterValuesInterval
-			) {
-				return;
-			}
 			if (chargeLimitReached) {
 				this.suspended = true;
 				this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
@@ -535,7 +528,15 @@ export class Session {
 			await sleep(100);
 		}
 
-    this.lastMeterValuesTimestamp = this.now();
+		if (
+			this.lastMeterValuesTimestamp &&
+			clock.secondsSince(this.lastMeterValuesTimestamp) <
+			this.meterValuesInterval
+		) {
+			return;
+		}
+
+		this.lastMeterValuesTimestamp = this.now();
     this.seqNo += 1;
     this.emitter.emitEvent(EventTypes.ChargingTick, { session: this });
   }
