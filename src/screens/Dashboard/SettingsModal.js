@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { HelpTip } from 'components';
-import {ChargeStationSetting} from "lib/settings";
+import { ChargeStationSetting } from 'lib/settings';
 
 @modal
 export default class SettingsModal extends React.Component {
@@ -35,11 +35,15 @@ export default class SettingsModal extends React.Component {
     });
   };
 
-  static getDerivedStateFromProps({configuration, settings}, prevState) {
+  static getDerivedStateFromProps({ configuration, settings }, prevState) {
     if (configuration.getVersion() != prevState.currentVersion) {
-      return {...prevState, config: configuration.variablesToKeyValueMap(), currentVersion: configuration.getVersion()}
+      return {
+        ...prevState,
+        config: configuration.variablesToKeyValueMap(),
+        currentVersion: configuration.getVersion(),
+      };
     }
-    return prevState
+    return prevState;
   }
 
   onSubmit = () => {
@@ -58,33 +62,32 @@ export default class SettingsModal extends React.Component {
             {settingsList?.map((item) => {
               if (item.key === ChargeStationSetting.OCPPConfiguration) {
                 return (
-                    <div key={item.key} style={{ marginBottom: '8px' }}>
-                      <Form.Select
-                          label={
-                            <strong
-                                style={{
-                                  marginBottom: '4px',
-                                  display: 'inline-block',
-                                }}>
-                              {item.name}
-                              {item.description && (
-                                  <HelpTip text={item.description} />
-                              )}
-                            </strong>
-                          }
-                          options={item.options.map(i => ({text: i, value: i}))}
-                          name={item.key}
-                          value={settings[item.key]}
-                          onChange={(e, { name, value }) => {
-
-                            if(this.state.settings.ocppConfiguration != value) {
-                              this.props.onProtocolChange(value);
-                              this.setSettingsField(e, {name, value})
-                            }
-                          }}
-                      />
-                    </div>
-                )
+                  <div key={item.key} style={{ marginBottom: '8px' }}>
+                    <Form.Select
+                      label={
+                        <strong
+                          style={{
+                            marginBottom: '4px',
+                            display: 'inline-block',
+                          }}>
+                          {item.name}
+                          {item.description && (
+                            <HelpTip text={item.description} />
+                          )}
+                        </strong>
+                      }
+                      options={item.options.map((i) => ({ text: i, value: i }))}
+                      name={item.key}
+                      value={settings[item.key]}
+                      onChange={(e, { name, value }) => {
+                        if (this.state.settings.ocppConfiguration != value) {
+                          this.props.onProtocolChange(value);
+                          this.setSettingsField(e, { name, value });
+                        }
+                      }}
+                    />
+                  </div>
+                );
               }
               return (
                 <div key={item.key} style={{ marginBottom: '8px' }}>

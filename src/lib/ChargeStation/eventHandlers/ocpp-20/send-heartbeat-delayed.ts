@@ -1,12 +1,14 @@
 import { sleep } from '../../../../utils/csv';
 
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
-import clock from "../../clock";
+import clock from '../../clock';
 
 const sendHeartbeatDelayed: ChargeStationEventHandler = async ({
   chargepoint,
 }) => {
-  await sleep(clock.adjustBySpeed(chargepoint.configuration.getHeartbeatInterval()));
+  await sleep(
+    clock.adjustBySpeed(chargepoint.configuration.getHeartbeatInterval())
+  );
   if (!chargepoint.connected) {
     return;
   }

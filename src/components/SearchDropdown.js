@@ -100,7 +100,7 @@ export default class SearchDropdown extends React.Component {
     });
 
     if (!this.state.objectMode) {
-      return this.props.onChange(evt,  {
+      return this.props.onChange(evt, {
         ...rest,
         value,
         item: this.props.multiple ? selected : selected[0],

@@ -41,7 +41,11 @@ export default class Home extends React.Component {
   static layout = 'simulator';
 
   state = {
-    configuration: getConfiguration(ocppVersion(), getSettings(), getDocumentQuery()),
+    configuration: getConfiguration(
+      ocppVersion(),
+      getSettings(),
+      getDocumentQuery()
+    ),
     settings: getSettings(),
     session: getDefaultSession(),
     logEntries: [],
@@ -55,10 +59,15 @@ export default class Home extends React.Component {
 
     let chargeStation = ChargeStation.load();
     if (chargeStation) {
-      await new Promise((r) => this.setState({
-        settings: chargeStation.settings,
-        configuration: chargeStation.configuration,
-      }, r));
+      await new Promise((r) =>
+        this.setState(
+          {
+            settings: chargeStation.settings,
+            configuration: chargeStation.configuration,
+          },
+          r
+        )
+      );
     } else {
       const { configuration, settings } = this.state;
       chargeStation = new ChargeStation(configuration, settings);
@@ -244,7 +253,10 @@ export default class Home extends React.Component {
               currentStatus={chargeStation.currentStatus}
               session={session}
               onSave={async ({ connectorId, status }) => {
-                await chargeStation.sendStatusNotification(parseInt(connectorId), status);
+                await chargeStation.sendStatusNotification(
+                  parseInt(connectorId),
+                  status
+                );
                 this.nextTick();
               }}
               trigger={
@@ -279,22 +291,30 @@ export default class Home extends React.Component {
               }
             />
             <div className="right-actions">
-              <Button to="/docs" as={Link} inverted icon="book" />
-              ({executeCommandEnabled && (
+              <Button to="/docs" as={Link} inverted icon="book" />(
+              {executeCommandEnabled && (
                 <ExecuteCommandModal
-                  trigger={<Button inverted icon="upload"/>}
+                  trigger={<Button inverted icon="upload" />}
                   onSave={({ commands }) => {
                     // Expected to match Road dashboard charging station CSV export format
-                    const parsed = Papa.parse(commands, { delimiter: ';', header: true });
-                    const rows = parsed.data.filter(row => row.destination === 'centralsystem');
+                    const parsed = Papa.parse(commands, {
+                      delimiter: ';',
+                      header: true,
+                    });
+                    const rows = parsed.data.filter(
+                      (row) => row.destination === 'centralsystem'
+                    );
                     if (rows.length > 0) {
                       const id = setInterval(() => {
                         const row = rows.pop();
-                        chargeStation.writeCall(row.method, JSON.parse(row.params))
+                        chargeStation.writeCall(
+                          row.method,
+                          JSON.parse(row.params)
+                        );
                         if (rows.length === 0) {
                           clearInterval(id);
                         }
-                      }, 1000)
+                      }, 1000);
                     }
                   }}
                 />
@@ -305,7 +325,10 @@ export default class Home extends React.Component {
                 configuration={configuration}
                 settingsList={settingsList}
                 onProtocolChange={(ocppConfiguration) => {
-                  const newConfiguration = getConfiguration(ocppConfiguration, settings);
+                  const newConfiguration = getConfiguration(
+                    ocppConfiguration,
+                    settings
+                  );
                   this.setState({
                     configuration: newConfiguration,
                   });
@@ -313,7 +336,7 @@ export default class Home extends React.Component {
                 onSave={({ config, settings: savedSettings }) => {
                   const newConfiguration = getConfiguration(
                     savedSettings.ocppConfiguration,
-                    savedSettings,
+                    savedSettings
                   );
 
                   this.setState({

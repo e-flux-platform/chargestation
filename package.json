@@ -9,10 +9,11 @@
     "build": "NODE_ENV=production NODE_OPTIONS=\"--max-old-space-size=4096\" webpack",
     "start": "node ./serve/dev",
     "static": "node ./serve/static",
-    "lint": "eslint",
+    "lint": "eslint && yarn prettier --check .",
     "test": "jest",
     "generate": "cd ../../generator && yarn install && yarn generate",
-    "postinstall": "cd serve && yarn install"
+    "postinstall": "cd serve && yarn install",
+    "format": "yarn prettier --write ."
   },
   "dependencies": {
     "@babel/core": "^7.24.6",
@@ -88,7 +89,6 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.24.6",
-    "@bedrockio/prettier-config": "^1.0.1",
     "@testing-library/dom": "^7.30.3",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^13.1.1",
@@ -102,7 +102,7 @@
     "eslint-plugin-bedrock": "^1.0.9",
     "jest": "^28.0.0",
     "node-mocks-http": "^1.8.1",
-    "prettier": "^2.4.1",
+    "prettier": "^3.3.3",
     "typescript": "^5.0.3",
     "webpack-bundle-analyzer": "^4.5.0"
   },
@@ -110,6 +110,19 @@
     "node": "20.9.0",
     "yarn": "1.22.17"
   },
-  "prettier": "@bedrockio/prettier-config",
+  "prettier": {
+    "singleQuote": true,
+    "bracketSameLine": true,
+    "trailingComma": "es5",
+    "proseWrap": "always",
+    "overrides": [
+      {
+        "files": "*.json",
+        "options": {
+          "parser": "json-stringify"
+        }
+      }
+    ]
+  },
   "packageManager": "yarn@1.22.22"
 }

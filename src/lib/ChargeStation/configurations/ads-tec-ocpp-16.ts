@@ -8,12 +8,14 @@ import { AuthorizationType } from 'lib/settings';
 const initiateSession: ChargeStationEventHandler = async (params) => {
   const { session, chargepoint } = params;
   if (session.options.authorizationType === AuthorizationType.CreditCard) {
-    session.options.uid = chargepoint.configuration.getVariableValue('CreditIdToken') as string;
+    session.options.uid = chargepoint.configuration.getVariableValue(
+      'CreditIdToken'
+    ) as string;
     await sendStartTransaction(params);
   } else {
     await sendAuthorize(params);
   }
-}
+};
 
 export default {
   ...DefaultOCPP16,

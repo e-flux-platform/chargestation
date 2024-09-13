@@ -6,9 +6,9 @@ const sendMeterValues: ChargeStationEventHandler = async ({
   chargepoint,
   session,
 }) => {
-  const now = clock.now()
+  const now = clock.now();
 
-	chargepoint.writeCall<MeterValuesRequest>('MeterValues', {
+  chargepoint.writeCall<MeterValuesRequest>('MeterValues', {
     connectorId: session.connectorId,
     transactionId: Number(session.transactionId),
     meterValue: [
@@ -24,18 +24,18 @@ const sendMeterValues: ChargeStationEventHandler = async ({
           },
         ],
       },
-			{
-				timestamp: now.toISOString(),
-				sampledValue: [
-					{
-						value: session.stateOfCharge.toString(),
-						context: 'Sample.Periodic',
-						measurand: 'SoC',
-						location: 'Outlet',
-						unit: 'Percent'
-					}
-				]
-			}
+      {
+        timestamp: now.toISOString(),
+        sampledValue: [
+          {
+            value: session.stateOfCharge.toString(),
+            context: 'Sample.Periodic',
+            measurand: 'SoC',
+            location: 'Outlet',
+            unit: 'Percent',
+          },
+        ],
+      },
     ],
   });
 };
