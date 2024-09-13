@@ -7,8 +7,9 @@ import clock from 'lib/ChargeStation/clock';
 const sendHeartbeatDelayed: ChargeStationEventHandler = async ({
   chargepoint,
 }) => {
-
-  await sleep(clock.adjustBySpeed(chargepoint.configuration.getHeartbeatInterval()));
+  await sleep(
+    clock.adjustBySpeed(chargepoint.configuration.getHeartbeatInterval())
+  );
   if (!chargepoint.connected) {
     return;
   }

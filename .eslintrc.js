@@ -26,7 +26,5 @@ module.exports = {
   globals: {
     __ENV__: 'readonly',
   },
-	ignorePatterns: [
-		'.eslintrc.js'
-	]
+  ignorePatterns: ['.eslintrc.js'],
 };

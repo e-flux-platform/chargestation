@@ -30,7 +30,12 @@ class Connection {
 
   onReceiveCall = (method: string, payload: unknown, messageId: string) => {};
   onReceiveCallResult = (messageId: string, payload: string) => {};
-  onReceiveCallError = (messageId: string, errorCode: string, errorDescription: string, errorDetails: string) => {};
+  onReceiveCallError = (
+    messageId: string,
+    errorCode: string,
+    errorDescription: string,
+    errorDetails: string
+  ) => {};
 
   constructor(ocppBaseUrl: string, ocppIdentity: string, version: string) {
     this.ocppBaseUrl = ocppBaseUrl;
@@ -135,7 +140,11 @@ class Connection {
       const promise = new Promise<void>((resolve, reject) => {
         const timeoutId = setTimeout(() => {
           this.inflight = undefined;
-          reject(new Error(`Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`));
+          reject(
+            new Error(
+              `Call with message id ${messageId} timed out after ${this.inflightTimeoutMs / 1000} seconds`
+            )
+          );
         }, this.inflightTimeoutMs);
 
         this.inflight = {

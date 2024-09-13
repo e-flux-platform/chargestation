@@ -479,9 +479,9 @@ export class Session {
     return this.chargeStation.currentStatus[this.connectorId];
   }
 
-	get stateOfCharge(): number {
-		return this.carBatteryStateOfCharge ;
-	}
+  get stateOfCharge(): number {
+    return this.carBatteryStateOfCharge;
+  }
 
   now(): Date {
     return clock.now();
@@ -496,47 +496,48 @@ export class Session {
   }
 
   async tick(secondsElapsed: number) {
-		if (secondsElapsed <= 0) {
-			return;
-		}
+    if (secondsElapsed <= 0) {
+      return;
+    }
 
-		this.secondsElapsed += secondsElapsed;
+    this.secondsElapsed += secondsElapsed;
 
-		if (!this.suspended) {
-			const	amountKwhToCharge =	(this.maxPowerKw / 3600) * secondsElapsed;
+    if (!this.suspended) {
+      const amountKwhToCharge = (this.maxPowerKw / 3600) * secondsElapsed;
 
-			this.carBatteryStateOfCharge += amountKwhToCharge / this.carBatteryKwh * 100;
+      this.carBatteryStateOfCharge +=
+        (amountKwhToCharge / this.carBatteryKwh) * 100;
 
-			const carNeededKwh =
-				this.carBatteryKwh -
-				this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
+      const carNeededKwh =
+        this.carBatteryKwh -
+        this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);
 
-			const chargeLimitReached = carNeededKwh <= 0;
+      const chargeLimitReached = carNeededKwh <= 0;
 
-			console.info(
-				`Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
-			);
+      console.info(
+        `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
+      );
 
-			if (chargeLimitReached) {
-				this.suspended = true;
-				this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
-					session: this,
-				});
-			} else if (['Charging', 'Occupied'].includes(this.connectorStatus)) {
-				this.kwhElapsed += amountKwhToCharge;
-			}
-			await sleep(100);
-		}
+      if (chargeLimitReached) {
+        this.suspended = true;
+        this.emitter.emitEvent(EventTypes.ChargingLimitReached, {
+          session: this,
+        });
+      } else if (['Charging', 'Occupied'].includes(this.connectorStatus)) {
+        this.kwhElapsed += amountKwhToCharge;
+      }
+      await sleep(100);
+    }
 
-		if (
-			this.lastMeterValuesTimestamp &&
-			clock.secondsSince(this.lastMeterValuesTimestamp) <
-			this.meterValuesInterval
-		) {
-			return;
-		}
+    if (
+      this.lastMeterValuesTimestamp &&
+      clock.secondsSince(this.lastMeterValuesTimestamp) <
+        this.meterValuesInterval
+    ) {
+      return;
+    }
 
-		this.lastMeterValuesTimestamp = this.now();
+    this.lastMeterValuesTimestamp = this.now();
     this.seqNo += 1;
     this.emitter.emitEvent(EventTypes.ChargingTick, { session: this });
   }

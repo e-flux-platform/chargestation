@@ -9,7 +9,7 @@ export default async function handleStartCharging({ emitter, session }) {
   session.tickInterval = clock.setInterval(() => {
     session.tick(clock.secondsSince(timeSince));
     timeSince = clock.now();
-  }, 5000)
+  }, 5000);
 
   await sleep(500);
   session.tick(0);

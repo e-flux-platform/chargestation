@@ -1,1 +1,7 @@
-src/components/RichTextEditor/utils/draft/__fixtures__/example.md
+**/*.md
+**/*.html
+src/schemas
+.webpack-cache
+dist
+**/.yarn
+src/semantic/

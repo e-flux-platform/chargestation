@@ -15,12 +15,12 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
     seqNo: session.seqNo,
     transactionInfo: {
       transactionId: session.transactionId,
-      chargingState: session.suspended ? 'SuspendedEV' : 'Charging'
+      chargingState: session.suspended ? 'SuspendedEV' : 'Charging',
     },
     meterValue: [
       {
-				timestamp: now.toISOString(),
-				sampledValue: [
+        timestamp: now.toISOString(),
+        sampledValue: [
           {
             value: Number(session.kwhElapsed.toFixed(3)),
             context: 'Sample.Periodic',
@@ -30,18 +30,18 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
           },
         ],
       },
-			{
-				timestamp: now.toISOString(),
-				sampledValue: [
-					{
-						value: session.stateOfCharge,
-						context: 'Sample.Periodic',
-						measurand: 'SoC',
-						location: 'Outlet',
-						unitOfMeasure: { unit: 'Percent' }
-					}
-				]
-			}
+      {
+        timestamp: now.toISOString(),
+        sampledValue: [
+          {
+            value: session.stateOfCharge,
+            context: 'Sample.Periodic',
+            measurand: 'SoC',
+            location: 'Outlet',
+            unitOfMeasure: { unit: 'Percent' },
+          },
+        ],
+      },
     ],
     evse: { id: 1, connectorId: session.connectorId },
   });
