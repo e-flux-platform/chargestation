@@ -26,6 +26,16 @@ export interface Settings {
   iccid: string;
   imsi: string;
   Identity: string;
+  eTotemTerminalMode: 'etotem' | 'etotem_offline';
+  eTotemCostCalculationMode:
+    | 'Legacy'
+    | 'DureeConsoReelleSession'
+    | 'DureeConsoSession';
+  eTotemFlatRateAmount: number;
+  eTotemPerSessionAmount: number;
+  eTotemPeriodDuration: number;
+  eTotemPerPeriodAmount: number;
+  eTotemPerKWhAmount: number;
 }
 
 interface CallLogItem {
@@ -357,6 +367,8 @@ export default class ChargeStation {
       // (it's not pretty...)
       session,
     };
+
+    return messageId;
   }
 
   sendStatusNotification(connectorId: number, status: string) {
@@ -450,6 +462,7 @@ export class Session {
   isStartingSession = false;
   isStoppingSession = false;
   startTime: Date = clock.now();
+  stopTime: Date | undefined;
 
   constructor(
     public connectorId: number,
@@ -492,6 +505,7 @@ export class Session {
   }
 
   async stop() {
+    this.stopTime = this.now();
     this.emitter.emitEvent(EventTypes.SessionStopInitiated, { session: this });
   }
 

@@ -323,7 +323,9 @@ export default class Home extends React.Component {
                 trigger={<Button inverted icon="setting" />}
                 settings={settings}
                 configuration={configuration}
-                settingsList={settingsList}
+                settingsList={settingsList.filter((setting) =>
+                  setting.predicate ? setting.predicate(settings) : true
+                )}
                 onProtocolChange={(ocppConfiguration) => {
                   const newConfiguration = getConfiguration(
                     ocppConfiguration,
