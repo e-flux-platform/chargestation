@@ -50,6 +50,7 @@ export default class SettingsModal extends React.Component {
     this.props.onSave(this.state);
     this.props.close();
   };
+
   render() {
     const { config, settings, settingsList } = this.state;
 
@@ -60,9 +61,9 @@ export default class SettingsModal extends React.Component {
           <Form onSubmit={this.onSubmit} id="edit-settings">
             <Header as="h3" content="Settings" />
             {settingsList?.map((item) => {
-              if (item.key === ChargeStationSetting.OCPPConfiguration) {
-                return (
-                  <div key={item.key} style={{ marginBottom: '8px' }}>
+              return (
+                <div key={item.key} style={{ marginBottom: '8px' }}>
+                  {item.type === 'dropdown' ? (
                     <Form.Select
                       label={
                         <strong
@@ -80,34 +81,31 @@ export default class SettingsModal extends React.Component {
                       name={item.key}
                       value={settings[item.key]}
                       onChange={(e, { name, value }) => {
-                        if (this.state.settings.ocppConfiguration != value) {
+                        if (name === 'ocppConfiguration') {
                           this.props.onProtocolChange(value);
-                          this.setSettingsField(e, { name, value });
                         }
+                        this.setSettingsField(e, { name, value });
                       }}
                     />
-                  </div>
-                );
-              }
-              return (
-                <div key={item.key} style={{ marginBottom: '8px' }}>
-                  <Form.Input
-                    label={
-                      <strong
-                        style={{
-                          marginBottom: '4px',
-                          display: 'inline-block',
-                        }}>
-                        {item.name}
-                        {item.description && (
-                          <HelpTip text={item.description} />
-                        )}
-                      </strong>
-                    }
-                    name={item.key}
-                    value={settings[item.key]}
-                    onChange={this.setSettingsField}
-                  />
+                  ) : (
+                    <Form.Input
+                      label={
+                        <strong
+                          style={{
+                            marginBottom: '4px',
+                            display: 'inline-block',
+                          }}>
+                          {item.name}
+                          {item.description && (
+                            <HelpTip text={item.description} />
+                          )}
+                        </strong>
+                      }
+                      name={item.key}
+                      value={settings[item.key]}
+                      onChange={this.setSettingsField}
+                    />
+                  )}
                 </div>
               );
             })}

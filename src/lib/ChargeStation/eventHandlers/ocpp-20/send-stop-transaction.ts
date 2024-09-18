@@ -13,13 +13,15 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
 
   await sleep(1000);
 
-  const now = clock.now().toISOString();
+  if (!session.stopTime) {
+    throw new Error('stopTime must be set');
+  }
 
   chargepoint.writeCall(
     'TransactionEvent',
     {
       eventType: 'Ended',
-      timestamp: now,
+      timestamp: session.stopTime.toISOString(),
       triggerReason: 'StopAuthorized',
       seqNo: session.seqNo,
       transactionInfo: {
@@ -38,7 +40,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
           ],
         },
         {
-          timestamp: now,
+          timestamp: session.stopTime.toISOString(),
           sampledValue: [
             {
               value: session.kwhElapsed,
@@ -48,7 +50,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
           ],
         },
         {
-          timestamp: now,
+          timestamp: session.stopTime.toISOString(),
           sampledValue: [
             {
               value: session.stateOfCharge,

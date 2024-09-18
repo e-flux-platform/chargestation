@@ -11,6 +11,13 @@ export enum ChargeStationSetting {
   ChargePointSerialNumber = 'chargePointSerialNumber',
   ICCID = 'iccid',
   IMSI = 'imsi',
+  ETotemTerminalMode = 'eTotemTerminalMode', // szTPEMode
+  ETotemCostCalculationMode = 'eTotemCostCalculationMode', // szTPEModeFacturation
+  ETotemFlatRateAmount = 'eTotemFlatRateAmount', // nTPEForfaitCentimes
+  ETotemPerSessionAmount = 'eTotemPerSessionAmount', // nTPESessionCentimes
+  ETotemPeriodDuration = 'eTotemPeriodDuration', // nTPEPeriodeSecondes
+  ETotemPerPeriodAmount = 'eTotemPerPeriodAmount', // nTPEPeriodeCentimes
+  ETotemPerKWhAmount = 'eTotemPerKWhAmount', // nTPEConsoKWhCentimes
 }
 
 export enum SessionSetting {
@@ -27,6 +34,7 @@ export interface SettingsListSetting<T> {
   options?: undefined | string[];
   description: string;
   defaultValue: string | number;
+  predicate?: (settings: Settings) => boolean;
 }
 
 export const AuthorizationType = {
@@ -41,6 +49,13 @@ export const OCPPVersion = {
   ocpp201: 'ocpp2.0.1',
 } as const;
 export type OCPPVersion = (typeof OCPPVersion)[keyof typeof OCPPVersion];
+
+const isSicharge = (settings: Settings) =>
+  settings.chargePointModel === 'sicharge';
+const isAdsTec = (settings: Settings) =>
+  settings.chargePointModel === 'ads-tec';
+const isETotem = (settings: Settings) =>
+  settings.chargePointModel === 'e-totem';
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -87,6 +102,64 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     description: 'The imsi sent during BootNotification',
     defaultValue: '888888888888888',
   },
+  {
+    key: ChargeStationSetting.ETotemTerminalMode,
+    type: 'dropdown',
+    options: ['etotem', 'etotem_offline'],
+    name: 'e-Totem Payment Terminal Mode',
+    description: 'Whether online or offline cost calculations should be used',
+    defaultValue: 'etotem',
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemCostCalculationMode,
+    type: 'dropdown',
+    options: ['Legacy', 'DureeConsoReelleSession', 'DureeConsoSession'],
+    name: 'e-Totem Offline Cost Calculation',
+    description: 'The mode of calculating offline session costs',
+    defaultValue: 'DureeConsoReelleSession',
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemFlatRateAmount,
+    name: 'e-Totem Flat Rate Price',
+    description:
+      'The flat per-session amount in eurocents to be applied when "Legacy" cost calculation is used',
+    defaultValue: 2500,
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemPerSessionAmount,
+    name: 'e-Totem Per Session Price',
+    description:
+      'The per-session amount in eurocents to be applied for non "Legacy" cost calculations',
+    defaultValue: 100,
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemPerPeriodAmount,
+    name: 'e-Totem Period Price',
+    description:
+      'The per-session amount in eurocents to be applied for non "Legacy" cost calculations',
+    defaultValue: 200,
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemPeriodDuration,
+    name: 'e-Totem Period Duration',
+    description:
+      'The period in seconds to which the "Period Amount" cost should be applied to',
+    defaultValue: 3600, // 1 hour
+    predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.ETotemPerKWhAmount,
+    name: 'e-Totem kWh Price',
+    description:
+      'The price per-kWh in eurocents to be applied for non "Legacy" cost calculations',
+    defaultValue: 30,
+    predicate: isETotem,
+  },
 ];
 
 export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
@@ -125,11 +198,6 @@ export interface Variable16 {
   value: string | number;
   predicate?: (settings: Settings) => boolean;
 }
-
-const isSicharge = (settings: Settings) =>
-  settings.chargePointModel === 'sicharge';
-const isAdsTec = (settings: Settings) =>
-  settings.chargePointModel === 'ads-tec';
 
 export const defaultVariableConfig16: Variable16[] = [
   {
