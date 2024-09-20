@@ -276,6 +276,11 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'Supported file transfer protocols',
     value: 'HTTP,FTP,HTTPS,FTPS',
   },
+  {
+    key: 'SecurityProfile',
+    description: 'Security profile used for communication',
+    value: '0',
+  },
 ];
 
 export interface Variable201 {
@@ -687,6 +692,25 @@ export const defaultVariableConfig201: Variable201[] = [
       supportsMonitoring: false,
     },
   },
+  {
+    component: {
+      name: 'SecurityCtrlr',
+    },
+    variable: {
+      name: 'SecurityProfile',
+    },
+    variableAttribute: [
+      {
+        value: '0',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'integer',
+      supportsMonitoring: false,
+    },
+  },
 ];
 
 export function getDocumentQuery() {
@@ -983,9 +1007,11 @@ class VariableConfiguration16 implements VariableConfiguration<Variable16> {
   updateVariablesFromKeyValueMap(variables: VariableKeyValueMap) {
     for (const variable of Object.values(variables)) {
       if (!this.variables[variable.key]) {
-        throw new Error(
-          `Variable ${variable.key} not found in configuration when updating variables`
-        );
+        // In case a new configuration was added to the charging station (eg: ChangeConfiguration)
+        this.variables[variable.key] = {
+          key: variable.key,
+          value: variable.value,
+        };
       }
 
       this.variables[variable.key].value = variable.value;
