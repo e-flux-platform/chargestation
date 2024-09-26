@@ -39,6 +39,7 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
       transactionInfo: {
         transactionId: session.transactionId,
         chargingState: 'SuspendedEVSE',
+        remoteStartId: session.options.remoteStartId,
       },
       meterValue: [
         {
@@ -65,7 +66,6 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
       ],
       evse: { id: evseId, connectorId },
       idToken: { idToken: session.options.uid, type: 'ISO14443' },
-      remoteStartId: session.options.remoteStartId,
     },
     session
   );
