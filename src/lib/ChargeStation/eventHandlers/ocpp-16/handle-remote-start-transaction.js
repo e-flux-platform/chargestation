@@ -11,19 +11,20 @@ export default async function handleRemoteStartTransaction({
     response = {
       status: 'Rejected',
     };
+  } else {
+    setTimeout(() => {
+      chargepoint.startSession(Number(connectorId), {
+        uid: idTag,
+        skipAuthorize:
+          chargepoint.configuration
+            .getVariableValue('AuthorizeRemoteTxRequests')
+            ?.toString() === 'false',
+      });
+    }, 100);
+    response = {
+      status: 'Accepted',
+    };
   }
-  setTimeout(() => {
-    chargepoint.startSession(Number(connectorId), {
-      uid: idTag,
-      skipAuthorize:
-        chargepoint.configuration
-          .getVariableValue('AuthorizeRemoteTxRequests')
-          ?.toString() === 'false',
-    });
-  }, 100);
-  response = {
-    status: 'Accepted',
-  };
 
   chargepoint.writeCallResult(callMessageId, response);
 }

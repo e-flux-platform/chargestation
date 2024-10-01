@@ -7,10 +7,12 @@ const handleRequestStartTransaction: ChargeStationEventHandler<
 > = ({ chargepoint, callMessageId, callMessageBody }) => {
   const { remoteStartId, evseId, idToken } = callMessageBody;
 
-  let response: RequestStartTransactionResponse = { status: 'Accepted' };
+  let response: RequestStartTransactionResponse;
 
   if (chargepoint.hasRunningSession(Number(evseId))) {
-    response = { status: 'Rejected' };
+    response = {
+      status: 'Rejected',
+    };
   } else {
     setTimeout(() => {
       chargepoint.startSession(
@@ -30,6 +32,9 @@ const handleRequestStartTransaction: ChargeStationEventHandler<
         'rfid'
       );
     }, 100);
+    response = {
+      status: 'Accepted',
+    };
   }
 
   chargepoint.writeCallResult(callMessageId, response);

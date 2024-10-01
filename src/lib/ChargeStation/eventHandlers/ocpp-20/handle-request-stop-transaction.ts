@@ -7,7 +7,7 @@ const handleRequestStopTransaction: ChargeStationEventHandler<
 > = ({ chargepoint, callMessageId, callMessageBody }) => {
   const { transactionId } = callMessageBody;
 
-  let response: RequestStopTransactionResponse = { status: 'Accepted' };
+  let response: RequestStopTransactionResponse;
 
   const connectorId = ['1', '2'].find(
     (cId) =>
@@ -18,13 +18,14 @@ const handleRequestStopTransaction: ChargeStationEventHandler<
     response = {
       status: 'Rejected',
     };
+  } else {
+    setTimeout(() => {
+      chargepoint.stopSession(Number(connectorId));
+    }, 100);
+    response = {
+      status: 'Accepted',
+    };
   }
-  setTimeout(() => {
-    chargepoint.stopSession(Number(connectorId));
-  }, 100);
-  response = {
-    status: 'Accepted',
-  };
 
   chargepoint.writeCallResult(callMessageId, response);
 };

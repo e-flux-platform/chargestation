@@ -20,13 +20,14 @@ export default async function handleRemoteStopTransaction({
     response = {
       status: 'Rejected',
     };
+  } else {
+    setTimeout(() => {
+      chargepoint.stopSession(Number(connectorId));
+    }, 100);
+    response = {
+      status: 'Accepted',
+    };
   }
-  setTimeout(() => {
-    chargepoint.stopSession(Number(connectorId));
-  }, 100);
-  response = {
-    status: 'Accepted',
-  };
 
   chargepoint.writeCallResult(callMessageId, response);
 }
