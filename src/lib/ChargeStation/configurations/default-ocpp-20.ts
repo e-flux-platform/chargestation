@@ -29,6 +29,7 @@ import handleRequestStopTransaction from 'lib/ChargeStation/eventHandlers/ocpp-2
 import handleGetInstalledCertificateIds from 'lib/ChargeStation/eventHandlers/ocpp-20/handle-get-installed-certificate-ids';
 import handleUpdateFirmwareReceived from '../eventHandlers/ocpp-20/handle-update-firmware-received';
 import handleTriggerMessageReceived from '../eventHandlers/ocpp-20/handle-trigger-message-received';
+import sendAuthorizeOrStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-20/send-authorize-or-start-transaction';
 
 // This is the default configuration for OCPP 2.0.*
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -43,7 +44,7 @@ export default {
   [e201.GetBaseReportReceived]: [handleGetBaseReportReceived],
   [e201.SetVariablesReceived]: [handleSetVariables],
   [e201.GetVariablesReceived]: [handleGetVariables],
-  [e.SessionStartInitiated]: [sendAuthorize],
+  [e.SessionStartInitiated]: [sendAuthorizeOrStartTransaction],
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],

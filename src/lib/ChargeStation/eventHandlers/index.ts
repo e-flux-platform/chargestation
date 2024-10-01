@@ -4,7 +4,10 @@ import ChargeStation, { Session } from 'lib/ChargeStation';
 import { OCPPVersion } from 'lib/settings';
 import { Map } from '../../../types/generic';
 
-interface ChargeStationEventHandlerParams<CallBodyType, CallResultBodyType> {
+export interface ChargeStationEventHandlerParams<
+  CallBodyType,
+  CallResultBodyType,
+> {
   chargepoint: ChargeStation;
   emitter: ChargeStationEventEmitter;
   session: Session;

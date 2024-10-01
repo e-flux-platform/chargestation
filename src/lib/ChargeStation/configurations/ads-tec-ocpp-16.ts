@@ -1,9 +1,8 @@
 import { EventTypes as e } from '../eventHandlers/event-types';
 import DefaultOCPP16 from 'lib/ChargeStation/configurations/default-ocpp-16';
-import sendStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-16/send-start-transaction';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
-import sendAuthorize from 'lib/ChargeStation/eventHandlers/ocpp-16/send-authorize';
 import { AuthorizationType } from 'lib/settings';
+import sendAuthorizeOrStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-16/send-authorize-or-start-transaction';
 
 const initiateSession: ChargeStationEventHandler = async (params) => {
   const { session, chargepoint } = params;
@@ -11,10 +10,9 @@ const initiateSession: ChargeStationEventHandler = async (params) => {
     session.options.uid = chargepoint.configuration.getVariableValue(
       'CreditIdToken'
     ) as string;
-    await sendStartTransaction(params);
-  } else {
-    await sendAuthorize(params);
+    session.options.skipAuthorize = true;
   }
+  return sendAuthorizeOrStartTransaction(params);
 };
 
 export default {
