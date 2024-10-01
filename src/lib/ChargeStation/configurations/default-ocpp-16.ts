@@ -5,7 +5,6 @@ import {
 import sendBootNotification from '../eventHandlers/ocpp-16/send-boot-notification';
 import sendHeartbeat from '../eventHandlers/ocpp-16/send-heartbeat';
 import sendHeartbeatDelayed from '../eventHandlers/ocpp-16/send-heartbeat-delayed';
-import sendAuthorize from '../eventHandlers/ocpp-16/send-authorize';
 import sendStopTransaction from '../eventHandlers/ocpp-16/send-stop-transaction';
 import handleTokenRejection from '../eventHandlers/ocpp-16/handle-token-rejection';
 import sendStartTransaction from '../eventHandlers/ocpp-16/send-start-transaction';
@@ -33,6 +32,7 @@ import handleDataTransfer from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-d
 import handleGetInstalledCertificateIds from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-get-installed-certificate-ids';
 import handleUpdateFirmwareReceived from '../eventHandlers/ocpp-16/handle-update-firmware-received';
 import handleTriggerMessageReceived from '../eventHandlers/ocpp-16/handle-trigger-message-received';
+import sendAuthorizeOrStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-16/send-authorize-or-start-transaction';
 
 // This is the default configuration for OCPP 1.6
 // Each key represents an event, and the value represents an array of handlers that will be called when the event is emitted
@@ -47,7 +47,7 @@ export default {
   ],
   [e.HeartbeatCallResultReceived]: [handleHeartbeatCallResultReceived],
   [e.HeartbeatAccepted]: [sendHeartbeatDelayed],
-  [e.SessionStartInitiated]: [sendAuthorize],
+  [e.SessionStartInitiated]: [sendAuthorizeOrStartTransaction],
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],

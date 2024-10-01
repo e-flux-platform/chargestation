@@ -195,7 +195,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
 export interface Variable16 {
   key: string;
   description?: string;
-  value: string | number;
+  value: string | number | boolean;
   predicate?: (settings: Settings) => boolean;
 }
 
@@ -240,6 +240,12 @@ export const defaultVariableConfig16: Variable16[] = [
     key: 'Connector2-MaxCurrent',
     description: 'Meta data about max current on connector 2',
     value: 32,
+  },
+  {
+    key: 'AuthorizeRemoteTxRequests',
+    description:
+      'Whether a remote request to start a transaction should be authorized before start',
+    value: true,
   },
   {
     key: 'PaymentCurrency',

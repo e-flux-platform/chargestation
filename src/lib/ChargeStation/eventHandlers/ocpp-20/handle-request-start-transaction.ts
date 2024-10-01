@@ -22,6 +22,10 @@ const handleRequestStartTransaction: ChargeStationEventHandler<
           maxPowerKw: 0,
           uid: idToken.idToken,
           remoteStartId,
+          skipAuthorize:
+            chargepoint.configuration
+              .getVariableValue('AuthCtrlr.AuthorizeRemoteStart')
+              ?.toString() === 'false',
         },
         'rfid'
       );

@@ -441,6 +441,7 @@ interface SessionOptions {
   uid: string;
   authorizationType: AuthorizationType;
   remoteStartId?: number;
+  skipAuthorize?: boolean;
 }
 
 export class Session {
