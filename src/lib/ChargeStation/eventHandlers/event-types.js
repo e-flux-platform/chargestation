@@ -38,6 +38,7 @@ export const EventTypes16 = {
   RemoteStopTransactionReceived: 'remoteStopTransactionReceived',
   StartTransactionCallResultReceived: 'startTransactionCallResultReceived',
   StopTransactionCallResultReceived: 'stopTransactionCallResultReceived',
+  SignedUpdateFirmwareReceived: 'signedUpdateFirmwareReceived',
 };
 
 // Specific to OCPP 2.0.1
