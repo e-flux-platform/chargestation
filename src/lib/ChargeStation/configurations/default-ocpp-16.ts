@@ -31,6 +31,7 @@ import handleAuthorizeCallResultReceived from 'lib/ChargeStation/eventHandlers/o
 import handleDataTransfer from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-data-transfer';
 import handleGetInstalledCertificateIds from 'lib/ChargeStation/eventHandlers/ocpp-16/handle-get-installed-certificate-ids';
 import handleUpdateFirmwareReceived from '../eventHandlers/ocpp-16/handle-update-firmware-received';
+import handleSignedUpdateFirmwareReceived from '../eventHandlers/ocpp-16/handle-signed-update-firmware-received';
 import handleTriggerMessageReceived from '../eventHandlers/ocpp-16/handle-trigger-message-received';
 import sendAuthorizeOrStartTransaction from 'lib/ChargeStation/eventHandlers/ocpp-16/send-authorize-or-start-transaction';
 
@@ -75,6 +76,7 @@ export default {
   [e16.RemoteStopTransactionReceived]: [handleRemoteStopTransaction],
   [e16.GetConfigurationReceived]: [handleGetConfiguration],
   [e16.ChangeConfigurationReceived]: [handleChangeConfiguration],
+  [e16.SignedUpdateFirmwareReceived]: [handleSignedUpdateFirmwareReceived],
   [e.ChargingTick]: [sendMeterValues],
   [e.ChargingLimitReached]: [sendChargingLimitReached],
   [e.ResetReceived]: [handleReset],

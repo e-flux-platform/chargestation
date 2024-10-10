@@ -136,7 +136,7 @@ export default class ChargeStation {
 
     this.connection.onConnected = () => {
       this.connected = true;
-      this.log('connnected', '< Connected!');
+      this.log('connected', '< Connected!');
       this.emitter.emitEvent(EventTypes.StationConnected);
     };
     this.connection.onError = (error: Event) => {
