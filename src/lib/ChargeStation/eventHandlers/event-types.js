@@ -13,7 +13,11 @@ export const EventTypes = {
   AuthorizationFailed: 'authorizationFailed',
   AuthorizationAccepted: 'authorizationAccepted',
   AuthorizeCallResultReceived: 'authorizeCallResultReceived',
-  ChargingLimitReached: 'charingLimitReached',
+  AuthorizationFailedDuringTransactionStart:
+    'authorizationFailedDuringTransactionStart',
+  AuthorizationFailedDuringTransactionStop:
+    'authorizationFailedDuringTransactionStop',
+  ChargingLimitReached: 'chargingLimitReached',
   ChargingTick: 'chargingTick',
   ResetReceived: 'resetReceived',
   SetChargingProfileReceived: 'setChargingProfileReceived',
@@ -26,10 +30,6 @@ export const EventTypes = {
 
 // OCPP 1.6 specific events
 export const EventTypes16 = {
-  AuthorizationFailedDuringStartTransaction:
-    'authorizationFailedDuringStartTransaction',
-  AuthorizationFailedDuringStopTransaction:
-    'authorizationFailedDuringStopTransaction',
   StartTransactionAccepted: 'startTransactionAccepted',
   StopTransactionAccepted: 'stopTransactionAccepted',
   GetConfigurationReceived: 'getConfigurationReceived',

@@ -6,7 +6,7 @@ export default async function handleTokenRejection({
   emitter,
   session,
 }) {
-  if (chargepoint.sessions[session.connectorId]) {
+  if (!chargepoint.sessions[session.connectorId]) {
     return;
   }
 

@@ -1,11 +1,17 @@
-import { EventTypes16 } from '../event-types';
+import { EventTypes, EventTypes16 } from '../event-types';
 
 export default async function handleStopTransactionCallResultReceived({
   emitter,
+  callResultMessageBody,
   session,
   chargepoint,
 }) {
-  // TODO: Listen for rejections
+  if (callResultMessageBody.idTagInfo.status !== 'Accepted') {
+    emitter.emitEvent(EventTypes.AuthorizationFailedDuringTransactionStop, {
+      session,
+    });
+    return;
+  }
 
   delete chargepoint.sessions[session.connectorId];
 

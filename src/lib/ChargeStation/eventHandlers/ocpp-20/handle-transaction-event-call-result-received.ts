@@ -21,31 +21,12 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
   switch (callMessageBody.eventType) {
     case 'Started':
       if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
-        alert('Session start failed');
-        await chargepoint.writeCall('StatusNotification', {
-          timestamp: clock.now().toISOString(),
-          connectorStatus: 'Available',
-          evseId: callMessageBody.evse?.id,
-          connectorId: callMessageBody.evse?.connectorId,
-        });
-        return;
-      }
-
-      session.isStartingSession = false;
-
-      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
-        alert('Session start failed');
-        await chargepoint.writeCall('StatusNotification', {
-          timestamp: clock.now().toISOString(),
-          connectorStatus: 'Available',
-          evseId: callMessageBody.evse?.id,
-          connectorId: callMessageBody.evse?.connectorId,
-        });
-
-        await session.stop();
-
-        delete chargepoint.sessions[session.connectorId];
-
+        emitter.emitEvent(
+          EventTypes.AuthorizationFailedDuringTransactionStart,
+          {
+            session,
+          }
+        );
         return;
       }
 
@@ -63,6 +44,13 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
     case 'Updated':
       break;
     case 'Ended':
+      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
+        emitter.emitEvent(EventTypes.AuthorizationFailedDuringTransactionStop, {
+          session,
+        });
+        return;
+      }
+
       emitter.emitEvent(EventTypes.Stopped, { session });
       delete chargepoint.sessions[session.connectorId];
       break;
