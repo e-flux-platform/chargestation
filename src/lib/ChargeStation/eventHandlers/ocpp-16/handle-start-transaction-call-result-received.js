@@ -1,4 +1,4 @@
-import { EventTypes16 } from '../event-types';
+import { EventTypes, EventTypes16 } from '../event-types';
 
 export default async function handleStartTransactionCallResultReceived({
   emitter,
@@ -6,14 +6,8 @@ export default async function handleStartTransactionCallResultReceived({
   session,
   chargepoint,
 }) {
-  if (callResultMessageBody.idTagInfo.status === 'Invalid') {
-    emitter.emitEvent(EventTypes16.AuthorizationFailedDuringStartTransaction, {
-      session,
-    });
-    return;
-  }
-  if (callResultMessageBody.idTagInfo.status === 'ConcurrentTx') {
-    emitter.emitEvent(EventTypes16.AuthorizationFailedDuringStartTransaction, {
+  if (callResultMessageBody.idTagInfo.status !== 'Accepted') {
+    emitter.emitEvent(EventTypes.AuthorizationFailedDuringTransactionStart, {
       session,
     });
     return;

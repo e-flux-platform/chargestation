@@ -53,7 +53,8 @@ export default {
   [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],
   [e.AuthorizationAccepted]: [sendStartTransaction],
-  [e16.AuthorizationFailedDuringStartTransaction]: [handleTokenRejection],
+  [e.AuthorizationFailedDuringTransactionStart]: [handleTokenRejection],
+  [e.AuthorizationFailedDuringTransactionStop]: [handleTokenRejection],
   [e16.StartTransactionCallResultReceived]: [
     handleStartTransactionCallResultReceived,
   ],

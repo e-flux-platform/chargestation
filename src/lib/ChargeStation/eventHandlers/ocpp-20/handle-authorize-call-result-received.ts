@@ -9,7 +9,7 @@ const handleAuthorizeCallResultReceived: ChargeStationEventHandler<
 > = ({ emitter, session, callResultMessageBody }) => {
   if (callResultMessageBody.idTokenInfo.status !== 'Accepted') {
     emitter.emitEvent(EventTypes.AuthorizationFailed, { session });
-    alert('RFID card UID is invalid');
+    alert('Token UID was not accepted');
     return;
   }
 

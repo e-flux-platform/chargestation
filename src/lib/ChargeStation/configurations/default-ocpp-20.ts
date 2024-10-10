@@ -48,6 +48,8 @@ export default {
   [e.SessionStopInitiated]: [sendStopTransaction],
   [e.AuthorizeCallResultReceived]: [handleAuthorizeCallResultReceived],
   [e.AuthorizationFailed]: [handleTokenRejection],
+  [e.AuthorizationFailedDuringTransactionStart]: [handleTokenRejection],
+  [e.AuthorizationFailedDuringTransactionStop]: [handleTokenRejection],
   [e.SessionCancelled]: [sendStatusNotification],
   [e.AuthorizationAccepted]: [sendStartTransaction],
   [e201.TransactionEventCallResultReceived]: [

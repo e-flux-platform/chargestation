@@ -5,9 +5,9 @@ export default async function handleAuthorizeCallResultReceived({
   session,
   callResultMessageBody,
 }) {
-  if (callResultMessageBody.idTagInfo.status === 'Invalid') {
+  if (callResultMessageBody.idTagInfo.status !== 'Accepted') {
     emitter.emitEvent(EventTypes.AuthorizationFailed, { session });
-    alert('RFID card UID is invalid');
+    alert('Token UID was not accepted');
     return;
   }
 
