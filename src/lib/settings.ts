@@ -287,6 +287,12 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'Security profile used for communication',
     value: '0',
   },
+  {
+    key: 'ResetRetries',
+    description:
+      'Number of times to retry a reset of the Charging Station when a reset was unsuccessful.',
+    value: 1,
+  },
 ];
 
 export interface Variable201 {
@@ -695,6 +701,25 @@ export const defaultVariableConfig201: Variable201[] = [
     ],
     variableCharacteristics: {
       dataType: 'MemberList',
+      supportsMonitoring: false,
+    },
+  },
+  {
+    component: {
+      name: 'OCPPCommCtrlr',
+    },
+    variable: {
+      name: 'ResetRetries',
+    },
+    variableAttribute: [
+      {
+        value: '1',
+        persistent: true,
+        constant: false,
+      },
+    ],
+    variableCharacteristics: {
+      dataType: 'integer',
       supportsMonitoring: false,
     },
   },
