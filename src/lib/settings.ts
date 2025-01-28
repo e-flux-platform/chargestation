@@ -56,6 +56,8 @@ const isAdsTec = (settings: Settings) =>
   settings.chargePointModel === 'ads-tec';
 const isETotem = (settings: Settings) =>
   settings.chargePointModel === 'e-totem';
+const isMadicLafon = (settings: Settings) =>
+  settings.chargePointModel === 'madic/lafon';
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -276,6 +278,24 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'kWh price to be applied to payment card sessions',
     value: 1,
     predicate: isAdsTec,
+  },
+  {
+    key: 'IDTagBankCard',
+    description: 'IdTag used when authorizing payment card sessions',
+    value: 'PleaseSetToken',
+    predicate: isMadicLafon,
+  },
+  {
+    key: 'ChargePriceTime',
+    description: 'Per minute price',
+    value: 0,
+    predicate: isMadicLafon,
+  },
+  {
+    key: 'ChargePriceEnergy',
+    description: 'Per kWh price',
+    value: 0,
+    predicate: isMadicLafon,
   },
   {
     key: 'SupportedFileTransferProtocols',
