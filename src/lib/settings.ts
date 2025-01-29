@@ -928,7 +928,7 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
         variableAttribute: [
           {
             type: variable.attributeType,
-            value: variable.attributeValue,
+            value: variable.attributeValue.toString(),
           },
         ],
       };
@@ -942,13 +942,13 @@ class VariableConfiguration201 implements VariableConfiguration<Variable201> {
     if (varAttrIndex === -1) {
       this.variables[key].variableAttribute.push({
         type: variable.attributeType,
-        value: variable.attributeValue,
+        value: variable.attributeValue.toString(),
       });
       return;
     }
 
     this.variables[key].variableAttribute[varAttrIndex].value =
-      variable.attributeValue;
+      variable.attributeValue.toString();
   }
 
   getVariableActualValue(key: string): string {
