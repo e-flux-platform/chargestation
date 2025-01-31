@@ -27,9 +27,9 @@ export default class SendMessageModal extends React.Component {
   render() {
     return (
       <>
-        <Modal.Header>Send Message to OCPP Server</Modal.Header>
+        <Modal.Header>Send Message</Modal.Header>
         <Modal.Content>
-          <p>Send a message to the OCPP server in a JSON format</p>
+          <p>Send a message to the Central System in a JSON format</p>
           <Form onSubmit={this.onSubmit} id="send-message-form">
             <Form.Input
               label="Action"

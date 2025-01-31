@@ -30,10 +30,7 @@ export default class ReplyMessageModal extends React.Component {
       <>
         <Modal.Header>Reply Message</Modal.Header>
         <Modal.Content>
-          <p>
-            Send a reply message to the following message in a JSON format (or
-            empty if it doesn't require a reply):
-          </p>
+          <p>Reply a message from the Central System in a JSON format</p>
           <p>
             <b>Action:</b> {call.action}
           </p>
