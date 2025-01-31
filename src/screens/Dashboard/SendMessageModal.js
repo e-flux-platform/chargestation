@@ -29,7 +29,7 @@ export default class SendMessageModal extends React.Component {
       <>
         <Modal.Header>Send Message</Modal.Header>
         <Modal.Content>
-          <p>Send a message to the Central System in a JSON format</p>
+          <p>Send a message to the Central System</p>
           <Form onSubmit={this.onSubmit} id="send-message-form">
             <Form.Input
               label="Action"
