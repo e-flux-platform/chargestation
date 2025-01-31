@@ -382,17 +382,12 @@ export default class Home extends React.Component {
             <ReplyMessageModal
               open={!!chargeStation.callToReplyManually}
               call={chargeStation.callToReplyManually}
-              onSave={async ({ payload }) => {
-                console.log(
-                  'hereeee',
-                  chargeStation.callToReplyManually?.messageId,
-                  payload
-                );
+              onSave={async ({ payload }) =>
                 chargeStation.writeCallResult(
                   chargeStation.callToReplyManually?.messageId,
                   payload
-                );
-              }}
+                )
+              }
               onClose={() => {
                 chargeStation.callToReplyManually = null;
               }}

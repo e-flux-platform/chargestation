@@ -1,7 +1,8 @@
 import React from 'react';
+
 import { Modal, Button, Form, Divider } from 'semantic';
+
 import modal from 'helpers/modal';
-import { p } from 'hast-util-to-mdast/lib/handlers/p';
 
 @modal
 export default class ReplyMessageModal extends React.Component {

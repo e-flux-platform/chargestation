@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { Modal, Button, Form, Divider } from 'semantic';
+
 import modal from 'helpers/modal';
 
 @modal

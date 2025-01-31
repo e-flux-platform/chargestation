@@ -821,10 +821,6 @@ export function ocppVersion() {
   return getSettings().ocppConfiguration;
 }
 
-export function manualMode() {
-  return getSettings().manualMode === 'true';
-}
-
 export function getDefaultSession() {
   const query = getDocumentQuery();
   const result: Map<string | number> = {};
