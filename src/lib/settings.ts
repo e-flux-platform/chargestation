@@ -79,7 +79,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.InteractiveMessagesReply,
     name: 'Interactive Messages Reply',
     description:
-      'Whether to reply to messages manually whenever a message is received',
+      'If a modal will open to reply every message received by the charge station',
     type: 'dropdown',
     options: ['true', 'false'],
     defaultValue: 'false',

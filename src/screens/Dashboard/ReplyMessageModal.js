@@ -7,7 +7,7 @@ import modal from 'helpers/modal';
 @modal
 export default class ReplyMessageModal extends React.Component {
   state = {
-    payload: null,
+    payload: '{}',
     error: null,
   };
 
