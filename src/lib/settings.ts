@@ -6,6 +6,7 @@ import { Settings } from 'lib/ChargeStation';
 export enum ChargeStationSetting {
   OCPPBaseUrl = 'ocppBaseUrl',
   OCPPConfiguration = 'ocppConfiguration',
+  InteractiveMessagesReply = 'interactiveMessagesReply',
   ChargePointVendor = 'chargePointVendor',
   ChargePointModel = 'chargePointModel',
   ChargePointSerialNumber = 'chargePointSerialNumber',
@@ -73,6 +74,15 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
     defaultValue: 'ws://localhost:2600/e-flux',
+  },
+  {
+    key: ChargeStationSetting.InteractiveMessagesReply,
+    name: 'Interactive Messages Reply',
+    description:
+      'Whether to reply to messages manually whenever a message is received',
+    type: 'dropdown',
+    options: ['true', 'false'],
+    defaultValue: 'false',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,
@@ -809,6 +819,10 @@ export function getConfiguration(
 
 export function ocppVersion() {
   return getSettings().ocppConfiguration;
+}
+
+export function manualMode() {
+  return getSettings().manualMode === 'true';
 }
 
 export function getDefaultSession() {
