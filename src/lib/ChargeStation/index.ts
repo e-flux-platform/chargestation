@@ -20,6 +20,7 @@ import clock, { Interval } from './clock';
 export interface Settings {
   ocppConfiguration: string;
   ocppBaseUrl: string;
+  interactiveMessagesReply: string;
   chargePointVendor: string;
   chargePointModel: string;
   chargePointSerialNumber: string;
@@ -72,6 +73,11 @@ export default class ChargeStation {
   public sessions: Map<Session>;
   public connected = false;
   public firmwareVersion: string;
+  public callToReplyManually: {
+    messageId: string;
+    action: string;
+    payload: any;
+  } | null = null;
 
   constructor(
     public configuration: VariableConfiguration<Variable>,
@@ -163,10 +169,14 @@ export default class ChargeStation {
         request: { method, params: body },
       };
 
-      this.emitter.emitEvent(`${toCamelCase(method)}Received`, {
-        callMessageBody: body,
-        callMessageId: messageId,
-      });
+      if (this.settings.interactiveMessagesReply === 'true') {
+        this.callToReplyManually = { messageId, action: method, payload: body };
+      } else {
+        this.emitter.emitEvent(`${toCamelCase(method)}Received`, {
+          callMessageBody: body,
+          callMessageId: messageId,
+        });
+      }
     };
     this.connection.onReceiveCallResult = (
       messageId: string,
