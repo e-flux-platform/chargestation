@@ -25,6 +25,7 @@ import SettingsModal from './SettingsModal';
 
 import './dashboard.less';
 import StartSessionModal from './StartSessionModal';
+import SendMessageModal from './SendMessageModal';
 import ErrorModal from './ErrorModal';
 import { summarizeCommandParams } from 'lib/ChargeStation/utils';
 import CommandDetailsModal from './CommandDetailsModal';
@@ -32,6 +33,7 @@ import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
 import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
+import ReplyMessageModal from './ReplyMessageModal';
 
 const executeCommandEnabled = getDocumentQuery().has('executeCommand');
 
@@ -290,6 +292,7 @@ export default class Home extends React.Component {
                 />
               }
             />
+
             <div className="right-actions">
               <Button to="/docs" as={Link} inverted icon="book" />(
               {executeCommandEnabled && (
@@ -365,6 +368,30 @@ export default class Home extends React.Component {
                 }}
               />
             </div>
+          </div>
+          <div className="sub-actions">
+            <SendMessageModal
+              onSave={async ({ action, payload }) =>
+                chargeStation.writeCall(action, payload)
+              }
+              trigger={
+                <Button inverted icon="envelope" content="Send Message" />
+              }
+            />
+
+            <ReplyMessageModal
+              open={!!chargeStation.callToReplyManually}
+              call={chargeStation.callToReplyManually}
+              onSave={async ({ payload }) =>
+                chargeStation.writeCallResult(
+                  chargeStation.callToReplyManually?.messageId,
+                  payload
+                )
+              }
+              onClose={() => {
+                chargeStation.callToReplyManually = null;
+              }}
+            />
           </div>
 
           <div className="console">
