@@ -62,7 +62,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
         },
       ],
       evse: { id: 1, connectorId: session.connectorId },
-      idToken: { idToken: session.options.uid, type: session.options.idTokenType },
+      idToken: { idToken: session.options.uid, type: session.options.idTokenType || session.options.authorizationType  },
     },
     session
   );
