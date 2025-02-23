@@ -11,7 +11,7 @@ const sendAuthorize: ChargeStationEventHandler<
 
   chargepoint.writeCall(
     'Authorize',
-    { idToken: { idToken: session.options.uid, type: 'ISO14443' } },
+    { idToken: { idToken: session.options.uid, type: session.options.idTokenType } },
     session
   );
 };
