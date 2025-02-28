@@ -1,11 +1,18 @@
 import { sleep } from 'utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { StopTransactionRequest } from 'schemas/ocpp/1.6/StopTransaction';
+import sendStopTransaction from 'lib/ChargeStation/eventHandlers/ocpp-16/send-stop-transaction';
+import { AuthorizationType } from 'lib/settings';
 
-const sendStopTransactionWithCost: ChargeStationEventHandler = async ({
-  chargepoint,
-  session,
-}) => {
+const sendStopTransactionWithCost: ChargeStationEventHandler = async (
+  params
+) => {
+  const { chargepoint, session } = params;
+
+  if (session.options.authorizationType !== AuthorizationType.CreditCard) {
+    return sendStopTransaction(params);
+  }
+
   chargepoint.sessions[session.connectorId].isStoppingSession = true;
   chargepoint.sessions[session.connectorId].tickInterval?.stop();
 
