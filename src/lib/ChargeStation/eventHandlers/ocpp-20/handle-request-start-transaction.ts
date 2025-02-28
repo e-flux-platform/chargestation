@@ -23,6 +23,7 @@ const handleRequestStartTransaction: ChargeStationEventHandler<
           carBatteryStateOfCharge: 0,
           maxPowerKw: 0,
           uid: idToken.idToken,
+          idTokenType: idToken.type,
           remoteStartId,
           skipAuthorize:
             chargepoint.configuration

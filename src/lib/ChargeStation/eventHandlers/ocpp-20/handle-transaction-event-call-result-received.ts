@@ -1,12 +1,10 @@
 import { sleep } from '../../../../utils/csv';
 import { EventTypes } from '../event-types';
-
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
-
 import { TransactionEventRequest } from 'schemas/ocpp/2.0/TransactionEventRequest';
 import { TransactionEventResponse } from 'schemas/ocpp/2.0/TransactionEventResponse';
-
 import clock from '../../clock';
+import sendStopTransaction from './send-stop-transaction';
 
 const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
   TransactionEventRequest,
@@ -20,16 +18,18 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
 }) => {
   switch (callMessageBody.eventType) {
     case 'Started':
+      if (callResultMessageBody.idTokenInfo?.status === 'ConcurrentTx') {
+        session.stopTime = new Date(); // Ensure stopTime is set
+        await sendStopTransaction({ chargepoint, session });
+        return;
+      }
       if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
         emitter.emitEvent(
           EventTypes.AuthorizationFailedDuringTransactionStart,
-          {
-            session,
-          }
+          { session }
         );
         return;
       }
-
       await sleep(1000);
       let timeSince = clock.now();
       session.tickInterval = clock.setInterval(() => {
@@ -38,7 +38,6 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
       }, 5000);
       await sleep(500);
       session.tick(0);
-
       emitter.emitEvent(EventTypes.Charging, { session });
       break;
     case 'Updated':
@@ -50,7 +49,6 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
         });
         return;
       }
-
       emitter.emitEvent(EventTypes.Stopped, { session });
       delete chargepoint.sessions[session.connectorId];
       break;
