@@ -59,6 +59,7 @@ const isETotem = (settings: Settings) =>
   settings.chargePointModel === 'e-totem';
 const isMadicLafon = (settings: Settings) =>
   settings.chargePointModel === 'madic/lafon';
+const isEVBox = (settings: Settings) => settings.chargePointModel === 'evbox';
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -306,6 +307,26 @@ export const defaultVariableConfig16: Variable16[] = [
     description: 'Per kWh price',
     value: 0,
     predicate: isMadicLafon,
+  },
+  {
+    key: 'AuthCtrlr.NFCPCCID.IdTagPrefix',
+    description: 'Id tag prefix for sessions authorized via payment card',
+    value: '',
+    predicate: isEVBox,
+  },
+  {
+    key: 'TariffCostCtrlr.EMVDefaultProfile.CostPerMinute',
+    description:
+      'Default cost per minute for sessions authorized via payment card',
+    value: 0,
+    predicate: isEVBox,
+  },
+  {
+    key: 'TariffCostCtrlr.EMVDefaultProfile.CostPerkWh',
+    description:
+      'Default cost per kWh for sessions authorized via payment card',
+    value: 0,
+    predicate: isEVBox,
   },
   {
     key: 'SupportedFileTransferProtocols',
