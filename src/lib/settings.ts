@@ -12,6 +12,7 @@ export enum ChargeStationSetting {
   ChargePointSerialNumber = 'chargePointSerialNumber',
   ICCID = 'iccid',
   IMSI = 'imsi',
+  PrivateKey = 'privateKey',
   ETotemTerminalMode = 'eTotemTerminalMode', // szTPEMode
   ETotemCostCalculationMode = 'eTotemCostCalculationMode', // szTPEModeFacturation
   ETotemFlatRateAmount = 'eTotemFlatRateAmount', // nTPEForfaitCentimes
@@ -114,6 +115,12 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     name: 'Boot / IMSI',
     description: 'The imsi sent during BootNotification',
     defaultValue: '888888888888888',
+  },
+  {
+    key: ChargeStationSetting.PrivateKey,
+    name: 'Private Key',
+    description: 'Private key used for signing meter data (hex encoded)',
+    defaultValue: '',
   },
   {
     key: ChargeStationSetting.ETotemTerminalMode,
@@ -343,6 +350,11 @@ export const defaultVariableConfig16: Variable16[] = [
     description:
       'Number of times to retry a reset of the Charging Station when a reset was unsuccessful.',
     value: 1,
+  },
+  {
+    key: 'StopTransactionSignatureFormat',
+    description: 'OCMF separate or combined data points',
+    value: 'MR',
   },
 ];
 

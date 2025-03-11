@@ -1,6 +1,10 @@
 import { sleep } from '../../../../utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { StopTransactionRequest } from 'schemas/ocpp/1.6/StopTransaction';
+import {
+  signOcpp16TransactionEnd,
+  signOcpp16TransactionStart,
+} from 'lib/ChargeStation/ocmf';
 
 const sendStopTransaction: ChargeStationEventHandler = async ({
   chargepoint,
@@ -15,6 +19,11 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
     throw new Error('stopTime must be set');
   }
 
+  const havePrivateKey = chargepoint.settings.privateKey !== '';
+  const ocmfSigFormat = chargepoint.configuration.getVariableValue(
+    'StopTransactionSignatureFormat'
+  );
+
   chargepoint.writeCall<StopTransactionRequest>(
     'StopTransaction',
     {
@@ -25,21 +34,32 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
       transactionId: Number(session.transactionId),
       transactionData: [
         {
-          timestamp: session.stopTime.toISOString(),
+          timestamp: session.startTime.toISOString(),
           sampledValue: [
             {
-              value: session.kwhElapsed.toString(),
-              context: 'Sample.Periodic',
+              value: '0',
+              context: 'Transaction.Begin',
               format: 'Raw',
               measurand: 'Energy.Active.Import.Register',
               location: 'Outlet',
               unit: 'kWh',
             },
+            ...(havePrivateKey && ocmfSigFormat === 'SR'
+              ? [await signOcpp16TransactionStart(session, chargepoint)]
+              : []),
           ],
         },
         {
           timestamp: session.stopTime.toISOString(),
           sampledValue: [
+            {
+              value: session.kwhElapsed.toString(),
+              context: 'Transaction.End',
+              format: 'Raw',
+              measurand: 'Energy.Active.Import.Register',
+              location: 'Outlet',
+              unit: 'kWh',
+            },
             {
               value: session.stateOfCharge.toString(),
               context: 'Transaction.End',
@@ -47,6 +67,9 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
               unit: 'Percent',
               measurand: 'SoC',
             },
+            ...(havePrivateKey
+              ? [await signOcpp16TransactionEnd(session, chargepoint)]
+              : []),
           ],
         },
       ],

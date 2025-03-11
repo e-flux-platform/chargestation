@@ -26,6 +26,7 @@ export interface Settings {
   chargePointSerialNumber: string;
   iccid: string;
   imsi: string;
+  privateKey?: string;
   Identity: string;
   eTotemTerminalMode: 'etotem' | 'etotem_offline';
   eTotemCostCalculationMode:
