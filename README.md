@@ -1,8 +1,8 @@
 # Chargestation.one
 
-Open source OCPP charge station simulator (work in progress).
+Open source OCPP charge station simulator with OCPP 1.6 and 2.0.1 support.
 
-Todo:
+Features:
 
 - [x] Basic web UI
 - [x] Basic connectivity & heartbeats
@@ -18,10 +18,10 @@ Todo:
 - [x] Make GetConfiguration and ChangeConfiguration work
 - [x] Support for using two connectors
 - [x] Support for Remote Start/Stop
-- [ ] Run any OCPP command
+- [x] Run any OCPP command
 - [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge
-- [ ] Support for authorization
+- [x] Support for authorization
 - [ ] Terminate session on disconnect
 - [ ] Simulate being offline (and buffering commands)
 - [ ] Time travel
