@@ -102,7 +102,7 @@ export const signOcpp16TransactionStart = async (
     buildOcmfDataSection(session, { includeStart: true })
   );
 
-  return buildOcmfSampledValue(chargepoint, dataSection, 'Transaction.End');
+  return buildOcmfSampledValue(chargepoint, dataSection, 'Transaction.Begin');
 };
 
 export const signOcpp16TransactionEnd = async (
