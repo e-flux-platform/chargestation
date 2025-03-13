@@ -450,6 +450,7 @@ interface SessionOptions {
   carBatteryKwh: number;
   carBatteryStateOfCharge: number;
   uid: string;
+  idTokenType?: string;
   authorizationType: AuthorizationType;
   remoteStartId?: number;
   skipAuthorize?: boolean;

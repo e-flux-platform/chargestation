@@ -65,7 +65,10 @@ const sendStartTransaction: ChargeStationEventHandler = async ({
         },
       ],
       evse: { id: evseId, connectorId },
-      idToken: { idToken: session.options.uid, type: 'ISO14443' },
+      idToken: {
+        idToken: session.options.uid,
+        type: session.options.idTokenType || 'ISO14443',
+      },
     },
     session
   );
