@@ -39,7 +39,7 @@ export interface SettingsListSetting<T> {
 }
 
 export const AuthorizationType = {
-  RFID: 'ISO14443',
+  RFID: 'rfid',
   CreditCard: 'creditCard',
 } as const;
 export type AuthorizationType =
