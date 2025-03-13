@@ -1,10 +1,11 @@
 import { sleep } from '../../../../utils/csv';
 import { ChargeStationEventHandler } from 'lib/ChargeStation/eventHandlers';
 import { StopTransactionRequest } from 'schemas/ocpp/1.6/StopTransaction';
-import {
-  signOcpp16TransactionEnd,
-  signOcpp16TransactionStart,
-} from 'lib/ChargeStation/ocmf';
+import { signMeterReadings } from 'lib/ChargeStation/ocmf';
+import ChargeStation, { Session } from 'lib/ChargeStation';
+
+type Ocpp16SampledValue =
+  StopTransactionRequest['transactionData'][0]['sampledValue'][0];
 
 const sendStopTransaction: ChargeStationEventHandler = async ({
   chargepoint,
@@ -68,7 +69,13 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
               measurand: 'SoC',
             },
             ...(havePrivateKey
-              ? [await signOcpp16TransactionEnd(session, chargepoint)]
+              ? [
+                  await signOcpp16TransactionEnd(
+                    session,
+                    chargepoint,
+                    ocmfSigFormat === 'MR'
+                  ),
+                ]
               : []),
           ],
         },
@@ -77,5 +84,38 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
     session
   );
 };
+
+const signOcpp16TransactionStart = async (
+  session: Session,
+  chargepoint: ChargeStation
+): Promise<Ocpp16SampledValue> =>
+  buildOcmfSampledValue(
+    await signMeterReadings(chargepoint, session, { includeStart: true }),
+    'Transaction.Begin'
+  );
+
+const signOcpp16TransactionEnd = async (
+  session: Session,
+  chargepoint: ChargeStation,
+  includeStart: boolean
+): Promise<Ocpp16SampledValue> =>
+  buildOcmfSampledValue(
+    await signMeterReadings(chargepoint, session, {
+      includeStart,
+      includeEnd: true,
+    }),
+    'Transaction.End'
+  );
+
+const buildOcmfSampledValue = (
+  signedData: string,
+  context: string
+): Ocpp16SampledValue => ({
+  value: signedData,
+  context,
+  format: 'SignedData',
+  measurand: 'Energy.Active.Import.Register',
+  unit: 'Wh',
+});
 
 export default sendStopTransaction;
