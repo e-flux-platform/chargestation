@@ -34,6 +34,7 @@ import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
 import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
 import ReplyMessageModal from './ReplyMessageModal';
+import SetDateTimeModal from 'screens/Dashboard/SetDateTimeModal';
 
 const executeCommandEnabled = getDocumentQuery().has('executeCommand');
 
@@ -120,6 +121,14 @@ export default class Home extends React.Component {
   setSpeed(speed) {
     clock.setSpeed(speed);
     this.setState({ speed });
+  }
+
+  setDate(date) {
+    clock.setNow(date);
+  }
+
+  getDate() {
+    return clock.now();
   }
 
   nextTick() {
@@ -219,6 +228,16 @@ export default class Home extends React.Component {
               primary={this.state.speed == 10}
               icon="bolt"
               onClick={() => this.setSpeed(10)}
+            />
+            <SetDateTimeModal
+              onSave={({ date }) => {
+                this.setDate(date);
+              }}
+              date={this.getDate()}
+              size={'mini'}
+              trigger={
+                <Button icon="clock" disabled={chargeStationIsCharging} />
+              }
             />
           </div>
         </div>

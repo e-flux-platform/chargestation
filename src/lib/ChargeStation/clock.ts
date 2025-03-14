@@ -2,6 +2,7 @@
 class Clock {
   protected nowDate: Date;
   protected clockInterval;
+
   constructor(protected speed = 1) {
     this.nowDate = new Date();
     this.clockInterval = setInterval(() => {
@@ -22,7 +23,11 @@ class Clock {
   }
 
   public reset() {
-    this.nowDate = new Date();
+    this.setNow(new Date());
+  }
+
+  public setNow(date: Date) {
+    this.nowDate = date;
   }
 
   public now() {
@@ -45,6 +50,7 @@ class Clock {
 class Interval {
   protected timeoutHandle: NodeJS.Timeout | undefined;
   protected continue: boolean = false;
+
   constructor(
     protected readonly clock: Clock,
     protected readonly callback: Function,
