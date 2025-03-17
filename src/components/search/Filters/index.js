@@ -3,7 +3,6 @@ import Number from './Number';
 import Search from './Search';
 import Dropdown from './Dropdown';
 import Checkbox from './Checkbox';
-import DateRange from './DateRange';
 
 export default {
   Modal,
@@ -11,5 +10,4 @@ export default {
   Search,
   Dropdown,
   Checkbox,
-  DateRange,
 };
