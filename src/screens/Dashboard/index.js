@@ -235,9 +235,7 @@ export default class Home extends React.Component {
               }}
               date={this.getDate()}
               size={'mini'}
-              trigger={
-                <Button icon="clock" disabled={chargeStationIsCharging} />
-              }
+              trigger={<Button icon="clock" />}
             />
           </div>
         </div>
