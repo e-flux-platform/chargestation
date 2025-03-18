@@ -535,6 +535,11 @@ export class Session {
       this.carBatteryStateOfCharge +=
         (amountKwhToCharge / this.carBatteryKwh) * 100;
 
+      this.carBatteryStateOfCharge = Math.min(
+        this.carBatteryStateOfCharge,
+        100
+      );
+
       const carNeededKwh =
         this.carBatteryKwh -
         this.carBatteryKwh * (this.carBatteryStateOfCharge / 100);

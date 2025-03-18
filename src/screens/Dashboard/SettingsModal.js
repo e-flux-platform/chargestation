@@ -3,6 +3,7 @@ import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { HelpTip } from 'components';
 import { ChargeStationSetting } from 'lib/settings';
+import SettingsInput from 'screens/Dashboard/SettingsInput';
 
 @modal
 export default class SettingsModal extends React.Component {
@@ -63,49 +64,16 @@ export default class SettingsModal extends React.Component {
             {settingsList?.map((item) => {
               return (
                 <div key={item.key} style={{ marginBottom: '8px' }}>
-                  {item.type === 'dropdown' ? (
-                    <Form.Select
-                      label={
-                        <strong
-                          style={{
-                            marginBottom: '4px',
-                            display: 'inline-block',
-                          }}>
-                          {item.name}
-                          {item.description && (
-                            <HelpTip text={item.description} />
-                          )}
-                        </strong>
+                  <SettingsInput
+                    item={item}
+                    value={settings[item.key]?.toString()}
+                    onChange={(e, { name, value }) => {
+                      if (name === 'ocppConfiguration') {
+                        this.props.onProtocolChange(value);
                       }
-                      options={item.options.map((i) => ({ text: i, value: i }))}
-                      name={item.key}
-                      value={settings[item.key]}
-                      onChange={(e, { name, value }) => {
-                        if (name === 'ocppConfiguration') {
-                          this.props.onProtocolChange(value);
-                        }
-                        this.setSettingsField(e, { name, value });
-                      }}
-                    />
-                  ) : (
-                    <Form.Input
-                      label={
-                        <strong
-                          style={{
-                            marginBottom: '4px',
-                            display: 'inline-block',
-                          }}>
-                          {item.name}
-                          {item.description && (
-                            <HelpTip text={item.description} />
-                          )}
-                        </strong>
-                      }
-                      name={item.key}
-                      value={settings[item.key]}
-                      onChange={this.setSettingsField}
-                    />
-                  )}
+                      this.setSettingsField(e, { name, value });
+                    }}
+                  />
                 </div>
               );
             })}
@@ -113,19 +81,12 @@ export default class SettingsModal extends React.Component {
             <Header as="h3" content="Configuration Keys" />
             {Object.values(config).map((item) => {
               return (
-                <Form.Input
+                <SettingsInput
                   key={item.key}
-                  label={
-                    <strong
-                      style={{
-                        marginBottom: '4px',
-                        display: 'inline-block',
-                      }}>
-                      {item.key}
-                      {item?.description && <HelpTip text={item.description} />}
-                    </strong>
-                  }
-                  name={item.key}
+                  item={{
+                    ...item,
+                    name: item.key,
+                  }}
                   value={item.value}
                   onChange={this.setConfigurationField}
                 />
