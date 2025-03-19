@@ -197,7 +197,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       'The power in kW that this charge startion can deliver to a car (e.g. AC single phase is 7.4kW, AC three phase is 22kW, DC Fast charger is 25-175kW',
     defaultValue: 75,
-    input: 'number',
+    type: 'number',
   },
   {
     key: SessionSetting.carBatteryKwh,
@@ -205,7 +205,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       "The car battery capacity that we're simulating in kWh - is used for determinig when to flatten MeterValues and send SuspendedEV notice",
     defaultValue: 64,
-    input: 'number',
+    type: 'number',
   },
   {
     key: SessionSetting.carBatteryStateOfCharge,
@@ -213,7 +213,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       'How full is the car battery we are simulating - is used for determinig when to flatten MeterValues and send SuspendedEV notice',
     defaultValue: 80,
-    input: 'number',
+    type: 'number',
   },
 ];
 
