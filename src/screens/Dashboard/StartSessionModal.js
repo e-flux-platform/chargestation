@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { AuthorizationType, sessionSettingsList } from 'lib/settings';
-import { HelpTip } from 'components';
+import SettingsInput from 'screens/Dashboard/SettingsInput';
 
 @modal
 export default class StartSessionModal extends React.Component {
@@ -23,6 +23,7 @@ export default class StartSessionModal extends React.Component {
     this.props.onSave(this.state);
     this.props.close();
   };
+
   render() {
     const { session, connectorId, authorizationType } = this.state;
     const { availableConnectors } = this.props;
@@ -76,21 +77,9 @@ export default class StartSessionModal extends React.Component {
                 {sessionSettingsList.map((item) => {
                   return (
                     <div key={item.key} style={{ marginBottom: '8px' }}>
-                      <Form.Input
-                        label={
-                          <strong
-                            style={{
-                              marginBottom: '4px',
-                              display: 'inline-block',
-                            }}>
-                            {item.name}
-                            {item.description && (
-                              <HelpTip text={item.description} />
-                            )}
-                          </strong>
-                        }
-                        name={item.key}
-                        value={session[item.key]}
+                      <SettingsInput
+                        item={item}
+                        value={session[item.key]?.toString()}
                         onChange={this.setField}
                       />
                     </div>

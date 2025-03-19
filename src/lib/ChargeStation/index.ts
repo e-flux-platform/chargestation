@@ -20,7 +20,7 @@ import clock, { Interval } from './clock';
 export interface Settings {
   ocppConfiguration: string;
   ocppBaseUrl: string;
-  interactiveMessagesReply: string;
+  interactiveMessagesReply: boolean;
   chargePointVendor: string;
   chargePointModel: string;
   chargePointSerialNumber: string;
@@ -170,7 +170,7 @@ export default class ChargeStation {
         request: { method, params: body },
       };
 
-      if (this.settings.interactiveMessagesReply === 'true') {
+      if (this.settings.interactiveMessagesReply) {
         this.callToReplyManually = { messageId, action: method, payload: body };
       } else {
         this.emitter.emitEvent(`${toCamelCase(method)}Received`, {
@@ -534,6 +534,11 @@ export class Session {
 
       this.carBatteryStateOfCharge +=
         (amountKwhToCharge / this.carBatteryKwh) * 100;
+
+      this.carBatteryStateOfCharge = Math.min(
+        this.carBatteryStateOfCharge,
+        100
+      );
 
       const carNeededKwh =
         this.carBatteryKwh -
