@@ -13,7 +13,15 @@ interface Props<T> {
 }
 
 const castValue = (type: string | undefined, value: unknown): unknown => {
-  return type === 'number' ? Number(value) : value;
+  switch (type) {
+    case 'number':
+      return Number(value);
+    case 'boolean':
+      return value === 'true';
+    case 'string':
+    default:
+      return value;
+  }
 };
 
 export default function SettingsInput<T>({ item, value, onChange }: Props<T>) {

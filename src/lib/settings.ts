@@ -33,10 +33,10 @@ export interface SettingsListSetting<T> {
   key: T;
   name: string;
   input?: 'text' | 'dropdown';
-  type?: 'string' | 'number';
+  type?: 'string' | 'number' | 'boolean';
   options?: undefined | string[];
   description: string;
-  defaultValue: string | number;
+  defaultValue: string | number | boolean;
   predicate?: (settings: Settings) => boolean;
 }
 
@@ -85,7 +85,8 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
       'If a modal will open to reply every message received by the charge station',
     input: 'dropdown',
     options: ['true', 'false'],
-    defaultValue: 'false',
+    defaultValue: false,
+    type: 'boolean',
   },
   {
     key: ChargeStationSetting.ChargePointVendor,
