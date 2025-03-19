@@ -2,11 +2,7 @@ import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { AuthorizationType, sessionSettingsList } from 'lib/settings';
-import { HelpTip } from 'components';
 import SettingsInput from 'screens/Dashboard/SettingsInput';
-
-const convertValue = (item, value) =>
-  item.type === 'number' ? Number(value) : value;
 
 @modal
 export default class StartSessionModal extends React.Component {
