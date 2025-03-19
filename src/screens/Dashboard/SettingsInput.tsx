@@ -12,10 +12,23 @@ interface Props<T> {
   ) => void;
 }
 
+const castValue = (type: string | undefined, value: unknown): unknown => {
+  return type === 'number' ? Number(value) : value;
+};
+
 export default function SettingsInput<T>({ item, value, onChange }: Props<T>) {
+  const handleChange = (
+    e: React.SyntheticEvent<HTMLElement, Event>,
+    { name, value }: { name?: string; value?: unknown }
+  ) =>
+    onChange(e, {
+      name,
+      value: castValue(item.type, value),
+    });
+
   return (
     <>
-      {item.type === 'dropdown' ? (
+      {item.input === 'dropdown' ? (
         <Form.Select
           key={item.key?.toString()}
           label={
@@ -31,7 +44,7 @@ export default function SettingsInput<T>({ item, value, onChange }: Props<T>) {
           options={item.options?.map((i) => ({ text: i, value: i })) || []}
           name={item.key}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
         />
       ) : (
         <Form.Input
@@ -48,12 +61,7 @@ export default function SettingsInput<T>({ item, value, onChange }: Props<T>) {
           }
           name={item.key}
           value={value}
-          onChange={(e, { name, value }) =>
-            onChange(e, {
-              name,
-              value: item.type === 'number' ? Number(value) : value,
-            })
-          }
+          onChange={handleChange}
         />
       )}
     </>

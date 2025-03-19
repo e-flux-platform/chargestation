@@ -32,7 +32,8 @@ export enum SessionSetting {
 export interface SettingsListSetting<T> {
   key: T;
   name: string;
-  type?: undefined | 'number' | 'dropdown';
+  input?: 'text' | 'dropdown';
+  type?: 'string' | 'number';
   options?: undefined | string[];
   description: string;
   defaultValue: string | number;
@@ -65,7 +66,7 @@ const isEVBox = (settings: Settings) => settings.chargePointModel === 'evbox';
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
     key: ChargeStationSetting.OCPPConfiguration,
-    type: 'dropdown',
+    input: 'dropdown',
     options: [OCPPVersion.ocpp16, OCPPVersion.ocpp201],
     name: 'OCPP Configuration',
     description: 'OCPP Configuration to use (ocpp1.6 or ocpp2.0.1)',
@@ -82,7 +83,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     name: 'Interactive Messages Reply',
     description:
       'If a modal will open to reply every message received by the charge station',
-    type: 'dropdown',
+    input: 'dropdown',
     options: ['true', 'false'],
     defaultValue: 'false',
   },
@@ -124,7 +125,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   },
   {
     key: ChargeStationSetting.ETotemTerminalMode,
-    type: 'dropdown',
+    input: 'dropdown',
     options: ['etotem', 'etotem_offline'],
     name: 'e-Totem Payment Terminal Mode',
     description: 'Whether online or offline cost calculations should be used',
@@ -133,7 +134,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   },
   {
     key: ChargeStationSetting.ETotemCostCalculationMode,
-    type: 'dropdown',
+    input: 'dropdown',
     options: ['Legacy', 'DureeConsoReelleSession', 'DureeConsoSession'],
     name: 'e-Totem Offline Cost Calculation',
     description: 'The mode of calculating offline session costs',
@@ -195,7 +196,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       'The power in kW that this charge startion can deliver to a car (e.g. AC single phase is 7.4kW, AC three phase is 22kW, DC Fast charger is 25-175kW',
     defaultValue: 75,
-    type: 'number',
+    input: 'number',
   },
   {
     key: SessionSetting.carBatteryKwh,
@@ -203,7 +204,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       "The car battery capacity that we're simulating in kWh - is used for determinig when to flatten MeterValues and send SuspendedEV notice",
     defaultValue: 64,
-    type: 'number',
+    input: 'number',
   },
   {
     key: SessionSetting.carBatteryStateOfCharge,
@@ -211,7 +212,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
     description:
       'How full is the car battery we are simulating - is used for determinig when to flatten MeterValues and send SuspendedEV notice',
     defaultValue: 80,
-    type: 'number',
+    input: 'number',
   },
 ];
 
