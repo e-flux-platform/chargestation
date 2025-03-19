@@ -5,7 +5,8 @@ import { Modal, Button } from 'semantic';
 import { DayPicker } from 'react-day-picker';
 
 import modal from 'helpers/modal';
-import { getHours, getMinutes, setHours, setMinutes } from 'date-fns';
+import { UTCDate } from '@date-fns/utc';
+import { setHours, setMinutes } from 'date-fns';
 import { Form } from 'semantic-ui-react';
 
 @modal
@@ -45,10 +46,10 @@ export default class SetDateTimeModal extends React.Component {
       const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10));
       this.setState({
         ...this.state,
-        date: new Date(
-          newDate.getFullYear(),
-          newDate.getMonth(),
-          newDate.getDate(),
+        date: new UTCDate(
+          newDate.getUTCFullYear(),
+          newDate.getUTCMonth(),
+          newDate.getUTCDate(),
           hours,
           minutes
         ),
@@ -61,6 +62,7 @@ export default class SetDateTimeModal extends React.Component {
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="set-date-time-form">
             <DayPicker
+              timeZone={'UTC'}
               animate
               mode="single"
               selected={date}
