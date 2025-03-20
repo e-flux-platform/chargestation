@@ -546,9 +546,15 @@ export class Session {
 
       const chargeLimitReached = carNeededKwh <= 0;
 
-      console.info(
-        `Charge session tick (connectorId=${this.connectorId}, carNeededKwh=${carNeededKwh}, chargeLimitReached=${chargeLimitReached}, amountKwhToCharge=${amountKwhToCharge}, currentStatus=${this.connectorStatus}`
-      );
+      console.info('Charging', {
+        clock: this.now().toISOString(),
+        connectorId: this.connectorId,
+        stateOfCharge: this.carBatteryStateOfCharge,
+        chargeAddedKwh: amountKwhToCharge,
+        carNeededKwh,
+        chargeLimitReached,
+        connectorStatus: this.connectorStatus,
+      });
 
       if (chargeLimitReached) {
         this.suspended = true;
