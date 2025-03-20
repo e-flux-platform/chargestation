@@ -548,6 +548,7 @@ export class Session {
 
       console.info('Charging', {
         clock: this.now().toISOString(),
+        speed: clock.getSpeed(),
         connectorId: this.connectorId,
         stateOfCharge: this.carBatteryStateOfCharge,
         chargeAddedKwh: amountKwhToCharge,

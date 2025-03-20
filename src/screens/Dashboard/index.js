@@ -119,6 +119,7 @@ export default class Home extends React.Component {
   }
 
   setSpeed(speed) {
+    speed = Math.max(1, speed);
     clock.setSpeed(speed);
     this.setState({ speed });
   }
@@ -167,6 +168,7 @@ export default class Home extends React.Component {
       session,
       error,
       inspectCommand,
+      speed,
       session1OnceStarted,
       session2OnceStarted,
     } = this.state;
@@ -214,21 +216,9 @@ export default class Home extends React.Component {
             <img src={chargeStationStatusSvg} />
           </div>
           <div className="time-control">
-            <Button
-              primary={this.state.speed == 1}
-              icon="play"
-              onClick={() => this.setSpeed(1)}
-            />
-            <Button
-              primary={this.state.speed == 5}
-              icon="forward"
-              onClick={() => this.setSpeed(5)}
-            />
-            <Button
-              primary={this.state.speed == 10}
-              icon="bolt"
-              onClick={() => this.setSpeed(10)}
-            />
+            <Button icon="play" onClick={() => this.setSpeed(1)} />
+            <Button icon="backward" onClick={() => this.setSpeed(speed - 1)} />
+            <Button icon="forward" onClick={() => this.setSpeed(speed + 1)} />
             <SetDateTimeModal
               onSave={({ date }) => {
                 this.setDate(date);
