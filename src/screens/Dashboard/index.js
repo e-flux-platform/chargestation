@@ -217,8 +217,8 @@ export default class Home extends React.Component {
           </div>
           <div className="time-control">
             <Button icon="play" onClick={() => this.setSpeed(1)} />
-            <Button icon="backward" onClick={() => this.setSpeed(speed - 1)} />
-            <Button icon="forward" onClick={() => this.setSpeed(speed + 1)} />
+            <Button icon="backward" onClick={() => this.setSpeed(speed - 3)} />
+            <Button icon="forward" onClick={() => this.setSpeed(speed + 3)} />
             <SetDateTimeModal
               onSave={({ date }) => {
                 this.setDate(date);
