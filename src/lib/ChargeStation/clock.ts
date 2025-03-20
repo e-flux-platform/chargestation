@@ -1,10 +1,12 @@
 // Class representing clock, used to enable 'time travel' in the simulation
+import { UTCDate } from '@date-fns/utc';
+
 class Clock {
-  protected nowDate: Date;
+  protected nowDate: UTCDate;
   protected clockInterval;
 
   constructor(protected speed = 1) {
-    this.nowDate = new Date();
+    this.nowDate = new UTCDate();
     this.clockInterval = setInterval(() => {
       this.nowDate.setTime(this.nowDate.getTime() + 1000 * this.speed);
     }, 1000);
@@ -23,15 +25,15 @@ class Clock {
   }
 
   public reset() {
-    this.setNow(new Date());
+    this.setNow(new UTCDate());
   }
 
-  public setNow(date: Date) {
+  public setNow(date: UTCDate) {
     this.nowDate = date;
   }
 
   public now() {
-    return new Date(this.nowDate);
+    return new UTCDate(this.nowDate);
   }
 
   public setInterval(
