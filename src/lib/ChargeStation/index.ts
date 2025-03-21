@@ -275,6 +275,10 @@ export default class ChargeStation {
     return !!this.sessions[connectorId];
   }
 
+  getSessions() {
+    return Object.values(this.sessions);
+  }
+
   isStartingSession(connectorId: number) {
     return (
       this.sessions[connectorId] && this.sessions[connectorId].isStartingSession
