@@ -126,6 +126,10 @@ export default class Home extends React.Component {
   }
 
   setSpeed(speed) {
+    if (this.state.speed === 1) {
+      speed -= 1;
+    }
+
     speed = Math.max(1, speed);
     clock.setSpeed(speed);
     this.setState({ speed });
