@@ -226,6 +226,19 @@ export default class Home extends React.Component {
             }`}>
             <img src={chargeStationStatusSvg} />
           </div>
+
+          <div className="realtime-statistics">
+            {chargeStation?.getSessions()?.map((session) => (
+              <SessionStatistic
+                key={session.connectorId}
+                connectorId={session.connectorId}
+                kwhCharged={session.kwhElapsed}
+                durationSeconds={session.secondsElapsed}
+                startedAt={session.startTime}
+              />
+            ))}
+          </div>
+
           <div className="time-control">
             <Grid centered>
               <Grid.Row>
