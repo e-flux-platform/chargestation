@@ -8,11 +8,11 @@ import Papa from 'papaparse';
 import ChargeStation from 'lib/ChargeStation';
 import {
   getConfiguration,
-  getSettings,
   getDefaultSession,
+  getDocumentQuery,
+  getSettings,
   ocppVersion,
   settingsList,
-  getDocumentQuery,
 } from 'lib/settings';
 
 import chargeStationSvg from 'assets/charge-station.svg';
@@ -35,6 +35,13 @@ import StatusNotificationModal from './StatusNotificationModal';
 import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
 import ReplyMessageModal from './ReplyMessageModal';
 import SetDateTimeModal from 'screens/Dashboard/SetDateTimeModal';
+import {
+  Grid,
+  Statistic,
+  StatisticLabel,
+  StatisticValue,
+} from 'semantic-ui-react';
+import { SessionStatistic } from 'screens/Dashboard/SessionStatistic';
 
 const executeCommandEnabled = getDocumentQuery().has('executeCommand');
 
@@ -216,17 +223,33 @@ export default class Home extends React.Component {
             <img src={chargeStationStatusSvg} />
           </div>
           <div className="time-control">
-            <Button icon="play" onClick={() => this.setSpeed(1)} />
-            <Button icon="backward" onClick={() => this.setSpeed(speed - 5)} />
-            <Button icon="forward" onClick={() => this.setSpeed(speed + 5)} />
-            <SetDateTimeModal
-              onSave={({ date }) => {
-                this.setDate(date);
-              }}
-              date={this.getDate()}
-              size={'mini'}
-              trigger={<Button icon="clock" />}
-            />
+            <Grid centered>
+              <Grid.Row>
+                <Statistic size="tiny" className="time-control-statistic">
+                  <StatisticLabel>session speed</StatisticLabel>
+                  <StatisticValue>x{this.state.speed}</StatisticValue>
+                </Statistic>
+              </Grid.Row>
+              <Grid.Row>
+                <Button icon="play" onClick={() => this.setSpeed(1)} />
+                <Button
+                  icon="backward"
+                  onClick={() => this.setSpeed(speed - 5)}
+                />
+                <Button
+                  icon="forward"
+                  onClick={() => this.setSpeed(speed + 5)}
+                />
+                <SetDateTimeModal
+                  onSave={({ date }) => {
+                    this.setDate(date);
+                  }}
+                  date={this.getDate()}
+                  size={'mini'}
+                  trigger={<Button icon="clock" />}
+                />
+              </Grid.Row>
+            </Grid>
           </div>
         </div>
         <div className="terminal">
