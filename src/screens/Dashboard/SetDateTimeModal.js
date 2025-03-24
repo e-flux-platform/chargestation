@@ -58,7 +58,7 @@ export default class SetDateTimeModal extends React.Component {
 
     return (
       <>
-        <Modal.Header>Set current date and time</Modal.Header>
+        <Modal.Header>Set date and time</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="set-date-time-form">
             <DayPicker
