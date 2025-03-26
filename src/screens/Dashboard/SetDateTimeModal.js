@@ -1,11 +1,11 @@
 import React from 'react';
 import 'react-day-picker/style.css';
 
-import { Modal, Button } from 'semantic';
+import { Modal, Button, Message } from 'semantic';
 import { DayPicker } from 'react-day-picker';
 
 import modal from 'helpers/modal';
-import { getHours, getMinutes, setHours, setMinutes } from 'date-fns';
+import { setHours, setMinutes } from 'date-fns';
 import { Form } from 'semantic-ui-react';
 
 @modal
@@ -14,6 +14,13 @@ export default class SetDateTimeModal extends React.Component {
     date: this.props.date,
     time: '',
     error: null,
+  };
+
+  getUTCDateTime = () => {
+    const { date } = this.state;
+    if (!date) return null;
+
+    return date.toISOString().replace('T', ' ').slice(0, 19);
   };
 
   onSubmit = () => {
@@ -73,6 +80,25 @@ export default class SetDateTimeModal extends React.Component {
               onChange={handleTimeChange}
               label={'Time'}
             />
+
+            {date && time && (
+              <Message info>
+                <Message.Header>Time Zone Conversion</Message.Header>
+                <p>
+                  The date and time you select is in your local time zone. When
+                  sending messages, this will be converted to UTC:
+                </p>
+                <p>
+                  <strong>UTC Date/Time:</strong> {this.getUTCDateTime()}
+                </p>
+                <p>
+                  <em>
+                    Note: This is the actual time that will be used when sending
+                    messages.
+                  </em>
+                </p>
+              </Message>
+            )}
           </Form>
         </Modal.Content>
         <Modal.Actions>
