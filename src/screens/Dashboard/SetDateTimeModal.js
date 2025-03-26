@@ -16,7 +16,7 @@ export default class SetDateTimeModal extends React.Component {
     error: null,
   };
 
-  getUTCDateTime = () => {
+  getUTCDateTimeLabel = () => {
     const { date } = this.state;
     if (!date) return null;
 
@@ -89,7 +89,7 @@ export default class SetDateTimeModal extends React.Component {
                   sending messages, this will be converted to UTC:
                 </p>
                 <p>
-                  <strong>UTC Date/Time:</strong> {this.getUTCDateTime()}
+                  <strong>UTC Date/Time:</strong> {this.getUTCDateTimeLabel()}
                 </p>
                 <p>
                   <em>
