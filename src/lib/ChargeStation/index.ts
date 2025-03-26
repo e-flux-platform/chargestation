@@ -458,6 +458,7 @@ interface SessionOptions {
   authorizationType: AuthorizationType;
   remoteStartId?: number;
   skipAuthorize?: boolean;
+	ignoreCSMSAuthResponse?: boolean;
 }
 
 export class Session {
@@ -468,12 +469,13 @@ export class Session {
   private lastMeterValuesTimestamp?: Date;
   private meterValuesInterval: number;
 
-  public kwhElapsed: number;
-  public seqNo: number;
-  public transactionId: string;
-  public tickInterval?: Interval;
-  public remoteStartId?: number;
-  public suspended?: boolean;
+  kwhElapsed: number;
+	seqNo: number;
+	transactionId: string;
+	tickInterval?: Interval;
+	remoteStartId?: number;
+	suspended?: boolean;
+	ignoreCSMSAuthResponse?: boolean;
 
   // TODO: Should ideally have getters and setters, but we should first convert everything to TS
   isStartingSession = false;
@@ -494,6 +496,7 @@ export class Session {
     this.carBatteryKwh = options.carBatteryKwh || 64;
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
     this.remoteStartId = options.remoteStartId;
+		this.ignoreCSMSAuthResponse = options.ignoreCSMSAuthResponse || false;
     this.secondsElapsed = 0;
     this.kwhElapsed = 0;
     this.lastMeterValuesTimestamp = undefined;
