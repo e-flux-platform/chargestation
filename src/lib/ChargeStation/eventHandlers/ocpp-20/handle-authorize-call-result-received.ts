@@ -7,7 +7,10 @@ const handleAuthorizeCallResultReceived: ChargeStationEventHandler<
   AuthorizeRequest,
   AuthorizeResponse
 > = ({ emitter, session, callResultMessageBody }) => {
-  if (callResultMessageBody.idTokenInfo.status !== 'Accepted' && !session.ignoreCSMSAuthResponse) {
+  if (
+    callResultMessageBody.idTokenInfo.status !== 'Accepted' &&
+    !session.ignoreCSMSAuthResponse
+  ) {
     emitter.emitEvent(EventTypes.AuthorizationFailed, { session });
     alert('Token UID was not accepted');
     return;

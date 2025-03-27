@@ -3,7 +3,7 @@ import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 import { AuthorizationType, sessionSettingsList } from 'lib/settings';
 import SettingsInput from 'screens/Dashboard/SettingsInput';
-import {FormField, Icon, Label} from "semantic-ui-react";
+import { FormField, Label } from 'semantic-ui-react';
 
 @modal
 export default class StartSessionModal extends React.Component {
@@ -89,21 +89,22 @@ export default class StartSessionModal extends React.Component {
               </React.Fragment>
             )}
             <Divider hidden />
-						<FormField inline>
-            <Form.Checkbox
-              label="Ignore CSMS Authorization response"
-              name="ignoreCSMSAuthResponse"
-              checked={session.ignoreCSMSAuthResponse}
-              onChange={(e, { name,checked }) => {
-								this.setField(e, { name, value: checked });
-							}}
-            />
+            <FormField inline>
+              <Form.Checkbox
+                label="Ignore CSMS Authorization response"
+                name="ignoreCSMSAuthResponse"
+                checked={session.ignoreCSMSAuthResponse}
+                onChange={(e, { name, checked }) => {
+                  this.setField(e, { name, value: checked });
+                }}
+              />
 
-						<Label pointing>
-							When enabled, the station will ignore the authorization response coming from the CSMS.
-							This is useful for testing behaviour in such a situation.
-						</Label>
-						</FormField>
+              <Label pointing>
+                When enabled, the station will ignore the authorization response
+                coming from the CSMS. This is useful for testing behaviour in
+                such a situation.
+              </Label>
+            </FormField>
             <Divider hidden />
           </Form>
         </Modal.Content>
