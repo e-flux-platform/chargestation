@@ -1,9 +1,8 @@
 import React from 'react';
-import { Modal, Button, Form, Header, Divider } from 'semantic';
+import { Modal, Button, Form, Divider, FormField, Label } from 'semantic';
 import modal from 'helpers/modal';
 import { AuthorizationType, sessionSettingsList } from 'lib/settings';
 import SettingsInput from 'screens/Dashboard/SettingsInput';
-import { FormField, Label } from 'semantic-ui-react';
 
 @modal
 export default class StartSessionModal extends React.Component {

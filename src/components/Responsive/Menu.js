@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sticky, Dropdown, Menu } from 'semantic-ui-react';
+import { Sticky, Dropdown, Menu } from 'semantic';
 import Desktop from './Desktop';
 import Mobile from './Mobile';
 

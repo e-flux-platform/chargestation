@@ -1,4 +1,4 @@
-import { Card, CardHeader, Divider } from 'semantic-ui-react';
+import { Card, CardHeader, Divider } from 'semantic';
 import React from 'react';
 import { round } from 'utils/formatting';
 

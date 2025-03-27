@@ -35,12 +35,7 @@ import StatusNotificationModal from './StatusNotificationModal';
 import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
 import ReplyMessageModal from './ReplyMessageModal';
 import SetDateTimeModal from 'screens/Dashboard/SetDateTimeModal';
-import {
-  Grid,
-  Statistic,
-  StatisticLabel,
-  StatisticValue,
-} from 'semantic-ui-react';
+import { Grid, Statistic, StatisticLabel, StatisticValue } from 'semantic';
 import { SessionStatistic } from 'screens/Dashboard/SessionStatistic';
 
 const executeCommandEnabled = getDocumentQuery().has('executeCommand');
