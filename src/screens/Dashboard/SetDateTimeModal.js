@@ -1,11 +1,10 @@
 import React from 'react';
 import 'react-day-picker/style.css';
 
-import { Modal, Button } from 'semantic';
+import { Modal, Button, Message } from 'semantic';
 import { DayPicker } from 'react-day-picker';
 
 import modal from 'helpers/modal';
-import { UTCDate } from '@date-fns/utc';
 import { setHours, setMinutes } from 'date-fns';
 import { Form } from 'semantic-ui-react';
 
@@ -15,6 +14,13 @@ export default class SetDateTimeModal extends React.Component {
     date: this.props.date,
     time: '',
     error: null,
+  };
+
+  getUTCDateTimeLabel = () => {
+    const { date } = this.state;
+    if (!date) return null;
+
+    return date.toISOString().replace('T', ' ').slice(0, 19);
   };
 
   onSubmit = () => {
@@ -46,10 +52,10 @@ export default class SetDateTimeModal extends React.Component {
       const [hours, minutes] = time.split(':').map((str) => parseInt(str, 10));
       this.setState({
         ...this.state,
-        date: new UTCDate(
-          newDate.getUTCFullYear(),
-          newDate.getUTCMonth(),
-          newDate.getUTCDate(),
+        date: new Date(
+          newDate.getFullYear(),
+          newDate.getMonth(),
+          newDate.getDate(),
           hours,
           minutes
         ),
@@ -62,7 +68,6 @@ export default class SetDateTimeModal extends React.Component {
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="set-date-time-form">
             <DayPicker
-              timeZone={'UTC'}
               animate
               mode="single"
               selected={date}
@@ -75,6 +80,25 @@ export default class SetDateTimeModal extends React.Component {
               onChange={handleTimeChange}
               label={'Time'}
             />
+
+            {date && time && (
+              <Message info>
+                <Message.Header>Time Zone Conversion</Message.Header>
+                <p>
+                  The date and time you select is in your local time zone. When
+                  sending messages, this will be converted to UTC:
+                </p>
+                <p>
+                  <strong>UTC Date/Time:</strong> {this.getUTCDateTimeLabel()}
+                </p>
+                <p>
+                  <em>
+                    Note: This is the actual time that will be used when sending
+                    messages.
+                  </em>
+                </p>
+              </Message>
+            )}
           </Form>
         </Modal.Content>
         <Modal.Actions>
