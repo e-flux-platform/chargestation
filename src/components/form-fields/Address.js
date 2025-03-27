@@ -1,11 +1,10 @@
 import React from 'react';
 import { get, set } from 'lodash';
-import { Form, Segment, Dropdown } from 'semantic';
+import { Dropdown, Form, Loader, Segment } from 'semantic';
 import { loadScript } from 'utils/script';
 import CountriesField from 'components/form-fields/Countries';
 import UsStates from './UsStates';
 import { GOOGLE_API_KEY } from 'utils/env';
-import { Loader } from 'semantic-ui-react';
 
 function extractGoogleAddressComponent(
   addressComponents,

@@ -1,12 +1,11 @@
 import React from 'react';
 import 'react-day-picker/style.css';
 
-import { Modal, Button, Message } from 'semantic';
+import { Modal, Button, Message, Form } from 'semantic';
 import { DayPicker } from 'react-day-picker';
 
 import modal from 'helpers/modal';
 import { setHours, setMinutes } from 'date-fns';
-import { Form } from 'semantic-ui-react';
 
 @modal
 export default class SetDateTimeModal extends React.Component {

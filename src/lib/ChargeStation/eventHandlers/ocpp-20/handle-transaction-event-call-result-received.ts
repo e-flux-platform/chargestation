@@ -18,12 +18,18 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
 }) => {
   switch (callMessageBody.eventType) {
     case 'Started':
-      if (callResultMessageBody.idTokenInfo?.status === 'ConcurrentTx') {
+      if (
+        callResultMessageBody.idTokenInfo?.status === 'ConcurrentTx' &&
+        !session.ignoreCSMSAuthResponse
+      ) {
         session.stopTime = new Date(); // Ensure stopTime is set
         await sendStopTransaction({ chargepoint, session });
         return;
       }
-      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
+      if (
+        callResultMessageBody.idTokenInfo?.status !== 'Accepted' &&
+        !session.ignoreCSMSAuthResponse
+      ) {
         emitter.emitEvent(
           EventTypes.AuthorizationFailedDuringTransactionStart,
           { session }
@@ -43,7 +49,10 @@ const handleTransactionEventCallResultReceived: ChargeStationEventHandler<
     case 'Updated':
       break;
     case 'Ended':
-      if (callResultMessageBody.idTokenInfo?.status !== 'Accepted') {
+      if (
+        callResultMessageBody.idTokenInfo?.status !== 'Accepted' &&
+        !session.ignoreCSMSAuthResponse
+      ) {
         emitter.emitEvent(EventTypes.AuthorizationFailedDuringTransactionStop, {
           session,
         });

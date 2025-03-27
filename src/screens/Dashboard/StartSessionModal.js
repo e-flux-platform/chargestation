@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Header, Divider } from 'semantic';
+import { Modal, Button, Form, Divider, FormField, Label } from 'semantic';
 import modal from 'helpers/modal';
 import { AuthorizationType, sessionSettingsList } from 'lib/settings';
 import SettingsInput from 'screens/Dashboard/SettingsInput';
@@ -87,6 +87,23 @@ export default class StartSessionModal extends React.Component {
                 })}
               </React.Fragment>
             )}
+            <Divider hidden />
+            <FormField inline>
+              <Form.Checkbox
+                label="Ignore CSMS Authorization response"
+                name="ignoreCSMSAuthResponse"
+                checked={session.ignoreCSMSAuthResponse}
+                onChange={(e, { name, checked }) => {
+                  this.setField(e, { name, value: checked });
+                }}
+              />
+
+              <Label pointing>
+                When enabled, the station will ignore the authorization response
+                coming from the CSMS. This is useful for testing CSMS behaviour
+                in such a situation.
+              </Label>
+            </FormField>
             <Divider hidden />
           </Form>
         </Modal.Content>
