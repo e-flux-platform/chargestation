@@ -101,7 +101,7 @@ export default class StartSessionModal extends React.Component {
 
               <Label pointing>
                 When enabled, the station will ignore the authorization response
-                coming from the CSMS. This is useful for testing behaviour in
+                coming from the CSMS. This is useful for testing CSMS behaviour in
                 such a situation.
               </Label>
             </FormField>
