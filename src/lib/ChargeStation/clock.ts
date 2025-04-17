@@ -6,8 +6,8 @@ class Clock {
   constructor(protected speed = 1) {
     this.nowDate = new Date();
     this.clockInterval = setInterval(() => {
-      this.nowDate.setTime(this.nowDate.getTime() + 1000 * this.speed);
-    }, 1000);
+      this.nowDate.setTime(this.nowDate.getTime() + 100 * this.speed);
+    }, 100);
   }
 
   public setSpeed(speed: number) {
