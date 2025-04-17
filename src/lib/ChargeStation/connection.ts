@@ -1,4 +1,4 @@
-import Queue from 'queue-promise';
+import PromiseQueue from 'lib/ChargeStation/queue';
 
 enum MessageType {
   CALL = 2,
@@ -21,7 +21,7 @@ class Connection {
   private version: string;
   private ready: boolean;
   private messageId: number;
-  private callQueue: Queue;
+  private callQueue: PromiseQueue;
   private inflight: Inflight | undefined; // the call queue should guarantee only 1 inflight call at any point in time
   private inflightTimeoutMs: number = 10000; // time before we consider the inflight call lost
   onConnected: null | (() => unknown);
@@ -43,7 +43,7 @@ class Connection {
     this.version = version;
     this.ready = false;
     this.messageId = 1;
-    this.callQueue = new Queue({ concurrent: 1, interval: 50 });
+    this.callQueue = new PromiseQueue();
     this.onConnected = null;
 
     const url = this.ocppBaseUrl + '/' + this.ocppIdentity;
