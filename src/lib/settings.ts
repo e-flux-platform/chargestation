@@ -62,6 +62,7 @@ const isETotem = (settings: Settings) =>
 const isMadicLafon = (settings: Settings) =>
   settings.chargePointModel === 'madic/lafon';
 const isEVBox = (settings: Settings) => settings.chargePointModel === 'evbox';
+const isDbt = (settings: Settings) => settings.chargePointModel === 'dbt';
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -339,6 +340,30 @@ export const defaultVariableConfig16: Variable16[] = [
       'Default cost per kWh for sessions authorized via payment card',
     value: 0,
     predicate: isEVBox,
+  },
+  {
+    key: 'TPE_OCPP_TAGID',
+    description: 'Static Id tag for sessions authorized via payment card',
+    value: 'EMVCO',
+    predicate: isDbt,
+  },
+  {
+    key: 'TPE_OCPP_VENDORID',
+    description: 'VendorId for payment data transfer payloads',
+    value: 'DBT.QCNG.TPE',
+    predicate: isDbt,
+  },
+  {
+    key: 'SCHED_1_PRICE_PER_UNIT',
+    description: 'Unit type for pricing',
+    value: 'kWh',
+    predicate: isDbt,
+  },
+  {
+    key: 'SCHED_1_BILLING_TABLE',
+    description: 'Billing specification',
+    value: '(0;1)', // 1 EUR per kWh
+    predicate: isDbt,
   },
   {
     key: 'SupportedFileTransferProtocols',
