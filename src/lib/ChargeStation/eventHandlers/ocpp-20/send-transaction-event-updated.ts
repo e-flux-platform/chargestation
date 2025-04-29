@@ -37,7 +37,7 @@ const sendTransationEventUpdated: ChargeStationEventHandler = ({
             value: session.stateOfCharge,
             context: 'Sample.Periodic',
             measurand: 'SoC',
-            location: 'Outlet',
+            location: 'EV',
             unitOfMeasure: { unit: 'Percent' },
           },
         ],
