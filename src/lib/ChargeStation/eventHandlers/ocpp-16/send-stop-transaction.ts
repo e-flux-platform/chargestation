@@ -64,7 +64,7 @@ const sendStopTransaction: ChargeStationEventHandler = async ({
             {
               value: session.stateOfCharge.toString(),
               context: 'Transaction.End',
-              location: 'Outlet',
+              location: 'EV',
               unit: 'Percent',
               measurand: 'SoC',
             },

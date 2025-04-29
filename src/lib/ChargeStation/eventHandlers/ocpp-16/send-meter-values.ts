@@ -31,7 +31,7 @@ const sendMeterValues: ChargeStationEventHandler = async ({
             value: session.stateOfCharge.toString(),
             context: 'Sample.Periodic',
             measurand: 'SoC',
-            location: 'Outlet',
+            location: 'EV',
             unit: 'Percent',
           },
         ],
