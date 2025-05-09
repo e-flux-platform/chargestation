@@ -11,7 +11,8 @@ export default async function handleRemoteStopTransaction({
   ['1', '2'].forEach((cId) => {
     if (
       chargepoint.sessions[cId] &&
-      chargepoint.sessions[cId].transactionId === transactionId
+      chargepoint.sessions[cId].transactionId?.toString() ===
+        transactionId?.toString()
     ) {
       connectorId = cId.toString();
     }
