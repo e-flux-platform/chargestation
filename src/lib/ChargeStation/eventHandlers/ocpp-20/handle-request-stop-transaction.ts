@@ -12,7 +12,8 @@ const handleRequestStopTransaction: ChargeStationEventHandler<
   const connectorId = ['1', '2'].find(
     (cId) =>
       chargepoint.sessions[cId] &&
-      chargepoint.sessions[cId].transactionId === transactionId
+      chargepoint.sessions[cId].transactionId?.toString() ===
+        transactionId?.toString()
   );
   if (!connectorId || !chargepoint.hasRunningSession(Number(connectorId))) {
     response = {
