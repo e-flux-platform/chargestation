@@ -24,7 +24,7 @@ Features:
 - [x] Support for authorization
 - [ ] Terminate session on disconnect
 - [ ] Simulate being offline (and buffering commands)
-- [ ] Time travel
+- [x] Time travel
 - [ ] OCPP 2.1 Support
 - [ ] Animation for plugging in cable
 - [ ] Animation for cars
