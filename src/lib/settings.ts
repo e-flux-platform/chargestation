@@ -348,6 +348,12 @@ export const defaultVariableConfig16: Variable16[] = [
     predicate: isDbt,
   },
   {
+    key: 'TPE_OCPP_DATA',
+    description: 'Data transfer mode',
+    value: 'default',
+    predicate: isDbt,
+  },
+  {
     key: 'TPE_OCPP_VENDORID',
     description: 'VendorId for payment data transfer payloads',
     value: 'DBT.QCNG.TPE',

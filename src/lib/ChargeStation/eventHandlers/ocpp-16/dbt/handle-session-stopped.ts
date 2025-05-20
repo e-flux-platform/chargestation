@@ -12,6 +12,13 @@ export const calculateCostsAndSendReceipt: ChargeStationEventHandler = async (
     return; // session will stop the normal route
   }
 
+  const dataTransferMode = chargepoint.configuration.getVariableValue(
+    'TPE_OCPP_DATA'
+  ) as string;
+  if (dataTransferMode === 'none') {
+    return; // data transfers have been disabled
+  }
+
   // Calculations below are just general approximations of how costs may be applied.
   const pricePerUnit = chargepoint.configuration.getVariableValue(
     'SCHED_1_PRICE_PER_UNIT'
