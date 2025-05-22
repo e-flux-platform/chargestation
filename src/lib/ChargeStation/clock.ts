@@ -14,15 +14,11 @@ class Clock {
     this.speed = speed;
     // the tick frequency is proportional to speed, with a min of 1 and a max of 10
     // - speed 1  = 1 update / second
-    // - speed 5  = 1.66 updates / second
-    // - speed 10 = 3.33 updates / second
-    // - speed 15 = 5 updates / second
-    // - speed 20 = 6.66 updates / second
-    // - speed 25 = 8.33 updates / second
-    // - speed 25 = 10 updates / second
-    // - speed 30 = 10 updates / second
+    // - speed 5  = 1 update / second
+    // - speed 10 = 2 updates / second
+    // - speed 15 = 3 updates / second
     // etc
-    this.tickWithFrequency(Math.max(1, Math.min(10, speed / 3)));
+    this.tickWithFrequency(Math.max(1, Math.min(10, speed / 5)));
   }
 
   public getSpeed() {
