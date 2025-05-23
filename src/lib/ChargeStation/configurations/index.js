@@ -7,6 +7,7 @@ import ETotemOCPP16 from './e-totem-ocpp-16';
 import MadicLafonOCPP16 from './madic-lafon-ocpp-16';
 import EVBoxOCPP16 from './evbox-ocpp-16';
 import DbtOCPP16 from './dbt-ocpp-16';
+import G2MobilityOCPP16 from 'lib/ChargeStation/configurations/g2mobility-ocpp-16';
 
 const options = {
   'default-ocpp1.6': DefaultOCPP16,
@@ -18,6 +19,7 @@ const options = {
   'madic/lafon-ocpp1.6': MadicLafonOCPP16,
   'evbox-ocpp1.6': EVBoxOCPP16,
   'dbt-ocpp1.6': DbtOCPP16,
+  'g2mobility-ocpp1.6': G2MobilityOCPP16,
 };
 
 export function getOCPPConfigurationOptions() {

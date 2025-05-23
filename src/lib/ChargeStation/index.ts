@@ -38,6 +38,7 @@ export interface Settings {
   eTotemPeriodDuration: number;
   eTotemPerPeriodAmount: number;
   eTotemPerKWhAmount: number;
+  g2MobilityIdTagPrefix: string;
 }
 
 interface CallLogItem {

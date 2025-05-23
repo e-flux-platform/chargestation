@@ -20,6 +20,7 @@ export enum ChargeStationSetting {
   ETotemPeriodDuration = 'eTotemPeriodDuration', // nTPEPeriodeSecondes
   ETotemPerPeriodAmount = 'eTotemPerPeriodAmount', // nTPEPeriodeCentimes
   ETotemPerKWhAmount = 'eTotemPerKWhAmount', // nTPEConsoKWhCentimes
+  G2MobilityIdTagPrefix = 'g2MobilityIdTagPrefix',
 }
 
 export enum SessionSetting {
@@ -63,6 +64,8 @@ const isMadicLafon = (settings: Settings) =>
   settings.chargePointModel === 'madic/lafon';
 const isEVBox = (settings: Settings) => settings.chargePointModel === 'evbox';
 const isDbt = (settings: Settings) => settings.chargePointModel === 'dbt';
+const isG2Mobility = (settings: Settings) =>
+  settings.chargePointModel === 'g2mobility';
 
 export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
   {
@@ -182,6 +185,14 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
       'The price per-kWh in eurocents to be applied for non "Legacy" cost calculations',
     defaultValue: 30,
     predicate: isETotem,
+  },
+  {
+    key: ChargeStationSetting.G2MobilityIdTagPrefix,
+    name: 'G2Mobility idTag prefix',
+    description:
+      'The prefix to be used for idTags sent relating to payment terminal transactions',
+    defaultValue: '',
+    predicate: isG2Mobility,
   },
 ];
 
@@ -344,7 +355,7 @@ export const defaultVariableConfig16: Variable16[] = [
   {
     key: 'TPE_OCPP_TAGID',
     description: 'Static Id tag for sessions authorized via payment card',
-    value: 'EMVCO',
+    value: '',
     predicate: isDbt,
   },
   {
