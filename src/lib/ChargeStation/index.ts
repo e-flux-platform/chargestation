@@ -491,8 +491,7 @@ export class Session {
     private chargeStation: ChargeStation
   ) {
     this.options = options;
-    this.meterValuesInterval =
-      chargeStation.getMeterValueSampleInterval() || 60;
+    this.meterValuesInterval = chargeStation.getMeterValueSampleInterval();
     this.maxPowerKw = options.maxPowerKw || 22;
     this.carBatteryKwh = options.carBatteryKwh || 64;
     this.carBatteryStateOfCharge = options.carBatteryStateOfCharge || 80;
@@ -577,9 +576,10 @@ export class Session {
     }
 
     if (
-      this.lastMeterValuesTimestamp &&
-      clock.secondsSince(this.lastMeterValuesTimestamp) <
-        this.meterValuesInterval
+      this.meterValuesInterval === 0 ||
+      (this.lastMeterValuesTimestamp &&
+        clock.secondsSince(this.lastMeterValuesTimestamp) <
+          this.meterValuesInterval)
     ) {
       return;
     }
