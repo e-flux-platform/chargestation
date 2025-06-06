@@ -57,6 +57,8 @@ export default class Home extends React.Component {
     session1OnceStarted: false,
     session2OnceStarted: false,
     speed: 1,
+    speedChangeBurstReset: 0,
+    speedChangeBurstTotal: 0,
   };
 
   async componentDidMount() {
@@ -153,6 +155,22 @@ export default class Home extends React.Component {
     this.nextTick();
   };
 
+  growSpeed = (multiplier) => {
+    const { speed, speedChangeBurstReset, speedChangeBurstTotal } = this.state;
+    if (speedChangeBurstReset) {
+      clearTimeout(speedChangeBurstReset);
+    }
+    this.setState({
+      speedChangeBurstReset: setTimeout(() => {
+        this.setState({ speedChangeBurstTotal: 0, speedChangeBurstReset: 0 });
+      }, 250),
+    });
+    this.setSpeed(
+      speed + Math.ceil((speedChangeBurstTotal + 1) / 5) * 5 * multiplier
+    );
+    this.setState({ speedChangeBurstTotal: speedChangeBurstTotal + 1 });
+  };
+
   getCarAnimationClass = (connectorNo) => {
     if (this.state[`session${connectorNo}Ongoing`]) {
       return 'animated';
@@ -244,14 +262,8 @@ export default class Home extends React.Component {
               </Grid.Row>
               <Grid.Row>
                 <Button icon="play" onClick={() => this.setSpeed(1)} />
-                <Button
-                  icon="backward"
-                  onClick={() => this.setSpeed(speed - 5)}
-                />
-                <Button
-                  icon="forward"
-                  onClick={() => this.setSpeed(speed + 5)}
-                />
+                <Button icon="backward" onClick={() => this.growSpeed(-1)} />
+                <Button icon="forward" onClick={() => this.growSpeed(1)} />
                 <SetDateTimeModal
                   onSave={({ date }) => {
                     this.setDate(date);
