@@ -155,7 +155,7 @@ export default class Home extends React.Component {
     this.nextTick();
   };
 
-  growSpeed = (multiplier) => {
+  growSpeed = (stepSize) => {
     const { speed, speedChangeBurstReset, speedChangeBurstTotal } = this.state;
     if (speedChangeBurstReset) {
       clearTimeout(speedChangeBurstReset);
@@ -166,7 +166,8 @@ export default class Home extends React.Component {
       }, 250),
     });
     this.setSpeed(
-      speed + Math.ceil((speedChangeBurstTotal + 1) / 5) * 5 * multiplier
+      speed +
+        Math.ceil((speedChangeBurstTotal + 1) / Math.abs(stepSize)) * stepSize
     );
     this.setState({ speedChangeBurstTotal: speedChangeBurstTotal + 1 });
   };
@@ -262,8 +263,8 @@ export default class Home extends React.Component {
               </Grid.Row>
               <Grid.Row>
                 <Button icon="play" onClick={() => this.setSpeed(1)} />
-                <Button icon="backward" onClick={() => this.growSpeed(-1)} />
-                <Button icon="forward" onClick={() => this.growSpeed(1)} />
+                <Button icon="backward" onClick={() => this.growSpeed(-5)} />
+                <Button icon="forward" onClick={() => this.growSpeed(5)} />
                 <SetDateTimeModal
                   onSave={({ date }) => {
                     this.setDate(date);
