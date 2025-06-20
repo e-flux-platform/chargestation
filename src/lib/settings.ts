@@ -13,6 +13,7 @@ export enum ChargeStationSetting {
   ICCID = 'iccid',
   IMSI = 'imsi',
   PrivateKey = 'privateKey',
+  OcmfSignatureMethod = 'ocmfSignatureMethod',
   ETotemTerminalMode = 'eTotemTerminalMode', // szTPEMode
   ETotemCostCalculationMode = 'eTotemCostCalculationMode', // szTPEModeFacturation
   ETotemFlatRateAmount = 'eTotemFlatRateAmount', // nTPEForfaitCentimes
@@ -127,6 +128,23 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     name: 'Private Key',
     description: 'Private key used for signing meter data (hex encoded)',
     defaultValue: '',
+  },
+  {
+    key: ChargeStationSetting.OcmfSignatureMethod,
+    name: 'OCMF Signature Method',
+    description: 'Signature method to use for signed meter data',
+    input: 'dropdown',
+    options: [
+      'ECDSA-brainpool256r1-SHA256',
+      'ECDSA-brainpool384r1-SHA256',
+      'ECDSA-secp192k1-SHA256',
+      'ECDSA-secp192r1-SHA256',
+      'ECDSA-secp256k1-SHA256',
+      'ECDSA-secp256r1-SHA256',
+      'ECDSA-secp384r1-SHA256',
+    ],
+    defaultValue: '',
+    type: 'string',
   },
   {
     key: ChargeStationSetting.ETotemTerminalMode,
