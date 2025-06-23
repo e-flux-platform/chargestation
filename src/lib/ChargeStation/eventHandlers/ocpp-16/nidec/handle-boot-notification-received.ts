@@ -16,8 +16,6 @@ export const sendMeterConfiguration: ChargeStationEventHandler = async (
     return;
   }
 
-  const hexPublicKey = bytesToHex(publicKey);
-
   await sleep(2000);
 
   for (const connectorId of [1, 2]) {
@@ -30,18 +28,11 @@ export const sendMeterConfiguration: ChargeStationEventHandler = async (
             connectorId,
             meterSerial: '1234567',
             type: 'SIGNATURE',
-            publicKey: hexPublicKey,
+            publicKey,
           },
         ],
       }),
     });
     await sleep(200);
   }
-};
-
-const bytesToHex = (bytes: Uint8Array): string => {
-  return Array.from(bytes)
-    .map((x) => x.toString(16).padStart(2, '0'))
-    .join('')
-    .toUpperCase();
 };

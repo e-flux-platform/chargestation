@@ -32,7 +32,9 @@ export const signMeterReadings = async (
   );
 };
 
-export const getPublicKey = async (chargepoint: ChargeStation) => {
+export const getPublicKey = async (
+  chargepoint: ChargeStation
+): Promise<string | undefined> => {
   if (!chargepoint.settings.privateKey) {
     throw new Error('Private key not set');
   }
@@ -40,7 +42,17 @@ export const getPublicKey = async (chargepoint: ChargeStation) => {
     hexToBytes(chargepoint.settings.privateKey),
     'pkcs8-der'
   );
-  return privateKey.getPublicKey()?.encode('spki-der');
+  const publicKey = privateKey.getPublicKey();
+  if (publicKey) {
+    return bytesToHex(publicKey.encode('spki-der'));
+  }
+};
+
+const bytesToHex = (bytes: Uint8Array): string => {
+  return Array.from(bytes)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
 };
 
 const hexToBytes = (hex: string): Uint8Array => {
