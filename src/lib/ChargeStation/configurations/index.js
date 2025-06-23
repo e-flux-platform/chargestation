@@ -8,6 +8,7 @@ import MadicLafonOCPP16 from './madic-lafon-ocpp-16';
 import EVBoxOCPP16 from './evbox-ocpp-16';
 import DbtOCPP16 from './dbt-ocpp-16';
 import G2MobilityOCPP16 from 'lib/ChargeStation/configurations/g2mobility-ocpp-16';
+import NidecOCPP16 from 'lib/ChargeStation/configurations/nidec-ocpp-16';
 
 const options = {
   'default-ocpp1.6': DefaultOCPP16,
@@ -20,6 +21,7 @@ const options = {
   'evbox-ocpp1.6': EVBoxOCPP16,
   'dbt-ocpp1.6': DbtOCPP16,
   'g2mobility-ocpp1.6': G2MobilityOCPP16,
+  'nidec-ocpp1.6': NidecOCPP16,
 };
 
 export function getOCPPConfigurationOptions() {
@@ -27,5 +29,5 @@ export function getOCPPConfigurationOptions() {
 }
 
 export function getOCPPConfiguration(ocppVersion, model) {
-  return options[`${model}-${ocppVersion}`];
+  return options[`${model.toLowerCase()}-${ocppVersion}`];
 }

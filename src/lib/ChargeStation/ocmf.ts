@@ -1,48 +1,73 @@
-import { ec as EC } from 'elliptic';
 import ChargeStation, { Session } from 'lib/ChargeStation/index';
-
-const curveToIdentifier: Record<Curve, string> = {
-  secp192k1: 'ECDSA-secp192k1-SHA256',
-  secp256k1: 'ECDSA-secp256k1-SHA256',
-  secp192r1: 'ECDSA-secp192r1-SHA256',
-  secp256r1: 'ECDSA-secp256r1-SHA256',
-  brainpool256r1: 'ECDSA-brainpool256r1-SHA256',
-  secp384r1: 'ECDSA-secp384r1-SHA256',
-  brainpool384r1: 'ECDSA-brainpool384r1-SHA256',
-};
-
-const defaultCurve = 'secp256k1';
-
-type Curve =
-  | 'secp192k1'
-  | 'secp256k1'
-  | 'secp192r1'
-  | 'secp256r1'
-  | 'brainpool256r1'
-  | 'secp384r1'
-  | 'brainpool384r1';
+import { Crypto } from '@road-labs/ocmf-crypto-noble';
+import { PayloadData, Signer } from '@road-labs/ocmf';
 
 type Options = {
   includeStart?: boolean;
   includeEnd?: boolean;
-  curve?: Curve;
 };
+
+const ecCrypto = new Crypto();
+const ocmfSigner = new Signer(ecCrypto);
 
 export const signMeterReadings = async (
   chargepoint: ChargeStation,
   session: Session,
   opts: Options
 ) => {
-  const dataSection = JSON.stringify(buildDataSection(session, opts));
-
-  const privateKey = chargepoint.settings.privateKey || '';
-  const curve = opts.curve || defaultCurve;
-  const signature = await signMessage(privateKey, dataSection, curve);
-  const signatureSection = JSON.stringify(
-    buildSignatureSection(signature, curve)
+  if (!chargepoint.settings.privateKey) {
+    throw new Error('Private key not set');
+  }
+  if (!chargepoint.settings.ocmfSignatureMethod) {
+    throw new Error('Signature method not set');
+  }
+  const privateKey = await ecCrypto.decodeEcPrivateKey(
+    hexToBytes(chargepoint.settings.privateKey),
+    'pkcs8-der'
   );
+  return ocmfSigner.sign(
+    buildDataSection(session, opts),
+    privateKey,
+    chargepoint.settings.ocmfSignatureMethod
+  );
+};
 
-  return ['OCMF', dataSection, signatureSection].join('|');
+export const getPublicKey = async (
+  chargepoint: ChargeStation
+): Promise<string | undefined> => {
+  if (!chargepoint.settings.privateKey) {
+    throw new Error('Private key not set');
+  }
+  const privateKey = await ecCrypto.decodeEcPrivateKey(
+    hexToBytes(chargepoint.settings.privateKey),
+    'pkcs8-der'
+  );
+  const publicKey = privateKey.getPublicKey();
+  if (publicKey) {
+    return bytesToHex(publicKey.encode('spki-der'));
+  }
+};
+
+const bytesToHex = (bytes: Uint8Array): string => {
+  return Array.from(bytes)
+    .map((x) => x.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
+};
+
+const hexToBytes = (hex: string): Uint8Array => {
+  if (
+    hex.length === 0 ||
+    hex.length % 2 !== 0 ||
+    !hex.match(/^[A-Za-f0-9]+$/)
+  ) {
+    throw new Error('Invalid hex string');
+  }
+  const bytes = hex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16));
+  if (!bytes) {
+    throw new Error('Failed to map hex string');
+  }
+  return new Uint8Array(bytes);
 };
 
 const ocmfDate = (d: Date): string => {
@@ -50,22 +75,10 @@ const ocmfDate = (d: Date): string => {
   const time = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()},${d.getMilliseconds()}`;
   const offset = d.getTimezoneOffset() <= 0 ? '+' : '-';
   const tz = `${(Math.abs(d.getTimezoneOffset()) / 60) * 100}`.padStart(4, '0');
-  return `${date}T${time}${offset}${tz}`;
+  return `${date}T${time}${offset}${tz} S`;
 };
 
-const signMessage = async (
-  privateKey: string,
-  message: string,
-  curve: string
-) => {
-  const ec = new EC(curve);
-  const key = ec.keyFromPrivate(privateKey);
-  const msgUint8 = new TextEncoder().encode(message);
-  const shaMsg = await crypto.subtle.digest('SHA-256', msgUint8);
-  return ec.sign(new Uint8Array(shaMsg), key).toDER('hex');
-};
-
-const buildDataSection = (session: Session, opts: Options) => ({
+const buildDataSection = (session: Session, opts: Options): PayloadData => ({
   FV: '1.0',
   GI: '123',
   GS: '000',
@@ -107,12 +120,5 @@ const buildDataSection = (session: Session, opts: Options) => ({
           },
         ]
       : []),
-  ],
-});
-
-const buildSignatureSection = (signature: string, curve: Curve) => ({
-  SA: curveToIdentifier[curve],
-  SE: 'hex',
-  SM: 'application/x-der',
-  SD: signature,
+  ] as PayloadData['RD'],
 });

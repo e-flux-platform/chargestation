@@ -16,6 +16,7 @@ import { StatusNotificationRequest as StatusNotificationRequest16 } from 'schema
 import { StatusNotificationRequest as StatusNotificationRequest20 } from 'schemas/ocpp/2.0/StatusNotificationRequest';
 
 import clock, { Interval } from './clock';
+import { SignatureMethodId } from '@road-labs/ocmf';
 
 export interface Settings {
   ocppConfiguration: string;
@@ -27,6 +28,7 @@ export interface Settings {
   iccid: string;
   imsi: string;
   privateKey?: string;
+  ocmfSignatureMethod?: SignatureMethodId;
   Identity: string;
   eTotemTerminalMode: 'etotem' | 'etotem_offline';
   eTotemCostCalculationMode:
