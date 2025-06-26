@@ -19,6 +19,7 @@ Features:
 - [x] Support for using two connectors
 - [x] Support for Remote Start/Stop
 - [x] Run any OCPP command
+- [x] OCMF signed meter data
 - [ ] Auto start session via parameters
 - [ ] Visual progress bar on car state of charge
 - [x] Support for authorization
