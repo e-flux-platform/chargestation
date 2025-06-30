@@ -1,14 +1,14 @@
 import ChargeStation, { Session } from 'lib/ChargeStation/index';
 import { Crypto } from '@road-labs/ocmf-crypto-noble';
-import { PayloadData, Signer } from '@road-labs/ocmf';
+import { formatDate, PayloadData, Signer } from '@road-labs/ocmf';
 
 type Options = {
   includeStart?: boolean;
   includeEnd?: boolean;
 };
 
-const ecCrypto = new Crypto();
-const ocmfSigner = new Signer(ecCrypto);
+const ocmfCrypto = new Crypto();
+const ocmfSigner = new Signer(ocmfCrypto);
 
 export const signMeterReadings = async (
   chargepoint: ChargeStation,
@@ -21,7 +21,7 @@ export const signMeterReadings = async (
   if (!chargepoint.settings.ocmfSignatureMethod) {
     throw new Error('Signature method not set');
   }
-  const privateKey = await ecCrypto.decodeEcPrivateKey(
+  const privateKey = await ocmfCrypto.decodeEcPrivateKey(
     hexToBytes(chargepoint.settings.privateKey),
     'pkcs8-der'
   );
@@ -38,7 +38,7 @@ export const getPublicKey = async (
   if (!chargepoint.settings.privateKey) {
     throw new Error('Private key not set');
   }
-  const privateKey = await ecCrypto.decodeEcPrivateKey(
+  const privateKey = await ocmfCrypto.decodeEcPrivateKey(
     hexToBytes(chargepoint.settings.privateKey),
     'pkcs8-der'
   );
@@ -71,11 +71,7 @@ const hexToBytes = (hex: string): Uint8Array => {
 };
 
 const ocmfDate = (d: Date): string => {
-  const date = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
-  const time = `${d.getHours()}:${d.getMinutes()}:${d.getSeconds()},${d.getMilliseconds()}`;
-  const offset = d.getTimezoneOffset() <= 0 ? '+' : '-';
-  const tz = `${(Math.abs(d.getTimezoneOffset()) / 60) * 100}`.padStart(4, '0');
-  return `${date}T${time}${offset}${tz} S`;
+  return formatDate(d, 'S');
 };
 
 const buildDataSection = (session: Session, opts: Options): PayloadData => ({
