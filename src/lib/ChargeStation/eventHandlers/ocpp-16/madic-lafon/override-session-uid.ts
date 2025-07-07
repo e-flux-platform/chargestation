@@ -10,6 +10,8 @@ const overrideSessionUid: ChargeStationEventHandler = async (params) => {
   session.options.uid = chargepoint.configuration.getVariableValue(
     'IDTagBankCard'
   ) as string;
+  session.options.skipAuthorize =
+    chargepoint.settings.madicLafonSkipPreAuthorize;
 };
 
 export default overrideSessionUid;

@@ -22,6 +22,7 @@ export enum ChargeStationSetting {
   ETotemPerPeriodAmount = 'eTotemPerPeriodAmount', // nTPEPeriodeCentimes
   ETotemPerKWhAmount = 'eTotemPerKWhAmount', // nTPEConsoKWhCentimes
   G2MobilityIdTagPrefix = 'g2MobilityIdTagPrefix',
+  MadicLafonSkipPreAuthorize = 'madicLafonSkipPreAuthorize',
 }
 
 export enum SessionSetting {
@@ -211,6 +212,17 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
       'The prefix to be used for idTags sent relating to payment terminal transactions',
     defaultValue: '',
     predicate: isG2Mobility,
+  },
+  {
+    key: ChargeStationSetting.MadicLafonSkipPreAuthorize,
+    name: 'MADIC/LAFON skip pre-authorization',
+    description:
+      'Whether to send an Authorize request before StartTransaction for payment terminal sessions',
+    input: 'dropdown',
+    options: ['true', 'false'],
+    defaultValue: false,
+    type: 'boolean',
+    predicate: isMadicLafon,
   },
 ];
 
