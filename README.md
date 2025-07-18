@@ -86,6 +86,7 @@ All configuration is done using environment variables. The default values in
 
 - `SERVER_HOST` - Host to bind to, defaults to `"0.0.0.0"`
 - `SERVER_PORT` - Port to bind to, defaults to `2100`
+- `OCPP_BASE_URL` - Default OCPP backend, defaults to `ws://localhost`
 - `ENV_NAME` - Node environment `development`
 - `APP_NAME` - Default product name to be used in views
 
