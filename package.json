@@ -36,7 +36,6 @@
     "@hot-loader/react-dom": "^17.0.1",
     "@road-labs/ocmf": "^0.0.7",
     "@road-labs/ocmf-crypto-noble": "^0.0.7",
-    "@sentry/browser": "^6.18.1",
     "@types/uuid": "^9.0.6",
     "autoprefixer": "^10.0.0",
     "babel-loader": "^8.2.2",

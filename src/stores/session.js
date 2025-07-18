@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 
 import { request, hasToken, setToken } from 'utils/api';
 import { trackSession } from 'utils/analytics';
-import { captureError } from 'utils/sentry';
 import { wrapContext } from 'utils/hoc';
 import { localStorage } from 'utils/storage';
 
@@ -29,7 +28,6 @@ export class SessionProvider extends React.PureComponent {
   }
 
   componentDidCatch(error) {
-    captureError(error);
     this.setState({
       error,
     });
