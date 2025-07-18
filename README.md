@@ -85,7 +85,7 @@ All configuration is done using environment variables. The default values in
 `.env` can be overwritten using environment variables.
 
 - `SERVER_HOST` - Host to bind to, defaults to `"0.0.0.0"`
-- `SERVER_PORT` - Port to bind to, defaults to `2300`
+- `SERVER_PORT` - Port to bind to, defaults to `2100`
 - `ENV_NAME` - Node environment `development`
 - `APP_NAME` - Default product name to be used in views
 
