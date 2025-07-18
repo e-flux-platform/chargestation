@@ -2,6 +2,7 @@ import { SetVariableDataType } from '../schemas/ocpp/2.0/SetVariablesRequest';
 import { ChangeConfigurationRequest } from '../schemas/ocpp/1.6/ChangeConfiguration';
 import { Map } from '../types/generic';
 import { Settings } from 'lib/ChargeStation';
+import { OCPP_BASE_URL } from 'utils/env';
 
 export enum ChargeStationSetting {
   OCPPBaseUrl = 'ocppBaseUrl',
@@ -82,7 +83,7 @@ export const settingsList: SettingsListSetting<ChargeStationSetting>[] = [
     key: ChargeStationSetting.OCPPBaseUrl,
     name: 'OCPP Base URL',
     description: 'Websocket server to connect with',
-    defaultValue: 'ws://localhost:2600/e-flux',
+    defaultValue: OCPP_BASE_URL || 'ws://localhost',
   },
   {
     key: ChargeStationSetting.InteractiveMessagesReply,
