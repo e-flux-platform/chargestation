@@ -6,7 +6,6 @@ import React from 'react';
 import { Message } from 'semantic';
 import { ApiError } from 'utils/api';
 import { CustomError } from 'utils/error';
-import { captureError } from 'utils/sentry';
 
 export default class ErrorMessage extends React.Component {
   componentDidUpdate(lastProps) {
@@ -15,7 +14,6 @@ export default class ErrorMessage extends React.Component {
       if (this.canLogError(error)) {
         // eslint-disable-next-line
         console?.error(error);
-        captureError(error);
       }
       this.setState({
         open: false,
