@@ -2,6 +2,7 @@ const Koa = require('koa');
 const webpack = require('webpack');
 const e2k = require('express-to-koa');
 const config = require('@bedrockio/config');
+const open = require('open');
 
 const envMiddleware = require('./middleware/env');
 const historyMiddleware = require('./middleware/history');
@@ -71,6 +72,8 @@ const app = new Koa();
 
   app.listen(SERVER_PORT, SERVER_HOST, () => {
     // eslint-disable-next-line
-    console.info(`Running App on http://${SERVER_HOST}:${SERVER_PORT}`);
+    const url = `http://${SERVER_HOST}:${SERVER_PORT}`;
+    console.info(`Running App on ${url}`);
+    open(url);
   });
 })();
