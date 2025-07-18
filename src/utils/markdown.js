@@ -1,4 +1,4 @@
-import { API_URL, APP_NAME } from 'utils/env';
+import { APP_NAME } from 'utils/env';
 import { flatten } from 'lodash';
 
 function formatTypeSummary(schema) {
@@ -234,10 +234,6 @@ export function enrichMarkdown(
       credentials[0].apiToken
     );
   }
-  enrichedMarkdown = enrichedMarkdown.replace(
-    new RegExp('<API_URL>', 'g'),
-    API_URL.replace(/\/$/, '')
-  );
   enrichedMarkdown = enrichedMarkdown.replace(
     new RegExp('<APP_NAME>', 'g'),
     APP_NAME.replace(/\/$/, '')

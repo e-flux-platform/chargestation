@@ -1,19 +1,3 @@
-const {
-  API_URL,
-  APP_NAME,
-  APP_URL,
-  APP_SUPPORT_EMAIL,
-  ENV_NAME,
-  GOOGLE_API_KEY,
-  API_KEY,
-} = window.__ENV__ || {};
+const { APP_NAME, APP_URL, ENV_NAME } = window.__ENV__ || {};
 
-export {
-  API_URL,
-  APP_NAME,
-  APP_URL,
-  APP_SUPPORT_EMAIL,
-  ENV_NAME,
-  GOOGLE_API_KEY,
-  API_KEY,
-};
+export { APP_NAME, APP_URL, ENV_NAME };
