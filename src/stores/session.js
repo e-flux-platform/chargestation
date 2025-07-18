@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { merge, omit } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import { trackSession } from 'utils/analytics';
 import { wrapContext } from 'utils/hoc';
 import { localStorage } from 'utils/storage';
 
@@ -36,12 +35,10 @@ export class SessionProvider extends React.PureComponent {
         [key]: data,
       })
     );
-    trackSession('add', key, data);
   };
 
   removeStored = (key) => {
     this.updateStored(omit(this.state.stored, key));
-    trackSession('remove', key);
   };
 
   clearStored = () => {
