@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { Message } from 'semantic';
-import { ApiError } from 'utils/api';
 import { CustomError } from 'utils/error';
 
 export default class ErrorMessage extends React.Component {
@@ -22,9 +21,7 @@ export default class ErrorMessage extends React.Component {
   }
 
   canLogError(error) {
-    if (error instanceof ApiError) {
-      return error.status >= 500;
-    } else if (error instanceof CustomError) {
+    if (error instanceof CustomError) {
       return false;
     } else {
       return !!error;

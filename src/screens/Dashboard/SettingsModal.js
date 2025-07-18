@@ -1,8 +1,6 @@
 import React from 'react';
 import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
-import { HelpTip } from 'components';
-import { ChargeStationSetting } from 'lib/settings';
 import SettingsInput from 'screens/Dashboard/SettingsInput';
 
 @modal
