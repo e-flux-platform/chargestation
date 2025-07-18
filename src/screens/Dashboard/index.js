@@ -32,13 +32,13 @@ import CommandDetailsModal from './CommandDetailsModal';
 import { formatDateTimeRelative } from 'utils/date';
 import StopSessionModal from './StopSessionModal';
 import StatusNotificationModal from './StatusNotificationModal';
-import ExecuteCommandModal from 'screens/Dashboard/ExecuteCommandModal';
+import PlayCommandCsvModal from 'screens/Dashboard/PlayCommandCsvModal';
 import ReplyMessageModal from './ReplyMessageModal';
 import SetDateTimeModal from 'screens/Dashboard/SetDateTimeModal';
 import { Grid, Statistic, StatisticLabel, StatisticValue } from 'semantic';
 import { SessionStatistic } from 'screens/Dashboard/SessionStatistic';
 
-const executeCommandEnabled = getDocumentQuery().has('executeCommand');
+const playCommandCsv = getDocumentQuery().has('playCommandCsv');
 
 @screen
 export default class Home extends React.Component {
@@ -349,10 +349,37 @@ export default class Home extends React.Component {
             />
 
             <div className="right-actions">
-              <Button to="/docs" as={Link} inverted icon="book" />(
-              {executeCommandEnabled && (
-                <ExecuteCommandModal
-                  trigger={<Button inverted icon="upload" />}
+              <Button
+                to="/docs"
+                as={Link}
+                inverted
+                icon="book"
+                title={'Help'}
+              />
+              <SendMessageModal
+                onSave={async ({ action, payload }) =>
+                  chargeStation.writeCall(action, payload)
+                }
+                trigger={
+                  <Button inverted icon="envelope" title={'Send Message'} />
+                }
+              />
+              <ReplyMessageModal
+                open={!!chargeStation.callToReplyManually}
+                call={chargeStation.callToReplyManually}
+                onSave={async ({ payload }) =>
+                  chargeStation.writeCallResult(
+                    chargeStation.callToReplyManually?.messageId,
+                    payload
+                  )
+                }
+                onClose={() => {
+                  chargeStation.callToReplyManually = null;
+                }}
+              />
+              {playCommandCsv && (
+                <PlayCommandCsvModal
+                  trigger={<Button inverted icon="upload" title={'Play CSV'} />}
                   onSave={({ commands }) => {
                     // Expected to match Road dashboard charging station CSV export format
                     const parsed = Papa.parse(commands, {
@@ -423,30 +450,6 @@ export default class Home extends React.Component {
                 }}
               />
             </div>
-          </div>
-          <div className="sub-actions">
-            <SendMessageModal
-              onSave={async ({ action, payload }) =>
-                chargeStation.writeCall(action, payload)
-              }
-              trigger={
-                <Button inverted icon="envelope" content="Send Message" />
-              }
-            />
-
-            <ReplyMessageModal
-              open={!!chargeStation.callToReplyManually}
-              call={chargeStation.callToReplyManually}
-              onSave={async ({ payload }) =>
-                chargeStation.writeCallResult(
-                  chargeStation.callToReplyManually?.messageId,
-                  payload
-                )
-              }
-              onClose={() => {
-                chargeStation.callToReplyManually = null;
-              }}
-            />
           </div>
 
           <div className="console">

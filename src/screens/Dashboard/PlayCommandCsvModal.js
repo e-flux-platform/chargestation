@@ -3,7 +3,7 @@ import { Modal, Button, Form, Header, Divider } from 'semantic';
 import modal from 'helpers/modal';
 
 @modal
-export default class ExecuteCommandModal extends React.Component {
+export default class PlayCommandCsvModal extends React.Component {
   state = {
     commands: '',
   };
@@ -22,13 +22,13 @@ export default class ExecuteCommandModal extends React.Component {
 
     return (
       <>
-        <Modal.Header>Execute Command</Modal.Header>
+        <Modal.Header>Play Command CSV</Modal.Header>
         <Modal.Content>
           <Form onSubmit={this.onSubmit} id="execute-command">
             <Form.TextArea
               value={commands}
               name="commands"
-              label="Commands"
+              label="CSV"
               type="text"
               required
               onChange={this.setField}
