@@ -19,18 +19,6 @@ const app = new Koa();
 
 app.use(statusMiddleware);
 
-if (config.has('HTTP_BASIC_AUTH_PATH')) {
-  app.use(
-    koaMount(
-      config.get('HTTP_BASIC_AUTH_PATH'),
-      koaBasicAuth({
-        user: config.get('HTTP_BASIC_AUTH_USER'),
-        pass: config.get('HTTP_BASIC_AUTH_PASS'),
-      })
-    )
-  );
-}
-
 app
   .use(koaMount('/assets/', assetsMiddleware('./dist/assets')))
   .use(loggingMiddleware())
