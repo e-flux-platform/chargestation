@@ -1,0 +1,36 @@
+name: On Pull Request
+
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+
+concurrency:
+  group: 'on-pull-request-${{ github.ref }}'
+  cancel-in-progress: false
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        timeout-minutes: 5
+      - name: Setup volta
+        uses: volta-cli/action@v4
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint
+        run: yarn lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup volta
+        uses: volta-cli/action@v4
+      - name: Install dependencies
+        run: yarn install
+      - name: Create build
+        run: yarn run build

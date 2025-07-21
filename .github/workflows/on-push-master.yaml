@@ -1,0 +1,55 @@
+name: On Push Master
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: 'on-push-master'
+  cancel-in-progress: false
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        timeout-minutes: 5
+      - name: Setup volta
+        uses: volta-cli/action@v4
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint
+        run: yarn lint
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup volta
+        uses: volta-cli/action@v4
+      - name: Install dependencies
+        run: yarn install
+      - name: Create build
+        run: yarn run build
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy-pages:
+    name: Deploy to GitHub pages
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: [ lint, build ]
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
