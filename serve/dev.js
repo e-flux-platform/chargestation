@@ -4,8 +4,6 @@ const e2k = require('express-to-koa');
 const config = require('@bedrockio/config');
 const open = require('open');
 
-const envMiddleware = require('./middleware/env');
-const historyMiddleware = require('./middleware/history');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 
@@ -65,8 +63,6 @@ const app = new Koa();
   // https://github.com/webpack-contrib/webpack-hot-middleware/pull/394
   const wrappedHotMiddleware = e2k(webpackHotMiddleware(compiler));
 
-  app.use(envMiddleware());
-  app.use(historyMiddleware({ apps: ['/'] }));
   app.use(wrappedDevMiddleware);
   app.use(wrappedHotMiddleware);
 

@@ -8,11 +8,20 @@ const TerserWebpackPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { template: compileTemplate } = require('lodash');
+const { template: compileTemplate, pick } = require('lodash');
 
 // To enable multiple builds, place each app in a folder inside src,
 // add it below, and move src/index.html to src/common/index.html.
 const APPS = ['public'];
+
+// Env vars specified below will be exposed to HtmlWebpackPlugin
+// templating. Only include env vars that are suitable for exposure.
+const envTemplateWhitelist = [
+  'ENV_NAME',
+  'APP_NAME',
+  'APP_URL',
+  'OCPP_BASE_URL',
+];
 
 // webpack v5 no longer passes command line flags so hooking into
 // "name" flag instead of "app".
@@ -206,13 +215,15 @@ function isMultiEntry() {
 }
 
 function getTemplatePlugins() {
+  const params = pick(PARAMS, envTemplateWhitelist);
   return argv.apps.map((app) => {
     return new HtmlWebpackPlugin({
       template: templatePath,
       chunks: [app, 'vendor'],
       templateParameters: {
         app,
-        ...PARAMS,
+        jsonParams: JSON.stringify(params),
+        ...params,
       },
       minify: {
         collapseWhitespace: true,

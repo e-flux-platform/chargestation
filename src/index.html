@@ -11,8 +11,10 @@
     <link
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,400&display=swap"
       rel="stylesheet" />
-    <title><!-- env:APP_NAME --></title>
-    <!-- env:conf -->
+    <title><%= APP_NAME %></title>
+    <script>
+      window.__ENV__ = <%= jsonParams %>;
+    </script>
   </head>
   <body>
     <div id="root"></div>

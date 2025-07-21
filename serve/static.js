@@ -2,13 +2,10 @@ const Koa = require('koa');
 
 const { loggingMiddleware } = require('@bedrockio/instrumentation');
 const koaMount = require('koa-mount');
-const koaBasicAuth = require('koa-basic-auth');
 
 const config = require('@bedrockio/config');
 
-const envMiddleware = require('./middleware/env');
 const assetsMiddleware = require('./middleware/assets');
-const historyMiddleware = require('./middleware/history');
 const templateMiddleware = require('./middleware/template');
 const statusMiddleware = require('./middleware/status');
 
@@ -22,8 +19,6 @@ app.use(statusMiddleware);
 app
   .use(koaMount('/assets/', assetsMiddleware('./dist/assets')))
   .use(loggingMiddleware())
-  .use(envMiddleware())
-  .use(historyMiddleware({ apps: ['/'] }))
   .use(templateMiddleware({ apps: ['/'] }));
 
 app.listen(SERVER_PORT, SERVER_HOST, (err) => {
