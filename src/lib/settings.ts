@@ -26,7 +26,7 @@ export enum ChargeStationSetting {
   MadicLafonSkipPreAuthorize = 'madicLafonSkipPreAuthorize',
 }
 
-export enum SessionSetting {
+enum SessionSetting {
   uid = 'uid',
   maxPowerKw = 'maxPowerKw',
   carBatteryKwh = 'carBatteryKwh',
@@ -260,7 +260,7 @@ export const sessionSettingsList: SettingsListSetting<SessionSetting>[] = [
   },
 ];
 
-export interface Variable16 {
+interface Variable16 {
   key: string;
   description?: string;
   value: string | number | boolean;
@@ -465,7 +465,7 @@ export interface Variable201 {
   predicate?: (settings: Settings) => boolean;
 }
 
-export const defaultVariableConfig201: Variable201[] = [
+const defaultVariableConfig201: Variable201[] = [
   {
     component: {
       name: 'SecurityCtrlr',

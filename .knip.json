@@ -1,0 +1,6 @@
+{
+  "ignoreDependencies": [
+    "postcss-loader",
+    "@hot-loader/react-dom"
+  ]
+}

@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { round } from 'lodash';
 
-export const SIZES = ['xxs', 'xs', 's', 'm', 'l', 'xl'];
+const SIZES = ['xxs', 'xs', 's', 'm', 'l', 'xl'];
 export const SIZE_TYPE = PropTypes.oneOfType([
   PropTypes.number,
   PropTypes.string,

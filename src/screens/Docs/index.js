@@ -5,7 +5,6 @@ import { Breadcrumb, Container, Divider } from 'semantic';
 import StandardPage from './StandardPage';
 
 import DOCS from 'docs';
-import { withSession } from 'stores';
 import {
   settingsList,
   sessionSettingsList,
@@ -46,7 +45,6 @@ function getDynamicMarkdown() {
   };
 }
 
-@withSession
 export default class Docs extends React.Component {
   static layout = 'portal';
 
