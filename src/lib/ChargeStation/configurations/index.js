@@ -24,10 +24,6 @@ const options = {
   'nidec-ocpp1.6': NidecOCPP16,
 };
 
-export function getOCPPConfigurationOptions() {
-  return Object.keys(options);
-}
-
 export function getOCPPConfiguration(ocppVersion, model) {
   return options[`${model.toLowerCase()}-${ocppVersion}`];
 }

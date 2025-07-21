@@ -6,7 +6,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { SessionProvider } from 'stores';
 
 // Icons
 
@@ -26,13 +25,11 @@ import App from './App';
 
 const Wrapper = () => (
   <BrowserRouter>
-    <SessionProvider>
-      <HelmetProvider>
-        <ScrollProvider>
-          <App />
-        </ScrollProvider>
-      </HelmetProvider>
-    </SessionProvider>
+    <HelmetProvider>
+      <ScrollProvider>
+        <App />
+      </ScrollProvider>
+    </HelmetProvider>
   </BrowserRouter>
 );
 

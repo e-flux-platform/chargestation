@@ -407,7 +407,7 @@ export default class ChargeStation {
   }
 }
 
-export class ChargeStationStorage {
+class ChargeStationStorage {
   private static storageKey = 'chargeStationSettingsCache';
 
   static save(chargeStation: ChargeStation) {

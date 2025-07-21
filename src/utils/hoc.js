@@ -7,14 +7,6 @@
 // don't need to worry about this and should instead be provided a hook with
 // useContext.
 
-export function wrapContext(context) {
-  return (Component) => {
-    const Wrapped = getWrappedComponent(Component);
-    Wrapped.contextType = context;
-    return Component;
-  };
-}
-
 export function wrapComponent(Component, Wrapper) {
   Wrapper.WrappedComponent = Component;
   Wrapper.displayName = wrapDisplayName(Component, Wrapper);
