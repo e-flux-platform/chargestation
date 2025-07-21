@@ -38,6 +38,7 @@ module.exports = {
   devtool: BUILD ? 'source-map' : 'eval-cheap-module-source-map',
   entry: getEntryPoints(),
   output: {
+    publicPath: '/',
     filename: 'assets/[name].[contenthash].js',
     assetModuleFilename: 'assets/[contenthash][ext]',
     clean: true,
