@@ -46,7 +46,7 @@ A small number of environment variables can be used to override defaults used at
 
 ## Demo
 
-https://github.com/user-attachments/assets/a909a7aa-1a78-4afb-b0aa-165fc8a04feb
+[csone.webm](https://github.com/user-attachments/assets/9e519552-eab1-4641-87ae-096b0f54421b)
 
 ## TODO
 
