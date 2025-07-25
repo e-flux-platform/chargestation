@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react';
 import { MemoryRouter, withRouter } from 'react-router-dom';
 import { render } from '@testing-library/react';
@@ -10,6 +14,7 @@ describe('class components', () => {
         return <div className={this.getBlockClass()} />;
       }
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe('my-component');
@@ -25,6 +30,7 @@ describe('class components', () => {
         return <div className={this.getBlockClass()} />;
       }
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe(
@@ -38,6 +44,7 @@ describe('class components', () => {
         return <div className={this.getElementClass('button')} />;
       }
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe('my-component__button');
@@ -51,6 +58,7 @@ describe('class components', () => {
         );
       }
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe(
@@ -64,6 +72,7 @@ describe('functional components', () => {
     function MyComponent({ getBlockClass }) {
       return <div className={getBlockClass()} />;
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe('my-component');
@@ -73,6 +82,7 @@ describe('functional components', () => {
     function MyComponent({ getBlockClass }) {
       return <div className={getBlockClass('active', null)} />;
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe(
@@ -84,6 +94,7 @@ describe('functional components', () => {
     function MyComponent({ getElementClass }) {
       return <div className={getElementClass('button')} />;
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe('my-component__button');
@@ -93,6 +104,7 @@ describe('functional components', () => {
     function MyComponent({ getElementClass }) {
       return <div className={getElementClass('button', 'active', null)} />;
     }
+
     const App = bem(MyComponent);
     const { container } = await render(<App />);
     expect(container.firstChild.className).toBe(
@@ -123,6 +135,7 @@ describe('withRouter', () => {
           );
         }
       }
+
       const App = wrapProviders(bem(withRouter(MyComponent)));
       const { container } = await render(<App />);
       expect(container.firstChild.className).toBe('my-component');
@@ -139,6 +152,7 @@ describe('withRouter', () => {
           );
         }
       }
+
       const App = wrapProviders(withRouter(bem(MyComponent)));
       const { container } = await render(<App />);
       expect(container.firstChild.className).toBe('my-component');
@@ -151,6 +165,7 @@ describe('withRouter', () => {
       function MyComponent({ getBlockClass, location }) {
         return <div className={getBlockClass()}>{location.pathname}</div>;
       }
+
       const App = wrapProviders(bem(withRouter(MyComponent)));
       const { container } = await render(<App />);
       expect(container.firstChild.className).toBe('my-component');
@@ -161,6 +176,7 @@ describe('withRouter', () => {
       function MyComponent({ getBlockClass, location }) {
         return <div className={getBlockClass()}>{location.pathname}</div>;
       }
+
       const App = wrapProviders(withRouter(bem(MyComponent)));
       const { container } = await render(<App />);
       expect(container.firstChild.className).toBe('my-component');
