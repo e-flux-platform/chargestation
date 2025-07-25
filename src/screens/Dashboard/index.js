@@ -248,6 +248,7 @@ export default class Home extends React.Component {
                 connectorId={session.connectorId}
                 kwhCharged={session.kwhElapsed}
                 durationSeconds={session.secondsElapsed}
+                stateOfCharge={session.stateOfCharge}
                 startedAt={session.startTime}
               />
             ))}

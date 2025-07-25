@@ -6,6 +6,7 @@ export function SessionStatistic({
   connectorId,
   kwhCharged,
   durationSeconds,
+  stateOfCharge,
   startedAt,
 }) {
   return (
@@ -13,18 +14,36 @@ export function SessionStatistic({
       <Card.Content>
         <CardHeader>Connector {connectorId}</CardHeader>
         <Divider />
-        <p>
-          Started on{' '}
-          <strong>
-            {startedAt?.toDateString()} {startedAt?.toLocaleTimeString()}
-          </strong>
-        </p>
-        <p>
-          <strong>{formatEnergy(kwhCharged)}</strong> charged
-        </p>
-        <p>
-          <strong>{formatTime(durationSeconds)}</strong> passed
-        </p>
+        <table>
+          <tbody>
+            <tr>
+              <td>Started</td>
+              <td>
+                <strong>
+                  {startedAt?.toDateString()} {startedAt?.toLocaleTimeString()}
+                </strong>
+              </td>
+            </tr>
+            <tr>
+              <td>Charged</td>
+              <td>
+                <strong>{formatEnergy(kwhCharged)}</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>Duration</td>
+              <td>
+                <strong>{formatTime(durationSeconds)}</strong>
+              </td>
+            </tr>
+            <tr>
+              <td>SoC</td>
+              <td>
+                <strong>{formatPercentage(stateOfCharge)}</strong>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </Card.Content>
     </Card>
   );
@@ -47,4 +66,8 @@ function formatEnergy(kwhCharged) {
   }
 
   return `${rounded} kWh`;
+}
+
+function formatPercentage(percent) {
+  return `${round(percent, 2)}%`;
 }
